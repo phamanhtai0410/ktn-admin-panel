@@ -3,12 +3,12 @@
 {% include "security/_messages.html" %}
 {% block body %}
 {{ super() }}
-<br><br><br><br><br>
-<section class="content">
-    <div class="col-sm-8 col-sm-offset-2">
-        <div class="well">
-                <h1>Login</h1>
-            <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
+
+<section class="content justify-content-center  w-100 h-100 p-0" style="height: 100vh;display: flex;align-items: center;">
+    <div class="col-sm-3 col-sm-offset-4">
+        <div class="justify-content-center well">
+            <h1 class="text-center">Admin panel</h1>
+            <form class="justify-content-center" action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
                 {{ login_user_form.hidden_tag() }}
                 {{ render_field_with_errors(login_user_form.email) }}
                 {{ render_field_with_errors(login_user_form.password) }}
@@ -19,6 +19,5 @@
         </div>
     </div>
 </section>
-<br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br>
+
 {% endblock body %}
