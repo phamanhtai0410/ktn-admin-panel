@@ -8,6 +8,5 @@ RUN pip --no-cache-dir install -r /lib/requirements.txt
 RUN pip --no-cache-dir install -r requirements.txt
 RUN pip --no-cache-dir install "Flask[async]"
 
-COPY conf/supervisor/ /etc/supervisor.d/
 COPY . /webapps
 WORKDIR /webapps
