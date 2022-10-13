@@ -17,6 +17,7 @@ app.config.update(Config.__dict__)
 def page_not_found(error):
     return render_template('errors/404.html'), 404
 
+
 #
 # @app.errorhandler(500)
 # def server_error_page(error):
@@ -88,4 +89,4 @@ if Config.SENTRY_DSN:
     )
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
