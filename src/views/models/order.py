@@ -9,6 +9,7 @@ class OrderView(MyBaseModelView):
     can_edit = False
     can_create = False
     can_delete = False
+
     column_labels = {
         'address': 'User'
     }

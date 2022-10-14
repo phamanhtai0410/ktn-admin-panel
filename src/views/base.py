@@ -9,6 +9,8 @@ from flask_admin import AdminIndexView, BaseView
 from flask_admin.contrib.mongoengine import ModelView
 from flask_login import current_user, logout_user
 
+from src.routes import LOCK_PAGE
+
 
 class MyBaseModelView(ModelView):
     def is_accessible(self):
@@ -22,10 +24,12 @@ class MyBaseModelView(ModelView):
         # SHOW ALL FOR SUPPER ADMIN
         if current_user.is_admin:
             is_render_page = True
-            self.edit = True
-            self.can_create = True
-            self.can_delete = True
-            self.can_export = True
+            print(self.name)
+            if self.name not in LOCK_PAGE:
+                self.edit = True
+                self.can_create = True
+                self.can_delete = True
+                self.can_export = True
         else:
             if current_user.roles:
                 for role in current_user.roles:

@@ -4,7 +4,7 @@ from wtforms import validators
 from src.views.base import MyBaseModelView
 
 
-class NFTView(MyBaseModelView):
+class NftView(MyBaseModelView):
     column_list = ['token_id', 'address', 'rarity', 'created_time']
     can_edit = False
     can_create = False
