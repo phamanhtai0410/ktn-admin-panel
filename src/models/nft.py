@@ -17,6 +17,7 @@ class Nft(BaseDocument):
     address = StringField()
     token_id = StringField()
     rarity = IntField()
+    contract = StringField()
 
     def __str__(self):
         return self.token_id if self else ''

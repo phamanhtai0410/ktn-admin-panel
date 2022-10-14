@@ -31,6 +31,7 @@ class Order(BaseDocument):
     order_id = StringField()
     items = ListField(EmbeddedDocumentField(Item))
     status = StringField()
+    tx_hash = StringField()
 
     def __str__(self):
         return self.order_id if self else ''

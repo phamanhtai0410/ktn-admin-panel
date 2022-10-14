@@ -14,7 +14,7 @@ class Config:
     PROJECT_NAME = 'Admin panel'
     TEMPLATE_MODE = 'bootstrap4'
     MONGO_URI = os.getenv('MONGO_URI')
-    print("[DEBUG] MONGO_URI", MONGO_URI)
+    BSC_SCAN = os.getenv('BSC_SCAN')
     SENTRY_DSN = os.getenv('SENTRY_DSN')
     SECRET_KEY = 'zTVDE1WG9Tg4BbxNi21A'
     SECURITY_PASSWORD_SALT = 'bcrypt'
