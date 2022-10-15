@@ -22,6 +22,5 @@ class NftDetail(BaseDocument):
     image = StringField()
     price = IntField()
 
-
     def __str__(self):
-        return self.token_id if self else ''
+        return self.nft_id if self else ''
