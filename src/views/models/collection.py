@@ -2,8 +2,8 @@ from markupsafe import Markup
 from src.views.base import MyBaseModelView
 
 
-class NftDetailView(MyBaseModelView):
-    column_list = ['nft_id', 'name', 'rarity', 'type', 'description', 'image', 'price', 'created_time']
+class CollectionView(MyBaseModelView):
+    column_list = ['collection_id', 'name', 'description', 'image', 'created_time']
     can_edit = True
     can_create = True
     can_delete = True
@@ -14,7 +14,7 @@ class NftDetailView(MyBaseModelView):
 
     column_searchable_list = ['name']
 
-    column_default_sort = ('nft_id', False)
+    column_default_sort = ('collection_id', False)
     column_formatters = {
         'image': image_format
     }

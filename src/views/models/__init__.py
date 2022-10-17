@@ -7,6 +7,7 @@
 from unicodedata import category
 from .nft import NftView
 from .nft_detail import NftDetailView
+from .collection import CollectionView
 from .order import OrderView
 from .roles import RolesView
 from .user import UserView
@@ -16,6 +17,7 @@ from ...models.nft import Nft
 from ...models.order import Order
 from ...models.security import User, Role
 from ...models.nft_detail import NftDetail
+from ...models.collection import Collection
 
 model_views = [
     UserView(User, category='Setting'),
@@ -25,6 +27,8 @@ model_views = [
 
     NftDetailView(NftDetail, category='NFT'),
 
-    ReferralView(Referral, category='Referral')
+    ReferralView(Referral, category='Referral'),
+    
+    CollectionView(Collection , category='NFT')
 
 ]
