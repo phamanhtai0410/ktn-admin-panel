@@ -3,12 +3,9 @@ ROLES_PAGE_ACCESS = [
     ('role', 'Role'),
     ('order', 'Order'),
     ('nft', 'Nft'),
-
     ('nft_detail', 'Nft Detail'),
-
-
-    ('referral', 'Referral')
-
+    ('referral', 'Referral'),
+    ('promotion', 'Promotion'),
 ]
 LOCK_PAGE = ['Order', 'Nft', 'Referral', 'Nft Detail']
 ROLES__PAGE_ACCESS_DISPLAY = {
@@ -17,5 +14,6 @@ ROLES__PAGE_ACCESS_DISPLAY = {
     'order': 'Order',
     'nft': 'Nft',
     'nft_detail': 'Nft Detail',
-    'referral': 'Referral'
+    'referral': 'Referral',
+    'promotion': 'Promotion',
 }
