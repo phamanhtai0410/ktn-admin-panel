@@ -121,3 +121,10 @@ class MyAdminIndexView(AdminIndexView):
     def inaccessible_callback(self, name, **kwargs):
         # redirect to login page if user doesn't have access
         return redirect(url_for('security.login', next=request.url))
+
+
+class RowActionListMixin(object):
+    list_template = 'admin/list.html'
+
+    def allow_row_action(self, action, model):
+        return True
