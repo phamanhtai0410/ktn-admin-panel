@@ -11,6 +11,7 @@ from .collection import CollectionView
 from .order import OrderView
 from .roles import RolesView
 from .user import UserView
+from .user_app import UserAppView
 from .referral import ReferralView
 from .promotion import PromotionView
 from .nfts_statistic import NftsStatisticView
@@ -20,6 +21,7 @@ from ...models.referral import Referral
 from ...models.nft import Nft
 from ...models.order import Order
 from ...models.security import User, Role
+from ...models.user import UserApp
 from ...models.nft_detail import NftDetail
 from ...models.collection import Collection
 from ...models.promotion import Promotion
@@ -33,6 +35,7 @@ model_views = [
 
     OrderView(Order, category='NFT'),
     NftView(Nft, category='NFT'),
+    UserAppView(UserApp, category='Application'),
     NftDetailView(NftDetail, category='NFT'),
     CollectionView(Collection, category='NFT'),
     NftsStatisticView(NftsStatistic, category='NFT'),
