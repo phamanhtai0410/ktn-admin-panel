@@ -19,6 +19,3 @@ class NftsStatistic(BaseDocument):
     contract = StringField()
     total = FloatField()
 
-
-    def __str__(self):
-        return self.nft_type if self else ''

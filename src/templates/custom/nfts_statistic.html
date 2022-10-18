@@ -14,7 +14,7 @@
                         <i class="ion ion-pie-graph"></i>
                     </div>
                     <spans class="small-box-footer">
-                        <h3>Total</h3></span>
+                        <p>Total</p></span>
                 </div>
             </div>
         </div>
@@ -24,13 +24,14 @@
                 <!-- small box -->
                 <div class="small-box bg-green">
                     <div class="inner">
-                        <h3 class="text-center"> {{ get_value(row, 'total') }} USD </h3>
+                        <h3>{{ get_value(row, 'total') }} USD</h3>
+                        <p></p>
                     </div>
                     <div class="icon">
                         <i class="ion ion-cash"></i>
                     </div>
-                    <spans class="small-box-footer">
-                        <p>Type: {{ get_value(row, 'nft_type')}} - Rarity: {{ get_value(row, 'rarity')}}</p></span>
+                    <a href="#" class="small-box-footer">Type: {{ get_value(row, 'nft_type')}} - Rarity: {{
+                        get_value(row, 'rarity')}}</a>
                 </div>
             </div>
             {% endfor %}

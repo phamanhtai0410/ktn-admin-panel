@@ -63,6 +63,57 @@
   <a href="/nft" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
 </div>
 </div>
+
+<div class="col-lg-3 col-xs-6">
+  <!-- small box -->
+  <div class="small-box bg-aqua">
+    <div class="inner">
+      <h3>{{ total_collection }}</h3>
+
+      <p>Total Collection</p>
+    </div>
+    <div class="icon">
+      <i class="ion ion-folder"></i>
+    </div>
+    <a href="/collection" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+  </div>
+</div>
+
+<!-- ./col total sold-->
+<div class="col-lg-3 col-xs-6">
+  <!-- small box -->
+  <div class="small-box bg-green">
+    <div class="inner">
+      <h3>{{ total_nfts_sold }}</h3>
+
+      <p>Total NFT Sold</p>
+    </div>
+    <div class="icon">
+      <i class="ion ion-cash"></i>
+    </div>
+    <a href="/nftsstatistic" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+  </div>
+</div>
+
+<!-- ./col total sold by nft type-->
+{% for item in total_nfts_sold_by_nft_type%}
+<div class="col-lg-3 col-xs-6">
+  <!-- small box -->
+  <div class="small-box bg-green">
+    <div class="inner">
+      <h3>{{ total_nfts_sold_by_nft_type[item] }}</h3>
+
+      <p>Total NFT Type {{item}} Sold</p>
+    </div>
+    <div class="icon">
+      <i class="ion ion-cash"></i>
+    </div>
+    <a href="/nftsstatistic" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+  </div>
+</div>
+{% endfor %}
+
+
 <!-- ./col -->
 </div>
 <!-- /.row -->
