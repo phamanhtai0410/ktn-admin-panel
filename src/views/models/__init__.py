@@ -32,8 +32,7 @@ model_views = [
 
     OrderView(Order, category='NFT'),
     NftView(Nft, category='NFT'),
-    UserAppView(UserApp, category='Application')
-    NftView(Nft, category='NFT'),
+    UserAppView(UserApp, category='Application'),
     NftDetailView(NftDetail, category='NFT'),
 
     ReferralView(Referral, category='Referral'),
