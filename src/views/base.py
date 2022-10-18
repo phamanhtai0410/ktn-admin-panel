@@ -5,10 +5,13 @@
         -
 """
 from flask import redirect, url_for, request, flash, session
-from flask_admin import AdminIndexView, BaseView
+from flask_admin import AdminIndexView, BaseView, expose
 from flask_admin.contrib.mongoengine import ModelView
 from flask_login import current_user, logout_user
 
+from src.models.nft import Nft
+from src.models.order import Order
+from src.models.user import UserApp
 from src.routes import LOCK_PAGE
 
 
@@ -98,6 +101,20 @@ class MyBaseModelViewUX(BaseView):
 
 
 class MyAdminIndexView(AdminIndexView):
+    @expose('/')
+    def index(self):
+        arg1 = 'Hello'
+        print('arg1', arg1)
+        _total_users = UserApp.objects.count({})
+        _total_orders = Order.objects.count({})
+        _total_nfts = Nft.objects.count({})
+
+        print('_total_user', _total_users)
+        return self.render('admin/index.html',
+                           total_users=_total_users,
+                           total_orders=_total_orders,
+                           total_nfts=_total_nfts)
+
     def is_accessible(self):
         return current_user.is_authenticated
 
