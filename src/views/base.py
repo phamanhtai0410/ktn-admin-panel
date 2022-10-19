@@ -5,10 +5,16 @@
         -
 """
 from flask import redirect, url_for, request, flash, session
-from flask_admin import AdminIndexView, BaseView
+from flask_admin import AdminIndexView, BaseView, expose
 from flask_admin.contrib.mongoengine import ModelView
 from flask_login import current_user, logout_user
+import pydash as py_
 
+from src.models.nft import Nft
+from src.models.order import Order
+from src.models.user import UserApp
+from src.models.nfts_statistic import NftsStatistic
+from src.models.collection import Collection
 from src.routes import LOCK_PAGE
 
 
@@ -98,9 +104,45 @@ class MyBaseModelViewUX(BaseView):
 
 
 class MyAdminIndexView(AdminIndexView):
+    @expose('/')
+    def index(self):
+        arg1 = 'Hello'
+        print('arg1', arg1)
+        _total_users = UserApp.objects.count({})
+        _total_orders = Order.objects.count({})
+        _total_nfts = Nft.objects.count({})
+        _total_collection = Collection.objects.count({})
+        _total_nfts_statistic = NftsStatistic.objects(__raw__={})
+        _total_nfts_sold = sum([py_.get(x, 'total', 0) for x in _total_nfts_statistic])
+        _total_nfts_sold_by_nft_type = {}
+        for item in _total_nfts_statistic:
+            _nft_type = str(py_.get(item, 'nft_type', 0))
+            _total = py_.get(item, 'total', 0)
+            if _nft_type in _total_nfts_sold_by_nft_type:
+                _total_nfts_sold_by_nft_type[_nft_type] += _total
+            else:
+                _total_nfts_sold_by_nft_type[_nft_type] = _total
+
+
+        print('_total_user', _total_users)
+        return self.render('admin/index.html',
+                           total_users=_total_users,
+                           total_orders=_total_orders,
+                           total_nfts=_total_nfts,
+                           total_nfts_sold=_total_nfts_sold,
+                           total_nfts_sold_by_nft_type=_total_nfts_sold_by_nft_type,
+                           total_collection=_total_collection)
+
     def is_accessible(self):
         return current_user.is_authenticated
 
     def inaccessible_callback(self, name, **kwargs):
         # redirect to login page if user doesn't have access
         return redirect(url_for('security.login', next=request.url))
+
+
+class RowActionListMixin(object):
+    list_template = 'admin/list.html'
+
+    def allow_row_action(self, action, model):
+        return True
