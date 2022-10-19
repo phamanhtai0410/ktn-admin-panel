@@ -14,6 +14,6 @@ class Promotion(BaseDocument):
         'strict': False,
         'collection': 'promotion_codes'
     }
-    code = StringField()
-    discount = FloatField()
-    status = BooleanField()
+    code = StringField(required=True, unique=True)
+    discount = FloatField(required=True)
+    status = BooleanField(default=True)

@@ -32,6 +32,13 @@ class OrderView(MyBaseModelView):
                 f'<a target="_blank"  href="{Config.BSC_SCAN}/tx/{_tx_hash}">{_tx_hash[:4]}...{_tx_hash[-4:]}</a>')
         return Markup("<p style='color: #808080;'>WAITING</p>")
 
+    def status_formart(view, context, model, name):
+        _status = model.status
+        if _status in ['FAILED', 'ERROR']:
+            return Markup(
+                f'<ul ><li>{_status}</li><li>{model.reason}</li></ul>')
+        return _status
+
     column_searchable_list = ['address', 'order_id']
 
     column_default_sort = ('created_time', True)
@@ -39,5 +46,6 @@ class OrderView(MyBaseModelView):
     column_formatters = {
         'items': items_formart,
         'address': address_formart,
-        'tx_hash': tx_hash_formart
+        'tx_hash': tx_hash_formart,
+        'status': status_formart
     }

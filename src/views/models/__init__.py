@@ -41,7 +41,6 @@ model_views = [
     NftView(Nft, category='NFT'),
     UserAppView(UserApp, category='Application'),
     NftDetailView(NftDetail, category='NFT'),
-    CollectionView(Collection, category='NFT'),
     NftsStatisticView(NftsStatistic, category='NFT'),
 
     ReferralView(Referral, category='Referral'),
