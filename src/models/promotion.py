@@ -14,6 +14,7 @@ class Promotion(BaseDocument):
         'strict': False,
         'collection': 'promotion_codes'
     }
+    address = StringField(required=False)
     code = StringField(required=True, unique=True)
     discount = FloatField(required=True)
     status = BooleanField(default=True)
