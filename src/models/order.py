@@ -33,6 +33,7 @@ class Order(BaseDocument):
     status = StringField()
     tx_hash = StringField()
     reason = StringField()
+    tx_mint = StringField()
 
     def __str__(self):
         return self.order_id if self else ''

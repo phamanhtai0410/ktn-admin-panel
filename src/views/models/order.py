@@ -27,9 +27,15 @@ class OrderView(MyBaseModelView):
 
     def tx_hash_formart(view, context, model, name):
         _tx_hash = model.tx_hash
+        _tx_mint = model.tx_mint
         if isinstance(_tx_hash, str) and len(_tx_hash) > 12:
-            return Markup(
-                f'<a target="_blank"  href="{Config.BSC_SCAN}/tx/{_tx_hash}">{_tx_hash[:4]}...{_tx_hash[-4:]}</a>')
+            if _tx_mint:
+                return Markup(
+                    f'<ul><li>Payment: <a target="_blank"  href="{Config.BSC_SCAN}/tx/{_tx_hash}">{_tx_hash[:4]}...{_tx_hash[-4:]}</a></li><li>Mint: <a target="_blank"  href="{Config.BSC_SCAN}/tx/{_tx_mint}">{_tx_mint[:4]}...{_tx_mint[-4:]}</a></li></ul>')
+            else:
+                return Markup(
+                    f'<ul><li>Payment: <a target="_blank"  href="{Config.BSC_SCAN}/tx/{_tx_hash}">{_tx_hash[:4]}...{_tx_hash[-4:]}</a></li></ul>')
+
         return Markup("<p style='color: #808080;'>WAITING</p>")
 
     def status_formart(view, context, model, name):
