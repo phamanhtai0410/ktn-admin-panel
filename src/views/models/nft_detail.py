@@ -14,7 +14,7 @@ class NftDetailView(MyBaseModelView):
 
     column_searchable_list = ['name']
 
-    column_default_sort = ('nft_id', False)
+    column_default_sort = ('created_time', True)
     column_formatters = {
         'image': image_format
     }
