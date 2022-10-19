@@ -15,6 +15,8 @@ class Config:
     TEMPLATE_MODE = 'bootstrap4'
     MONGO_URI = os.getenv('MONGO_URI')
     BSC_SCAN = os.getenv('BSC_SCAN')
+    ETH_SCAN = os.getenv('ETH_SCAN')
+
     SENTRY_DSN = os.getenv('SENTRY_DSN')
     SECRET_KEY = 'zTVDE1WG9Tg4BbxNi21A'
     SECURITY_PASSWORD_SALT = 'bcrypt'
@@ -28,4 +30,5 @@ class Config:
     # security
     SECURITY_USER_IDENTITY_ATTRIBUTES = ('email')
     ADMIN_ROOT = 'root@katana.com'
+
     pass

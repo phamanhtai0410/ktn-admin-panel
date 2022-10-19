@@ -34,6 +34,7 @@ class Order(BaseDocument):
     tx_hash = StringField()
     reason = StringField()
     tx_mint = StringField()
+    chain = StringField()
 
     def __str__(self):
         return self.order_id if self else ''

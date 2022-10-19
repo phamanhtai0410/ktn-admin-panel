@@ -4,6 +4,9 @@ from wtforms import validators
 from src.config import Config
 from src.views.base import MyBaseModelView
 
+class Chains:
+    BSC_CHAIN = 'BSC_CHAIN'
+    ETHEREUM_CHAIN = 'ETHEREUM_CHAIN'
 
 class OrderView(MyBaseModelView):
     column_list = ['order_id', 'address', 'items', 'status', 'tx_hash', 'created_time']
@@ -31,10 +34,10 @@ class OrderView(MyBaseModelView):
         if isinstance(_tx_hash, str) and len(_tx_hash) > 12:
             if _tx_mint:
                 return Markup(
-                    f'<ul><li>Payment: <a target="_blank"  href="{Config.BSC_SCAN}/tx/{_tx_hash}">{_tx_hash[:4]}...{_tx_hash[-4:]}</a></li><li>Mint: <a target="_blank"  href="{Config.BSC_SCAN}/tx/{_tx_mint}">{_tx_mint[:4]}...{_tx_mint[-4:]}</a></li></ul>')
+                    f'<ul><li>Payment: <a target="_blank"  href="{Config.BSC_SCAN if model.chain == Chains.BSC_CHAIN else Config.ETH_SCAN}/tx/{_tx_hash}">{_tx_hash[:4]}...{_tx_hash[-4:]}</a></li><li>Mint: <a target="_blank"  href="{Config.BSC_SCAN}/tx/{_tx_mint}">{_tx_mint[:4]}...{_tx_mint[-4:]}</a></li></ul>')
             else:
                 return Markup(
-                    f'<ul><li>Payment: <a target="_blank"  href="{Config.BSC_SCAN}/tx/{_tx_hash}">{_tx_hash[:4]}...{_tx_hash[-4:]}</a></li></ul>')
+                    f'<ul><li>Payment: <a target="_blank"  href="{Config.BSC_SCAN if model.chain == Chains.BSC_CHAIN else Config.ETH_SCAN}/tx/{_tx_hash}">{_tx_hash[:4]}...{_tx_hash[-4:]}</a></li></ul>')
 
         return Markup("<p style='color: #808080;'>WAITING</p>")
 
