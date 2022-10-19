@@ -3,12 +3,12 @@ from src.views.base import MyBaseModelView, RowActionListMixin
 
 
 class PromotionView(RowActionListMixin, MyBaseModelView):
-    column_list = ['address', 'code', 'discount', 'status', 'created_time', 'updated_time', 'updated_by']
+    column_list = ['code', 'discount', 'status', 'created_time', 'updated_time', 'updated_by']
     can_edit = True
     can_create = True
     can_delete = True
 
-    column_searchable_list = ['address', 'code']
+    column_searchable_list = ['code']
 
     column_default_sort = ('created_time', True)
 
