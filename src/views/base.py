@@ -112,17 +112,44 @@ class MyAdminIndexView(AdminIndexView):
         _total_orders = Order.objects.count({})
         _total_nfts = Nft.objects.count({})
         _total_collection = Collection.objects.count({})
-        _total_nfts_statistic = NftsStatistic.objects(__raw__={})
+        _total_nfts_statistic = NftsStatistic.objects().aggregate([
+            {
+                "$match": {}
+            },
+            {
+                "$group": {
+                    "_id": "$nft_type",
+                    "total": {
+                        "$sum": "$total"
+                    }
+                }
+            }
+        ])
+        _statistic_points = UserApp.objects().aggregate([
+            {
+                "$match": {}
+            },
+            {
+                "$group": {
+                    "_id": None,
+                    "total_points": {
+                        "$sum": "$total_points"
+                    },
+                    "total_withdraw": {
+                        "$sum": "$total_withdraw"
+                    }
+                }
+            }
+        ])
+        _total_nfts_statistic = list(_total_nfts_statistic)
+        _statistic_points = list(_statistic_points)
+        if len(_statistic_points) > 0:
+            _statistic_points = _statistic_points[0]
         _total_nfts_sold = sum([py_.get(x, 'total', 0) for x in _total_nfts_statistic])
         _total_nfts_sold_by_nft_type = {}
         for item in _total_nfts_statistic:
-            _nft_type = str(py_.get(item, 'nft_type', 0))
-            _total = py_.get(item, 'total', 0)
-            if _nft_type in _total_nfts_sold_by_nft_type:
-                _total_nfts_sold_by_nft_type[_nft_type] += _total
-            else:
-                _total_nfts_sold_by_nft_type[_nft_type] = _total
-
+            _nft_type = str(py_.get(item, '_id', 0))
+            _total_nfts_sold_by_nft_type[_nft_type] = py_.get(item, 'total', 0)
 
         print('_total_user', _total_users)
         return self.render('admin/index.html',
@@ -131,7 +158,8 @@ class MyAdminIndexView(AdminIndexView):
                            total_nfts=_total_nfts,
                            total_nfts_sold=_total_nfts_sold,
                            total_nfts_sold_by_nft_type=_total_nfts_sold_by_nft_type,
-                           total_collection=_total_collection)
+                           total_collection=_total_collection,
+                           statistic_points=_statistic_points or {})
 
     def is_accessible(self):
         return current_user.is_authenticated

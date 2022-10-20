@@ -4,7 +4,7 @@
         -
         -
 """
-from mongoengine import StringField
+from mongoengine import StringField, FloatField
 
 from src.models.base import BaseDocument
 
@@ -15,6 +15,8 @@ class UserApp(BaseDocument):
         'collection': 'user'
     }
     address = StringField()
+    total_points = FloatField()
+    total_withdraw = FloatField()
 
     def __str__(self):
         return self.address if self else ''

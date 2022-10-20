@@ -1,0 +1,36 @@
+from markupsafe import Markup
+from wtforms import validators
+
+from src.config import Config
+from src.views.base import MyBaseModelView
+
+
+class ExchangeView(MyBaseModelView):
+    column_list = ['status', 'address', 'amount', 'tx_hash', 'created_time']
+    can_edit = False
+    can_create = False
+    can_delete = False
+    column_filters = ['status']
+    column_labels = {
+        'address': 'User'
+    }
+
+    def address_formart(view, context, model, name):
+        _address = model['address']
+        return Markup(f'<a target="_blank"  href="{Config.BSC_SCAN}/address/{_address}">{_address}</a>')
+
+    def tx_hash_formart(view, context, model, name):
+        _tx_hash = model['tx_hash']
+        if _tx_hash:
+            return Markup(
+                f'<a target="_blank"  href="{Config.BSC_SCAN}/tx/{_tx_hash}">{_tx_hash[:4]}...{_tx_hash[-4:]}</a>')
+        return "..."
+
+    column_searchable_list = ['address', 'tx_hash']
+
+    column_default_sort = ('created_time', True)
+
+    column_formatters = {
+        'address': address_formart,
+        'tx_hash': tx_hash_formart
+    }

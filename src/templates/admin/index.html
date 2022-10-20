@@ -7,120 +7,157 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-      Dashboard 
-      <small>Control panel</small>
-  </h1>
-  <ol class="breadcrumb">
-      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active">Dashboard</li>
-  </ol>
+        Dashboard
+        <small>Control panel</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+    </ol>
 </section>
 
-<section class="content">
-  <!-- Small boxes (Stat box) -->
-  <div class="row">
-    <div class="col-lg-3 col-xs-6">
-      <!-- small box -->
-      <div class="small-box bg-aqua">
-        <div class="inner">
-          <h3>{{ total_orders }}</h3>
-          <p>Total Orders</p>
-      </div>
-      <div class="icon">
-          <i class="ion ion-bag"></i>
-      </div>
-      <a href="/order" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-  </div>
-</div>
+<section class="content connectedSortable">
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+        <!-- Left col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>{{ total_orders }}</h3>
+                    <p>Total Orders</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-bag"></i>
+                </div>
+                <a href="/order" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
 
-<!-- ./col -->
-<div class="col-lg-3 col-xs-6">
-  <!-- small box -->
-  <div class="small-box bg-yellow">
-    <div class="inner">
-      <h3>{{ total_users }}</h3>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <h3>{{ total_users }}</h3>
 
-      <p>Total users</p>
-  </div>
-  <div class="icon">
-      <i class="ion ion-person-add"></i>
-  </div>
-  <a href="/userapp" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-</div>
-</div>
-<!-- ./col -->
-<div class="col-lg-3 col-xs-6">
-  <!-- small box -->
-  <div class="small-box bg-red">
-    <div class="inner">
-      <h3>{{ total_nfts }}</h3>
+                    <p>Total users</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-person-add"></i>
+                </div>
+                <a href="/userapp" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-red">
+                <div class="inner">
+                    <h3>{{ total_nfts }}</h3>
 
-      <p>Total NFT</p>
-  </div>
-  <div class="icon">
-      <i class="ion ion-pie-graph"></i>
-  </div>
-  <a href="/nft" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-</div>
-</div>
-
-<div class="col-lg-3 col-xs-6">
-  <!-- small box -->
-  <div class="small-box bg-aqua">
-    <div class="inner">
-      <h3>{{ total_collection }}</h3>
-
-      <p>Total Collection</p>
+                    <p>Total NFT</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-pie-graph"></i>
+                </div>
+                <a href="/nft" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
     </div>
-    <div class="icon">
-      <i class="ion ion-folder"></i>
+</section>
+<section class="content connectedSortable">
+    <h3>
+        NFT
+    </h3>
+    <div class="row">
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>{{ total_collection }}</h3>
+
+                    <p>Total Collection</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-folder"></i>
+                </div>
+                <a href="/collection" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col total sold-->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>{{ total_nfts_sold }} USD</h3>
+
+                    <p>Total NFT Sold</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-cash"></i>
+                </div>
+                <a href="/nftsstatistic" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+
+        <!-- ./col total sold by nft type-->
+        {% for item in total_nfts_sold_by_nft_type%}
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>{{ total_nfts_sold_by_nft_type[item] }} USD</h3>
+
+                    <p>Total NFT Type {{item}} Sold</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-cash"></i>
+                </div>
+                <a href="/nftsstatistic" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endfor %}
+
     </div>
-    <a href="/collection" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-  </div>
-</div>
+</section>
 
-<!-- ./col total sold-->
-<div class="col-lg-3 col-xs-6">
-  <!-- small box -->
-  <div class="small-box bg-green">
-    <div class="inner">
-      <h3>{{ total_nfts_sold }} USD</h3>
-
-      <p>Total NFT Sold</p>
+<section class="content connectedSortable">
+    <h3>
+        Points
+    </h3>
+    <div class="row">
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>{{ statistic_points.get("total_points", 0) }}  <span style="font-size:16px;">{{ total_users }} users</span></h3>
+                    <p>Total points</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-folder"></i>
+                </div>
+                <a href="/pointlog" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+         <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>{{ statistic_points.get("total_withdraw", 0) }}</h3>
+                    <p>Total Withdraw</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-folder"></i>
+                </div>
+                <a href="/exchangelog" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
     </div>
-    <div class="icon">
-      <i class="ion ion-cash"></i>
-    </div>
-    <a href="/nftsstatistic" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-  </div>
-</div>
+</section>
 
-<!-- ./col total sold by nft type-->
-{% for item in total_nfts_sold_by_nft_type%}
-<div class="col-lg-3 col-xs-6">
-  <!-- small box -->
-  <div class="small-box bg-green">
-    <div class="inner">
-      <h3>{{ total_nfts_sold_by_nft_type[item] }} USD</h3>
+<br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br>
+{% endif %}
 
-      <p>Total NFT Type {{item}} Sold</p>
-    </div>
-    <div class="icon">
-      <i class="ion ion-cash"></i>
-    </div>
-    <a href="/nftsstatistic" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-  </div>
-</div>
-{% endfor %}
-
-
-<!-- ./col -->
-</div>
-<!-- /.row -->
-<!-- Main row -->
-
-    <br><br><br><br><br><br><br><br><br>
-    <br><br><br><br><br><br><br><br><br><br>
- {% endif %}
-
-  {% endblock body %}
+{% endblock body %}
