@@ -110,7 +110,7 @@ class MyAdminIndexView(AdminIndexView):
         print('arg1', arg1)
         _total_users = UserApp.objects.count({})
         _total_orders = Order.objects.count({})
-        _total_nfts = Nft.objects.count({})
+        _total_nfts = MintedNfts.objects.count({})
         _total_collection = Collection.objects.count({})
         _total_nfts_statistic = NftsStatistic.objects().aggregate([
             {
