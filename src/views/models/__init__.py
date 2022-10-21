@@ -9,7 +9,7 @@ from unicodedata import category
 from .exchange import ExchangeView
 from .minted_nfts import MintedNftsView
 from .nft_detail import NftDetailView
-from .collection import CollectionView
+from .nft_type import NftTypeView
 from .nft_history import NftHistoryView
 from .order import OrderView
 from .point import PointView
@@ -29,7 +29,7 @@ from ...models.order import Order
 from ...models.security import User, Role
 from ...models.user import UserApp
 from ...models.nft_detail import NftDetail
-from ...models.collection import Collection
+from ...models.nft_type import NftType
 
 from ...models.nft_history import NftHistory
 
@@ -50,7 +50,7 @@ model_views = [
     ReferralView(Referral, category='Referral'),
     ReferralRewardConfigView(ReferralRewardConfig, category='Referral'),
 
-    CollectionView(Collection, category='NFT'),
+    NftTypeView(NftType, category='NFT'),
 
     NftHistoryView(NftHistory, category='NFT'),
 
