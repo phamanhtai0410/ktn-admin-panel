@@ -7,7 +7,7 @@
 from unicodedata import category
 
 from .exchange import ExchangeView
-from .nft import NftView
+from .minted_nfts import MintedNftsView
 from .nft_detail import NftDetailView
 from .collection import CollectionView
 from .nft_history import NftHistoryView
@@ -24,7 +24,7 @@ from ...models.exchange import ExchangeLog
 from ...models.point import PointLog
 
 from ...models.referral import Referral
-from ...models.nft import Nft
+from ...models.minted_nfts import MintedNfts
 from ...models.order import Order
 from ...models.security import User, Role
 from ...models.user import UserApp
@@ -42,7 +42,7 @@ model_views = [
     RolesView(Role, category='Setting'),
 
     OrderView(Order, category='NFT'),
-    NftView(Nft, category='NFT'),
+    MintedNftsView(MintedNfts, category='NFT'),
     UserAppView(UserApp, category='Application'),
     NftDetailView(NftDetail, category='NFT'),
     NftsStatisticView(NftsStatistic, category='NFT'),

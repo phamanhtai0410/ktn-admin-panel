@@ -10,7 +10,7 @@ from flask_admin.contrib.mongoengine import ModelView
 from flask_login import current_user, logout_user
 import pydash as py_
 
-from src.models.nft import Nft
+from src.models.minted_nfts import MintedNfts
 from src.models.order import Order
 from src.models.user import UserApp
 from src.models.nfts_statistic import NftsStatistic

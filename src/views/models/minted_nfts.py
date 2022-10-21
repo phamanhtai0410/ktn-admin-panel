@@ -5,7 +5,7 @@ from src.config import Config
 from src.views.base import MyBaseModelView
 
 
-class NftView(MyBaseModelView):
+class MintedNftsView(MyBaseModelView):
     column_list = ['token_id', 'address', 'rarity', 'created_time']
     can_edit = False
     can_create = False
