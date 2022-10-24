@@ -3,7 +3,7 @@ from src.views.base import MyBaseModelView
 
 
 class NftDetailView(MyBaseModelView):
-    column_list = ['nft_id', 'name', 'rarity', 'type', 'description', 'image', 'price', 'created_time']
+    column_list = ['nft_id', 'name', 'rarity', 'type', 'description', 'image', 'price','is_show', 'created_time']
     can_edit = True
     can_create = True
     can_delete = True

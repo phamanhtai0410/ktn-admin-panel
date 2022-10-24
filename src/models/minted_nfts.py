@@ -9,7 +9,7 @@ from mongoengine import StringField, IntField
 from src.models.base import BaseDocument
 
 
-class Nft(BaseDocument):
+class MintedNfts(BaseDocument):
     meta = {
         'strict': False,
         'collection': 'nfts'

@@ -10,11 +10,11 @@ from flask_admin.contrib.mongoengine import ModelView
 from flask_login import current_user, logout_user
 import pydash as py_
 
-from src.models.nft import Nft
+from src.models.minted_nfts import MintedNfts
 from src.models.order import Order
 from src.models.user import UserApp
 from src.models.nfts_statistic import NftsStatistic
-from src.models.collection import Collection
+from src.models.nft_type import NftType
 from src.routes import LOCK_PAGE
 
 
@@ -110,8 +110,8 @@ class MyAdminIndexView(AdminIndexView):
         print('arg1', arg1)
         _total_users = UserApp.objects.count({})
         _total_orders = Order.objects.count({})
-        _total_nfts = Nft.objects.count({})
-        _total_collection = Collection.objects.count({})
+        _total_nfts = MintedNfts.objects.count({})
+        _total_collection = NftType.objects.count({})
         _total_nfts_statistic = NftsStatistic.objects().aggregate([
             {
                 "$match": {}

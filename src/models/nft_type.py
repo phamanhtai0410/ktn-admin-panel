@@ -9,7 +9,7 @@ from mongoengine import StringField, IntField
 from src.models.base import BaseDocument
 
 
-class Collection(BaseDocument):
+class NftType(BaseDocument):
     meta = {
         'strict': False,
         'collection': 'collection'
