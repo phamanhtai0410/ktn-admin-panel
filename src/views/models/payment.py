@@ -4,7 +4,7 @@ from src.config import Config
 
 
 class PaymentView(MyBaseModelView):
-    column_list = ['_id', 'asset', 'chain', 'chain_id', 'asset_logo', 'chain_logo', 'is_active', 'created_time']
+    column_list = ['asset', 'chain', 'chain_id', 'asset_logo', 'chain_logo', 'is_active', 'created_time']
     can_edit = True
     can_create = True
     can_delete = True

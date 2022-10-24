@@ -14,7 +14,6 @@ class Payment(BaseDocument):
         'strict': False,
         'collection': 'payment'
     }
-    _id = ObjectIdField()
     asset = StringField()
     chain = StringField()
     chain_id = IntField()
