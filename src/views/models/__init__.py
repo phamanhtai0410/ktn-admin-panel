@@ -5,6 +5,9 @@
         -
 """
 from unicodedata import category
+from src.models.payment import Payment
+
+from src.views.models.payment import PaymentView
 
 from .exchange import ExchangeView
 from .minted_nfts import MintedNftsView
@@ -56,6 +59,8 @@ model_views = [
 
     PromotionView(Promotion, category='Promotion'),
     ExchangeView(ExchangeLog, category="Point"),
-    PointView(PointLog, category='Point')
+    PointView(PointLog, category='Point'),
+    
+    PaymentView(Payment, category='Payment')
 
 ]
