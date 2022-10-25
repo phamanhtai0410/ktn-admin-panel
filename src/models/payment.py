@@ -15,6 +15,7 @@ class Payment(BaseDocument):
         'collection': 'payment'
     }
     asset = StringField()
+    asset_address = StringField()
     chain = StringField()
     chain_id = IntField()
     asset_logo = StringField()
