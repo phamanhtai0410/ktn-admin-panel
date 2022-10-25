@@ -3,10 +3,12 @@ from src.views.base import MyBaseModelView
 
 
 class NftDetailView(MyBaseModelView):
-    column_list = ['nft_id', 'name', 'rarity', 'type', 'description', 'image', 'price', 'is_show', 'created_time']
+    column_list = ['nft_id', 'name', 'type', 'rarity', 'description', 'image', 'price', 'is_show', 'created_time']
     can_edit = True
     can_create = True
     can_delete = True
+    column_editable_list = ['price', 'is_show']
+    edit_modal = True
 
     def image_format(view, context, model, name):
         # _image = model['image']

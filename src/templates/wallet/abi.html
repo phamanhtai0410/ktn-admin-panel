@@ -26,18 +26,7 @@
                           case "address":
                             data = ethers.utils.getAddress(data)
                             break;
-                          case "uint256":
-                            data = Number(data)
-                            break;
-                          case "bytes":
-                            data = ethers.utils.hexlify(data)
-                            break;
-                          case "uint8":
-                            data = Number(data)
-                            break;
-                          case "bytes4":
-                            data = ethers.utils.hexlify(data)
-                            break;
+
 
                           default :
                             // code block
