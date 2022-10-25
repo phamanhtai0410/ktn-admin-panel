@@ -13,6 +13,8 @@ class NftDetailView(MyBaseModelView):
         return Markup(f'<a target="_blank" href="{model["image"]}"> image </a>')
 
     column_searchable_list = ['name']
+    
+    column_filters = ['type']
 
     column_default_sort = ('created_time', True)
     column_formatters = {
