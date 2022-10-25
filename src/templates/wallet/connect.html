@@ -1,3 +1,40 @@
+{% import 'wallet/abi.html' as abi with context -%}
+
+{% block tail_js %}
+<script src="{{ admin_static.url(filename='vendor/jquery.min.js', v='3.5.1') }}" type="text/javascript"></script>
+<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+        type="application/javascript"></script>
+{% endblock %}
+
 <div>
-  <button id="connect_wallet">Connect Wallet</button>
+    <button id="connect_wallet">Connect Wallet</button>
+</div>
+<script>
+ async function connectWallet(){
+
+        if(!window.ethereum) {
+            alert("Please install the wallet.")
+        }
+
+        window.provider = new ethers.providers.Web3Provider(window.ethereum)
+
+        await window.provider.send("eth_requestAccounts", []);
+
+        window.signer = window.provider.getSigner()
+        var wallet = await window.signer.getAddress()
+        $('#connect_wallet').replaceWith($('<h3> Address: ' + wallet + '</h3>'));
+  }
+  $("#connect_wallet").click(async function(){
+
+        connectWallet()
+  })
+
+
+</script>
+<div id="smc_controller">
+
+<section class="content connectedSortable">
+    {{ abi.load_abi() }}
+</section>
+
 </div>

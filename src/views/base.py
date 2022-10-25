@@ -125,26 +125,26 @@ class MyAdminIndexView(AdminIndexView):
                 }
             }
         ])
-        _statistic_points = UserApp.objects().aggregate([
-            {
-                "$match": {}
-            },
-            {
-                "$group": {
-                    "_id": None,
-                    "total_points": {
-                        "$sum": "$total_points"
-                    },
-                    "total_withdraw": {
-                        "$sum": "$total_withdraw"
-                    }
-                }
-            }
-        ])
+        # _statistic_points = UserApp.objects().aggregate([
+        #     {
+        #         "$match": {}
+        #     },
+        #     {
+        #         "$group": {
+        #             "_id": None,
+        #             "total_points": {
+        #                 "$sum": "$total_points"
+        #             },
+        #             "total_withdraw": {
+        #                 "$sum": "$total_withdraw"
+        #             }
+        #         }
+        #     }
+        # ])
         _total_nfts_statistic = list(_total_nfts_statistic)
-        _statistic_points = list(_statistic_points)
-        if len(_statistic_points) > 0:
-            _statistic_points = _statistic_points[0]
+        # _statistic_points = list(_statistic_points)
+        # if len(_statistic_points) > 0:
+        #     _statistic_points = _statistic_points[0]
         _total_nfts_sold = sum([py_.get(x, 'total', 0) for x in _total_nfts_statistic])
         _total_nfts_sold_by_nft_type = {}
         for item in _total_nfts_statistic:
@@ -158,8 +158,7 @@ class MyAdminIndexView(AdminIndexView):
                            total_nfts=_total_nfts,
                            total_nfts_sold=_total_nfts_sold,
                            total_nfts_sold_by_nft_type=_total_nfts_sold_by_nft_type,
-                           total_collection=_total_collection,
-                           statistic_points=_statistic_points or {})
+                           total_collection=_total_collection)
 
     def is_accessible(self):
         return current_user.is_authenticated

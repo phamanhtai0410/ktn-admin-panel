@@ -1,0 +1,124 @@
+{% macro load_function(abi) -%}
+<section class="content connectedSortable">
+    <h3>
+        {{ abi.get('name') }}
+    </h3>
+    <div id="msg_{{ abi.get('name') }}">
+
+    </div>
+    <form id="form_{{ abi.get('name') }}">
+        {% for input in abi.get('inputs') %}
+
+        <div class="form-group">
+            <label for="{{ abi.get('name') }}_{{ input.get('name') }}">{{ input.get('name') }} - {{ input.get('type')
+                }}</label>
+            <input required="true" data-type="{{ input.get('type') }}" type="text" class="form-control"
+                   id="{{ abi.get('name') }}_{{ input.get('name') }}" name="{{ input.get('name') }}"
+                   placeholder="Enter {{ input.get('name') }}">
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <script>
+            function convertType(data, inputType) {
+                    switch(inputType) {
+                          case "address":
+                            data = ethers.utils.getAddress(data)
+                            break;
+                          case "uint256":
+                            data = Number(data)
+                            break;
+                          case "bytes":
+                            data = ethers.utils.hexlify(data)
+                            break;
+                          case "uint8":
+                            data = Number(data)
+                            break;
+                          case "bytes4":
+                            data = ethers.utils.hexlify(data)
+                            break;
+
+                          default :
+                            // code block
+                            break;
+                    }
+                    return data;
+
+                  }
+            $( "#form_{{ abi.get('name') }}" ).submit(async function( event ) {
+                    event.preventDefault(); // avoid to execute the actual submit of the form.
+
+                    try {
+                        if(!window.contract) {
+                            initContract()
+                        }
+                        if(window.contract){
+                             console.log("{{ abi.get('name') }}")
+                             var formData = $( this ).serializeArray()
+                             var data = []
+                             formData.map(function(item){
+                                var _inputType = $("#{{ abi.get('name') }}_"+item.name).attr('data-type')
+                                var _value = item.value
+                                if(_inputType.indexOf("[]") != -1) {
+                                   _value = _value.split(",")
+                                }
+                                console.log("raw data of ", item.name, _value)
+
+                                console.log(item,_inputType, _inputType.replace("[]", ""))
+                                if(Array.isArray(_value)){
+                                   _value = _value.map(function(_val){return convertType(_val, _inputType.replace("[]", ""))})
+                                } else {
+                                  _value = convertType(_value, _inputType)
+                                }
+
+                               console.log("after convert data of ", item.name, _value)
+
+                               data.push(_value)
+                             })
+                             console.log( ...data );
+
+                             var result = await window.contract["{{ abi.get('name') }}"](...data)
+                             console.log(result)
+                            $("#msg_{{ abi.get('name') }}").replaceWith('<div id="msg_{{ abi.get('name') }}" class="alert alert-success" role="alert"> Successfully </div>')
+
+                        }
+                    } catch(e) {
+                       console.log(e.data?.message)
+                       console.log(e.toString())
+                       console.log(e.data?.message)
+                        var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+                       $("#msg_{{ abi.get('name') }}").replaceWith('<div id="msg_{{ abi.get('name') }}" class="alert alert-danger" role="alert">' + msg + ' </div>')
+                       console.error(e)
+
+                    }
+
+              });
+
+    </script>
+</section>
+{%- endmacro %}
+
+{% macro load_abi(_abis=None) %}
+{% if _abis is none %}{% set _abis = abis %}{% endif %}
+<script>
+
+         async function initContract() {
+
+            if(!window.signer) {
+               await  connectWallet()
+            }
+            window.contract = await new ethers.Contract("{{ address }}", {{ _abis | tojson(indent=2) }}, window.provider).connect(window.signer);
+         }
+        $(document).ready(function(){
+            initContract()
+        })
+
+</script>
+{%  for abi in _abis %}
+{% if abi.get('type') == 'function' %}
+{{ load_function(abi) }}
+{% endif %}
+{% endfor %}
+{% endmacro %}
+

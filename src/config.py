@@ -30,5 +30,7 @@ class Config:
     # security
     SECURITY_USER_IDENTITY_ATTRIBUTES = ('email')
     ADMIN_ROOT = 'root@katana.com'
-
+    NFT_ADDRESS = os.getenv('NFT_ADDRESS')
+    STAKING_ADDRESS = os.getenv('STAKING_ADDRESS')
+    CREATOR_ADDRESS = os.getenv('CREATOR_ADDRESS')
     pass

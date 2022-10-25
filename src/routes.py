@@ -10,7 +10,7 @@ ROLES_PAGE_ACCESS = [
     ('exchangelog', 'Exchange Log'),
     ('pointlog', 'Point Log')
 ]
-LOCK_PAGE = ['Order', 'Nft', 'User App', 'Referral', 'Nft Detail', 'Exchange Log', 'Point Log']
+LOCK_PAGE = ['Order', 'Minted Nfts', 'User App', 'Referral', 'Nft Detail', 'Exchange Log', 'Point Log']
 ROLES__PAGE_ACCESS_DISPLAY = {
     'user': 'User',
     'role': 'Role',

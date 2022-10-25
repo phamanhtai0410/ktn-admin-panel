@@ -25,3 +25,6 @@ class NftDetail(BaseDocument):
 
     def __str__(self):
         return self.nft_id if self else ''
+
+    def tracking(self):
+        return True

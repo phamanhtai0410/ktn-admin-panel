@@ -5,11 +5,13 @@
         -
 """
 from src.views.root import root_blueprint
-from src.views.smc_setting import SettingSmcView
+from src.views.smc_setting import SettingNFTView, SettingStakingView, SettingMarketView
 
 blueprints = [
     root_blueprint
 ]
 pages = [
-    SettingSmcView(name="Setting", category="Blockchain", endpoint="blockchain")
+    SettingNFTView(name="Nft", category="Blockchain"),
+    SettingStakingView(name="Staking", category="Blockchain"),
+    SettingMarketView(name="Market", category="Blockchain")
 ]

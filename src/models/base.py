@@ -12,6 +12,7 @@ from flask_mongoengine import Document
 from mongoengine import DateTimeField
 
 from src.extensions import db
+# from src.models.admin_log import AdminLog
 
 
 class BaseDocument(Document):
@@ -32,13 +33,43 @@ class BaseDocument(Document):
         if getattr(current_user, 'get_user_name', None):
             doc["created_by"] = current_user.get_user_name()
             doc["updated_by"] = current_user.get_user_name()
-
+        # if hasattr(self, 'tracking') and self.tracking:
+        #     #     model = StringField()
+        #     #     action = StringField()
+        #     #     before = DictField()
+        #     #     after = DictField()
+        #     #     created_by = StringField()
+        #     #     created_time = DateTimeField(default=datetime.now)
+        #     AdminLog(
+        #         model=self.name,
+        #         action='create',
+        #         created_by=current_user.get_user_name(),
+        #         created_time=dt.datetime.now(),
+        #         before={},
+        #         after=doc
+        #     ).save(force_insert=True)
         return super()._save_create(doc, force_insert, write_concern)
 
     def _save_update(self, doc, save_condition, write_concern):
         doc["updated_time"] = dt.datetime.now()
         if getattr(current_user, 'get_user_name', None):
             doc["updated_by"] = current_user.get_user_name()
+        # if hasattr(self, 'tracking') and self.tracking:
+        #     # model = StringField()
+        #     #     action = StringField()
+        #     #     before = DictField()
+        #     #     after = DictField()
+        #     #     created_by = StringField()
+        #     #     created_time = DateTimeField(default=datetime.now)
+        #     print(self.name)
+        #     AdminLog(
+        #         model=self.name,
+        #         action='update',
+        #         created_by=current_user.get_user_name(),
+        #         created_time=dt.datetime.now(),
+        #         before=self.to_mongo(),
+        #         after=doc
+        #     ).save(force_insert=True)
         return super()._save_update(doc, save_condition, write_concern)
 
     def _get_update_doc(self):
