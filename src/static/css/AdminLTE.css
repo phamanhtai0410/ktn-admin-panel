@@ -24,6 +24,10 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
 }
+form {
+  margin: 16px;
+
+}
 /* Layout */
 .wrapper {
   height: 100%;
