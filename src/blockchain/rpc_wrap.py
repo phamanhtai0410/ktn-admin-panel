@@ -19,7 +19,6 @@ class RPCWrap(Web3):
 
     def __init__(self, private_key, *args, **kwargs):
         super(RPCWrap, self).__init__(*args, **kwargs)
-        print("_private", private_key, type(private_key))
         self.my_account = Account.from_key(private_key)
         self.middleware_onion.add(
             construct_sign_and_send_raw_middleware(self.my_account)
