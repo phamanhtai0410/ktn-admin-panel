@@ -59,6 +59,7 @@ class NftDetailView(MyBaseModelView):
             signed_tx = bsc.my_account.signTransaction(tx)
             _txn = bsc.eth.send_raw_transaction(signed_tx.rawTransaction)
             _tx_hash = _txn.hex()
+            print("_tx_hash", _tx_hash)
         pass
 
     def create_form(self, obj=None):
