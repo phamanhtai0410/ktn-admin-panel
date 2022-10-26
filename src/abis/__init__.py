@@ -16,7 +16,7 @@ with open("src/abis/NFT.json") as f:
     nft_abi = json.loads(f.read())
     f.close()
 
-creater_abi = None
+creator_abi = None
 with open("src/abis/CREATER.json") as f:
-    creater_abi = json.loads(f.read())
+    creator_abi = json.loads(f.read())
     f.close()

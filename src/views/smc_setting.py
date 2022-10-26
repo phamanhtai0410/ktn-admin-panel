@@ -2,7 +2,7 @@ from markupsafe import Markup
 from flask_admin import BaseView, expose
 from pydash import get
 
-from src.abis import nft_abi, staking_abi, creater_abi
+from src.abis import nft_abi, staking_abi, creator_abi
 from src.config import Config
 
 
@@ -46,5 +46,5 @@ class SettingMarketView(BaseView):
         return self.render("pages/smc_setting.html",
                            address=Config.CREATOR_ADDRESS,
                            abis=[
-                               abi for abi in creater_abi if get(abi, 'name') in _functions
+                               abi for abi in creator_abi if get(abi, 'name') in _functions
                            ])

@@ -33,4 +33,6 @@ class Config:
     NFT_ADDRESS = os.getenv('NFT_ADDRESS')
     STAKING_ADDRESS = os.getenv('STAKING_ADDRESS')
     CREATOR_ADDRESS = os.getenv('CREATOR_ADDRESS')
+    BSC_RPC = os.getenv('BSC_RPC')
+
     pass
