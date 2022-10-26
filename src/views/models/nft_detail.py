@@ -40,7 +40,7 @@ class NftDetailView(MyBaseModelView):
                 tx = bsc.smc_creator.functions.updatePrice(
                     bsc.toInt(text=str(form.type.data)),
                     bsc.toInt(text=str(form.rarity.data)),
-                    bsc.toWei(form.price.data, unit='wei')
+                    bsc.toWei(form.price.data, unit='ether')
                 ).buildTransaction({
                     'gasPrice': bsc.eth.gas_price,
                     'nonce': bsc.eth.getTransactionCount(bsc.my_account.address)
@@ -62,7 +62,7 @@ class NftDetailView(MyBaseModelView):
                 tx = bsc.smc_creator.functions.updatePrice(
                     bsc.toInt(text=str(form.type.data)),
                     bsc.toInt(text=str(form.rarity.data)),
-                    bsc.toWei(_force_price, unit='wei')
+                    bsc.toWei(_force_price, unit='ether')
                 ).buildTransaction({
                     'gasPrice': bsc.eth.gas_price,
                     'nonce': bsc.eth.getTransactionCount(bsc.my_account.address)
