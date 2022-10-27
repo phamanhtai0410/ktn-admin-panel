@@ -4,13 +4,15 @@ services:
   
   ktn-admin-panel:
     image: ktn-admin-panel
-    build: .
+    build: 
+        context: .
+        dockerfile: Dockerfile-server
     restart: always
     volumes:
       - ./:/webapps
 
     ports:
-      - 5005:5000
+      - 5444:5000
     networks:
       - base-network
     command: python3 main.py
