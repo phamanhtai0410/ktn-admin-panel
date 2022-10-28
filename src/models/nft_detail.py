@@ -8,6 +8,7 @@ from mongoengine import StringField, IntField, BooleanField, FloatField
 
 from src.models.base import BaseDocument
 
+from src.enums.nft_type import NftType, NftRarity
 
 class NftDetail(BaseDocument):
     meta = {
