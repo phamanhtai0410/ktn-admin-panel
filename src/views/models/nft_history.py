@@ -5,9 +5,9 @@ from src.config import Config
 
 class NftHistoryView(MyBaseModelView):
     column_list = ['token_id', 'contract', 'from_address', 'to_address', 'event', 'tx_hash', 'block_number', 'created_time']
-    can_edit = True
-    can_create = True
-    can_delete = True
+    can_edit = False
+    can_create = False
+    can_delete = False
     
     def contract_formart(view, context, model, name):
         _contract = model['contract']

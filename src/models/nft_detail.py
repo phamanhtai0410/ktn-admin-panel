@@ -21,8 +21,8 @@ class NftDetail(BaseDocument):
     description = StringField()
     image = StringField()
     price = IntField()
-    discount = FloatField()
-    commission = FloatField()
+    discount = FloatField(min_value=0, max_value=100)
+    commission = FloatField(min_value=0, max_value=100)
     is_show = BooleanField()
 
     def __str__(self):

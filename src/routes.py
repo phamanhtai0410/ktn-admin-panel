@@ -9,9 +9,10 @@ ROLES_PAGE_ACCESS = [
     ('userapp', 'User App'),
     ('exchangelog', 'Exchange Log'),
     ('pointlog', 'Point Log'),
-    ('payment', 'Payment')
+    ('payment', 'Payment'),
+    ('nft_history', 'NftHistory')
 ]
-LOCK_PAGE = ['Order', 'Minted Nfts', 'User App', 'Referral', 'Nft Detail', 'Exchange Log', 'Point Log']
+LOCK_PAGE = ['Order', 'Minted Nfts', 'User App', 'Referral', 'Nft Detail', 'Exchange Log', 'Point Log', 'Nft History']
 ROLES__PAGE_ACCESS_DISPLAY = {
     'user': 'User',
     'role': 'Role',
@@ -23,5 +24,6 @@ ROLES__PAGE_ACCESS_DISPLAY = {
     'promotion': 'Promotion',
     'exchangelog': 'Exchange Log',
     'pointlog': 'Point Log',
-    'payment': 'Payment'
+    'payment': 'Payment',
+    'nft_history': 'Nft History'
 }
