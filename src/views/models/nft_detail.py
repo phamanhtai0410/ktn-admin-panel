@@ -10,7 +10,7 @@ from src.views.base import MyBaseModelView
 from wtforms import validators
 
 class NftDetailView(MyBaseModelView):
-    column_list = ['nft_id', 'name', 'type', 'rarity', 'description', 'image', 'price', 'is_show', 'created_time']
+    column_list = ['nft_id', 'name', 'type', 'rarity', 'description', 'image', 'price','discount', 'commission', 'is_show', 'created_time']
     can_edit = True
     can_create = True
     can_delete = True

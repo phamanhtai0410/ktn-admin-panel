@@ -4,7 +4,7 @@
         -
         -
 """
-from mongoengine import StringField, IntField, BooleanField
+from mongoengine import StringField, IntField, BooleanField, FloatField
 
 from src.models.base import BaseDocument
 
@@ -21,6 +21,8 @@ class NftDetail(BaseDocument):
     description = StringField()
     image = StringField()
     price = IntField()
+    discount = FloatField()
+    commission = FloatField()
     is_show = BooleanField()
 
     def __str__(self):

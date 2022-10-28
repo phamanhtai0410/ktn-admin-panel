@@ -51,7 +51,7 @@ model_views = [
     NftsStatisticView(NftsStatistic, category='NFT'),
 
     ReferralView(Referral, category='Referral'),
-    ReferralRewardConfigView(ReferralRewardConfig, category='Referral'),
+    # ReferralRewardConfigView(ReferralRewardConfig, category='Referral'),
 
     NftTypeView(NftType, category='NFT'),
 
