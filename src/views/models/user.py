@@ -1,3 +1,4 @@
+from flask_admin.form import Select2Widget
 from wtforms import validators
 
 from src.views.base import MyBaseModelView
@@ -20,3 +21,7 @@ class UserView(MyBaseModelView):
             'validators': [validators.required()]
         }
     }
+
+    def scaffold_form(self):
+        _form = super(UserView, self).scaffold_form()
+        return _form

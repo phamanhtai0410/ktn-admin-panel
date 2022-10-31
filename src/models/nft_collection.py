@@ -4,21 +4,22 @@
         -
         -
 """
-from mongoengine import StringField, IntField
+from mongoengine import StringField, IntField, ListField
 
 from src.models.base import BaseDocument
 
 
-class NftType(BaseDocument):
+class NftCollection(BaseDocument):
     meta = {
         'strict': False,
-        'collection': 'nft_types'
+        'collection': 'collection'
     }
-    type_id = IntField()
+    collection_id = IntField()
     name = StringField()
     description = StringField()
     image = StringField()
-    max_rarity = IntField(required=True)
+    nfts = ListField(IntField(), default=[])
 
     def __str__(self):
         return self.name if self else ''
+

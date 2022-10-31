@@ -15,9 +15,9 @@ class NftDetail(BaseDocument):
         'strict': False,
         'collection': 'nft_details'
     }
-    nft_id = IntField()
-    name = StringField()
-    rarity = IntField()
+    nft_id = IntField(unique=True, required=True)
+    name = StringField(required=True)
+    rarity = IntField(unique_with='nft_id')
     type = IntField()
     description = StringField()
     image = StringField()
@@ -27,7 +27,7 @@ class NftDetail(BaseDocument):
     is_show = BooleanField()
 
     def __str__(self):
-        return self.nft_id if self else ''
+        return self.name if self else ''
 
     def tracking(self):
         return True
