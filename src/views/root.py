@@ -47,5 +47,5 @@ def root_view():
 #     }
 #     print(nfts)
 #     return jsonify({'htmlresponse': render_template('custom/nft_type.html',nfts=nfts)})
-    # return nfts
-    # return redirect(url_for('admin.index'))
+# return nfts
+# return redirect(url_for('admin.index'))

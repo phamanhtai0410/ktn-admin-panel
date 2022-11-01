@@ -16,7 +16,8 @@ from wtforms import validators
 
 
 class NftDetailView(MyBaseModelView):
-    column_list = ['nft_id', 'name', 'type', 'rarity', 'description', 'image', 'price', 'discount', 'commission',
+    column_list = ['nft_id', 'name', 'type', 'rarity', 'description',
+                   'image', 'price', 'discount', 'commission',
                    'is_show', 'created_time']
     can_edit = True
     can_create = True
@@ -32,7 +33,7 @@ class NftDetailView(MyBaseModelView):
         return Markup(f'<a target="_blank" href="{model["image"]}"> image </a>')
 
     def format_type(view, context, model, name):
-        _type = find(view.get_type_options(), lambda x: x[0] == model['type'])
+        _type = find(view.get_type_options(), lambda x: int(x[0]) == model['type'])
         if _type:
             return _type[1]
         return model['type']
