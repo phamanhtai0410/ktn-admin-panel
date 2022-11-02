@@ -58,7 +58,7 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
 
     def edit_form(self, obj=None):
         _form = super(NftCollectionView, self).edit_form(obj)
-        _form.type.choices = self.get_nfts_options()
+        _form.nfts.choices = self.get_nfts_options()
         return _form
 
     def get_nfts_options(self):
