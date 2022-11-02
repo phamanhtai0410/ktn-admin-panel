@@ -137,7 +137,7 @@ class NftDetailView(MyBaseModelView):
             # return redirect(self.get_url('.index_view'))
 
     def create_form(self, obj=None):
-        self.form_widget_args = { }
+        self.form_widget_args = {}
         return super(NftDetailView, self).create_form(obj)
 
     def edit_form(self, obj=None):
@@ -158,3 +158,6 @@ class NftDetailView(MyBaseModelView):
             pass
 
         return super(NftDetailView, self).edit_form(obj)
+
+    def lock_admin(self):
+        return True

@@ -20,6 +20,7 @@ class ExchangeLog(BaseDocument):
     amount = FloatField()
     status = StringField()
     log_id = StringField()
+    event = StringField()
 
     def __str__(self):
         return self.tx_hash if self else ''

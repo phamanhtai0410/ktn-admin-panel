@@ -6,7 +6,7 @@ from src.views.base import MyBaseModelView
 
 
 class ExchangeView(MyBaseModelView):
-    column_list = ['status', 'address', 'amount', 'tx_hash', 'created_time']
+    column_list = ['status', 'address', 'amount', 'event', 'tx_hash', 'created_time']
     can_edit = False
     can_create = False
     can_delete = False
