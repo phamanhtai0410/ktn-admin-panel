@@ -52,9 +52,10 @@ class NftDetailView(MyBaseModelView):
         return [(f'{x.type_id}', x.name) for x in NftType.objects()]
 
     def scaffold_form(self):
+        print("scaffold_form here", )
         self.form_args = {
             'type': {
-                'choices': self.get_type_options(),
+                'choices': [],
                 'widget': Select2Widget(multiple=False)
             }
         }
@@ -138,10 +139,13 @@ class NftDetailView(MyBaseModelView):
 
     def create_form(self, obj=None):
         self.form_widget_args = {}
-        return super(NftDetailView, self).create_form(obj)
+        _form =  super(NftDetailView, self).create_form(obj)
+        _form.type.choices = self.get_type_options()
+        return _form
 
     def edit_form(self, obj=None):
         try:
+
             self.form_widget_args = {
                 'type': {
                     'disabled': True
@@ -156,8 +160,9 @@ class NftDetailView(MyBaseModelView):
             self.before_price = obj.price
         except AttributeError:
             pass
-
-        return super(NftDetailView, self).edit_form(obj)
+        _form = super(NftDetailView, self).edit_form(obj)
+        _form.type.choices = self.get_type_options()
+        return _form
 
     def lock_admin(self):
         return True
