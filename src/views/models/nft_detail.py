@@ -60,7 +60,6 @@ class NftDetailView(MyBaseModelView):
             }
         }
         _form = super(NftDetailView, self).scaffold_form()
-        print(_form.type)
         _form.type.kwargs['choices'] = self.form_args['type']['choices']
         return _form
 

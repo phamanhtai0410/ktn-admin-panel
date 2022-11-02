@@ -42,7 +42,7 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     def scaffold_form(self):
         self.form_args = {
             'nfts': {
-                'choices': get_nfts_options(),
+                'choices': [],
                 'widget': Select2Widget(multiple=True)
             }
         }
@@ -50,6 +50,16 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
 
     def get_nfts(self):
         return NftDetail.objects()
+
+    def create_form(self, obj=None):
+        _form = super(NftCollectionView, self).create_form(obj)
+        _form.nfts.choices = get_nfts_options()
+        return _form
+
+    def edit_form(self, obj=None):
+        _form = super(NftCollectionView, self).edit_form(obj)
+        _form.type.choices = self.get_nfts_options()
+        return _form
 
     def get_nfts_options(self):
         return [(f'{x.nft_id}', x.name) for x in NftDetail.objects()]
