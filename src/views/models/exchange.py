@@ -26,7 +26,7 @@ class ExchangeView(MyBaseModelView):
                 f'<a target="_blank"  href="{Config.BSC_SCAN}/tx/{_tx_hash}">{_tx_hash[:4]}...{_tx_hash[-4:]}</a>')
         return "..."
 
-    column_searchable_list = ['address', 'tx_hash']
+    column_searchable_list = ['address', 'tx_hash', 'event']
 
     column_default_sort = ('created_time', True)
 
