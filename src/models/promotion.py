@@ -4,7 +4,7 @@
         -
         -
 """
-from mongoengine import StringField, BooleanField, FloatField
+from mongoengine import StringField, BooleanField, FloatField, IntField
 
 from src.models.base import BaseDocument
 
@@ -16,4 +16,7 @@ class Promotion(BaseDocument):
     }
     code = StringField(required=True, unique=True)
     discount = FloatField(required=True)
+    used = IntField(required=True)
+    total = IntField(required=True)
     status = BooleanField(default=True)
+    

@@ -10,7 +10,7 @@ from src.views.base import MyBaseModelView, RowActionListMixin
 
 
 class PromotionView(RowActionListMixin, MyBaseModelView):
-    column_list = ['code', 'discount', 'status', 'created_time', 'updated_time', 'updated_by']
+    column_list = ['code', 'discount', 'used', 'total', 'status', 'created_time', 'updated_time', 'updated_by']
     can_edit = True
     can_create = True
     can_delete = True
