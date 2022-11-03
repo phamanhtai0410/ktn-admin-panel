@@ -6,3 +6,5 @@ __pycache__
 .DS_Store
 .idea
 private.txt
+skaffold.yaml
+.gitlab-ci.yml
