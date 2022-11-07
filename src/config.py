@@ -39,5 +39,6 @@ class Config:
     AWS_KEY = os.getenv('AWS_KEY')
     AWS_SECRET = os.getenv('AWS_SECRET')
     BUCKET_NAME = os.getenv('BUCKET_NAME')
-
+    S3_HOST = os.getenv('S3_HOST')
+    S3_STATIC = os.getenv('S3_STATIC')
     pass

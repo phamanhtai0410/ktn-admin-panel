@@ -1,305 +1,60 @@
-import os
-import os.path as op
-from io import StringIO as cStringIO
-import logging
-from src.config import Config as config
-from flask import url_for
+from datetime import datetime
 
-from werkzeug.utils import secure_filename
-from werkzeug.datastructures import FileStorage
-import boto
-from boto.s3.key import Key
-
-from wtforms import ValidationError, fields
-from wtforms.widgets import HTMLString, html_params
-
-from flask_babel import gettext
-# from flask.ext.admin.babel import gettext
-
-from flask_admin._compat import string_types, urljoin
-# from flask.ext.admin._compat import string_types, urljoin
-
-from flask_admin.form.upload import ImageUploadField
-# from flask.ext.admin.form.upload import ImageUploadField
+import boto3
+from flask_admin.form.upload import FileUploadField, ImageUploadInput, ImageUploadField
+from src.config import Config
 
 
-try:
-    from PIL import Image, ImageOps
-except ImportError:
-    Image = None
-    ImageOps = None
+class CustomViewImageWidget(ImageUploadInput):
 
-__all__ = ['FileUploadInput', 'FileUploadField',
-           'ImageUploadInput', 'ImageUploadField',
-           'namegen_filename', 'thumbgen_filename']
+    def get_url(self, field):
+        return field.data
 
 
-class ImageUploadInput(object):
-    """
-        Renders a image input chooser field.
-
-        You can customize `empty_template` and `data_template` members to customize
-        look and feel.
-    """
-    empty_template = ('<input %(file)s>')
-
+class S3ImageUploadField(FileUploadField):
     data_template = ('<div class="image-thumbnail">'
                      ' <img %(image)s>'
                      ' <input type="checkbox" name="%(marker)s">Delete</input>'
                      '</div>'
                      '<input %(file)s>')
 
-    def __call__(self, field, **kwargs):
-        kwargs.setdefault('id', field.id)
-        kwargs.setdefault('name', field.name)
+    def __init__(self, *args, **kwargs):
+        super(S3ImageUploadField, self).__init__(*args, **kwargs)
 
-        args = {
-            'file': html_params(type='file',
-                                **kwargs),
-            'marker': '_%s-delete' % field.name
-        }
-
-        if field.data and isinstance(field.data, string_types):
-            url = self.get_url(field)
-            args['image'] = html_params(src=url)
-
-            template = self.data_template
-        else:
-            template = self.empty_template
-
-        return HTMLString(template % args)
-
-    def get_url(self, field):
-        if field.thumbnail_size:
-            filename = field.thumbnail_fn(field.data)
-        else:
-            filename = field.data
-
-        if field.url_relative_path:
-            filename = urljoin(field.url_relative_path, filename)
-        return field.data
-        #return url_for(field.endpoint, filename=field.data)
-
-
-
-
-class s3ImageUploadField(ImageUploadField):
-    """
-        Image upload field.
-
-        Does image validation, thumbnail generation, updating and deleting images.
-
-        Requires PIL (or Pillow) to be installed.
-    """
-    widget = ImageUploadInput()
-
-    keep_image_formats = ('PNG',)
-    """
-        If field detects that uploaded image is not in this list, it will save image
-        as PNG.
-    """
-
-    def __init__(self, label=None, validators=None,
-                 base_path=None, relative_path=None,
-                 namegen=None, allowed_extensions=None,
-                 max_size=None,
-                 thumbgen=None, thumbnail_size=None,
-                 permission=0o666,
-                 url_relative_path=None, endpoint='static',
-                 **kwargs):
-        """
-            Constructor.
-
-            :param label:
-                Display label
-            :param validators:
-                Validators
-            :param base_path:
-                Absolute path to the directory which will store files
-            :param relative_path:
-                Relative path from the directory. Will be prepended to the file name for uploaded files.
-                Flask-Admin uses `urlparse.urljoin` to generate resulting filename, so make sure you have
-                trailing slash.
-            :param namegen:
-                Function that will generate filename from the model and uploaded file object.
-                Please note, that model is "dirty" model object, before it was committed to database.
-
-                For example::
-
-                    import os.path as op
-
-                    def prefix_name(obj, file_data):
-                        parts = op.splitext(file_data.filename)
-                        return secure_filename('file-%s%s' % parts)
-
-                    class MyForm(BaseForm):
-                        upload = FileUploadField('File', namegen=prefix_name)
-
-            :param allowed_extensions:
-                List of allowed extensions. If not provided, will allow any file.
-            :param max_size:
-                Tuple of (width, height, force) or None. If provided, Flask-Admin will
-                resize image to the desired size.
-            :param thumbgen:
-                Thumbnail filename generation function. All thumbnails will be saved as JPEG files,
-                so there's no need to keep original file extension.
-
-                For example::
-
-                    import os.path as op
-
-                    def thumb_name(filename):
-                        name, _ = op.splitext(filename)
-                        return secure_filename('%s-thumb.jpg' % name)
-
-                    class MyForm(BaseForm):
-                        upload = ImageUploadField('File', thumbgen=prefix_name)
-
-            :param thumbnail_size:
-                Tuple or (width, height, force) values. If not provided, thumbnail won't be created.
-
-                Width and height is in pixels. If `force` is set to `True`, will try to fit image into dimensions and
-                keep aspect ratio, otherwise will just resize to target size.
-            :param url_relative_path:
-                Relative path from the root of the static directory URL. Only gets used when generating
-                preview image URLs.
-
-                For example, your model might store just file names (`relative_path` set to `None`), but
-                `base_path` is pointing to subdirectory.
-            :param endpoint:
-                Static endpoint for images. Used by widget to display previews. Defaults to 'static'.
-        """
-        # Check if PIL is installed
-        if Image is None:
-            raise Exception('PIL library was not found')
-
-        self.max_size = max_size
-        self.thumbnail_fn = thumbgen or thumbgen_filename
-        self.thumbnail_size = thumbnail_size
-        self.endpoint = endpoint
-        self.image = None
-        self.url_relative_path = url_relative_path
-
-        if not allowed_extensions:
-            allowed_extensions = ('gif', 'jpg', 'jpeg', 'png', 'tiff')
-
-        super(ImageUploadField, self).__init__(label, validators,
-                                               base_path=base_path,
-                                               relative_path=relative_path,
-                                               namegen=namegen,
-                                               allowed_extensions=allowed_extensions,
-                                               permission=permission,
-                                               **kwargs)
-
-    def pre_validate(self, form):
-        super(ImageUploadField, self).pre_validate(form)
-
-        if self.data and isinstance(self.data, FileStorage):
-            try:
-                self.image = Image.open(self.data)
-            except Exception as e:
-                raise ValidationError('Invalid image: %s' % e)
+    widget = CustomViewImageWidget()
 
     # Deletion
     def _delete_file(self, filename):
-        super(ImageUploadField, self)._delete_file(filename)
+        # super(ImageUploadField, self)._delete_file(filename)
 
-        self._delete_thumbnail(filename)
+        # self._delete_thumbnail(filename)
+        pass
 
-    def _delete_thumbnail(self, filename):
-        path = self._get_path(self.thumbnail_fn(filename))
-
-        if op.exists(path):
-            os.remove(path)
 
     # Saving
     def _save_file(self, data, filename):
-        path = self._get_path(filename)
-
-        if not op.exists(op.dirname(path)):
-            os.makedirs(os.path.dirname(path), self.permission)
-
-        # Figure out format
-        filename, format = self._get_save_format(filename, self.image)
-
-        if self.image and (self.image.format != format or self.max_size):
-            if self.max_size:
-                image = self._resize(self.image, self.max_size)
-            else:
-                image = self._resize(self.image, (500, 500))
-                #image = self.image
-
-            self._save_image(image, filename, format)
-        else:
-            data.seek(0)
-            data.save(path)
-        savedUrl=self._save_image(self.image, filename, format)
-        self._save_thumbnail(data, filename, format)
-
+        print('___data', data)
+        savedUrl = self._save_image(data, filename)
         return savedUrl
 
-    def _save_thumbnail(self, data, filename, format):
-        if self.image and self.thumbnail_size:
-            path = self._get_path(self.thumbnail_fn(filename))
+    def _save_image(self, image, path):
+        print(image)
+        s3 = boto3.client(
+            "s3",
+            endpoint_url=Config.S3_HOST,
+            aws_access_key_id=Config.AWS_KEY,
+            aws_secret_access_key=Config.AWS_SECRET,
+            use_ssl=False
+        )
+        name_prefix = datetime.today().strftime('%hh%MM%ss')
 
-            savedUrl=self._save_image(self._resize(self.image, self.thumbnail_size),
-                             thumbgen_filename(filename),
-                             format)
-            return savedUrl
-
-    def _resize(self, image, size):
-        (width, height, force) = size
-
-        if image.size[0] > width or image.size[1] > height:
-            if force:
-                return ImageOps.fit(self.image, (width, height), Image.ANTIALIAS)
-            else:
-                thumb = self.image.copy()
-                thumb.thumbnail((width, height), Image.ANTIALIAS)
-                return thumb
-
-        return image
-
-    def _save_image(self, image, path, format='JPEG'):
-        if image.mode not in ('RGB', 'RGBA'):
-            image = image.convert('RGBA')
-
-        conn =boto.connect_s3( config.AWS_KEY, config.AWS_SECRET,)
-        bucket = conn.get_bucket(config.BUCKET_NAME)
-        k = Key(bucket)
-        k.key= path
-        tempFile = cStringIO.StringIO()
-        image.save(tempFile,format)
-        #image.seek(0)
-        #tempFile.seek(0)
-        #k.set_contents_from_string('This is a test of S3')
-        k.set_contents_from_string(tempFile.getvalue())
-        k.set_acl('public-read')
-        #k.set_contents_from_file(tempFile.getValue())
-        #with open(path, 'wb') as fp:
-        #    image.save(fp, format)
-        return k.generate_url(expires_in=0, query_auth=False)
-
-    def _get_save_format(self, filename, image):
-        if image.format not in self.keep_image_formats:
-            name, ext = op.splitext(filename)
-            filename = '%s.jpg' % name
-            return filename, 'JPEG'
-
-        return filename, image.format
-
-
-# Helpers
-def namegen_filename(obj, file_data):
-    """
-        Generate secure filename for uploaded file.
-    """
-    return secure_filename(file_data.filename)
-
-
-def thumbgen_filename(filename):
-    """
-        Generate thumbnail name from filename.
-    """
-    name, ext = op.splitext(filename)
-    return '%s_thumb%s' % (name, ext)
+        key_path_upload = f'{name_prefix}_{image.filename}'
+        s3.upload_fileobj(
+            image,
+            Config.BUCKET_NAME,
+            key_path_upload,
+            ExtraArgs={
+                "ContentType": image.content_type  # Set appropriate content type as per the file
+            }
+        )
+        return f'{Config.S3_STATIC}/{name_prefix}_{image.filename}'

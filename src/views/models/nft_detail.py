@@ -1,19 +1,23 @@
 import traceback
+import uuid
 from gettext import gettext
-from flask_admin.form import Select2Widget
+from flask_admin.form import Select2Widget, FileUploadField
 
-from flask import flash, redirect
 from markupsafe import Markup
-from mongoengine.queryset.base import BaseQuerySet
 from pydash import get, find
-from wtforms.fields.core import UnboundField, SelectField
+from wtforms.fields.core import SelectField
 
 from src.connect import bsc
 from src.models.nft_type import NftType
+from src.utils.s3_image_uploader import S3ImageUploadField
 from src.views.base import MyBaseModelView
-from src.utils.s3_image_uploader import s3ImageUploadField
 
 from wtforms import validators
+
+
+def your_namegen_func_here(file):
+    return str(uuid.uuid4())
+# class S3Upload(S3ImageUploadInput):
 
 
 class NftDetailView(MyBaseModelView):
@@ -27,10 +31,9 @@ class NftDetailView(MyBaseModelView):
     edit_modal = True
     create_modal = True
     can_view_details = True
-    form_args = {}
     form_overrides = dict(
         type=SelectField,
-        image=s3ImageUploadField
+        image=S3ImageUploadField
     )
 
     def image_format(view, context, model, name):
@@ -65,7 +68,6 @@ class NftDetailView(MyBaseModelView):
         }
         _form = super(NftDetailView, self).scaffold_form()
         _form.type.kwargs['choices'] = self.form_args['type']['choices']
-        _form.image.kwargs['base_path'] = "/admin/static"
         return _form
 
     def on_model_change(self, form, model, is_created):
@@ -143,7 +145,7 @@ class NftDetailView(MyBaseModelView):
 
     def create_form(self, obj=None):
         self.form_widget_args = {}
-        _form =  super(NftDetailView, self).create_form(obj)
+        _form = super(NftDetailView, self).create_form(obj)
         _form.type.choices = self.get_type_options()
         return _form
 
