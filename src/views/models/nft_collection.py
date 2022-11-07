@@ -6,6 +6,7 @@ from wtforms.fields.core import UnboundField
 
 from src.models.nft_detail import NftDetail
 from src.views.base import MyBaseModelView, RowActionListMixin
+from src.utils.s3_image_uploader import S3ImageUploadField
 
 from wtforms.fields import SelectMultipleField
 
@@ -21,7 +22,10 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     column_labels = {
         'collection_id': 'Id'
     }
-    form_overrides = dict(nfts=SelectMultipleField)
+    form_overrides = dict(
+        nfts=SelectMultipleField,
+        image=S3ImageUploadField
+    )
 
     form_args = {}
 
