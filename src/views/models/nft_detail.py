@@ -11,6 +11,7 @@ from wtforms.fields.core import UnboundField, SelectField
 from src.connect import bsc
 from src.models.nft_type import NftType
 from src.views.base import MyBaseModelView
+from src.utils.s3_image_uploader import s3ImageUploadField
 
 from wtforms import validators
 
@@ -27,7 +28,10 @@ class NftDetailView(MyBaseModelView):
     create_modal = True
     can_view_details = True
     form_args = {}
-    form_overrides = dict(type=SelectField)
+    form_overrides = dict(
+        type=SelectField,
+        image=s3ImageUploadField
+    )
 
     def image_format(view, context, model, name):
         return Markup(f'<a target="_blank" href="{model["image"]}"> image </a>')
@@ -61,6 +65,7 @@ class NftDetailView(MyBaseModelView):
         }
         _form = super(NftDetailView, self).scaffold_form()
         _form.type.kwargs['choices'] = self.form_args['type']['choices']
+        _form.image.kwargs['base_path'] = "/admin/static"
         return _form
 
     def on_model_change(self, form, model, is_created):

@@ -35,4 +35,9 @@ class Config:
     CREATOR_ADDRESS = os.getenv('CREATOR_ADDRESS')
     BSC_RPC = os.getenv('BSC_RPC')
 
+    # S3
+    AWS_KEY = os.getenv('AWS_KEY')
+    AWS_SECRET = os.getenv('AWS_SECRET')
+    BUCKET_NAME = os.getenv('BUCKET_NAME')
+
     pass
