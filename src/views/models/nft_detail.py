@@ -22,7 +22,7 @@ def your_namegen_func_here(file):
 
 class NftDetailView(MyBaseModelView):
     column_list = ['nft_id', 'name', 'type', 'rarity', 'description',
-                   'image', 'price', 'discount', 'commission',
+                   'image', 'price', 'discount', 'commission', 'commission_level_2',
                    'is_show', 'created_time']
     can_edit = True
     can_create = True

@@ -24,6 +24,8 @@ from .referral import ReferralView
 from .promotion import PromotionView
 from .nfts_statistic import NftsStatisticView
 from .referral_reward_config import ReferralRewardConfigView
+from .setting import SettingView
+
 from ...models.exchange import ExchangeLog
 from ...models.nft_collection import NftCollection
 from ...models.point import PointLog
@@ -41,9 +43,12 @@ from ...models.nft_history import NftHistory
 from ...models.promotion import Promotion
 from ...models.nfts_statistic import NftsStatistic
 
+from ...models.setting import Setting
+
 model_views = [
     UserView(User, category='Setting'),
     RolesView(Role, category='Setting'),
+    SettingView(Setting, category='Setting'),
 
     OrderView(Order, category='NFT'),
     MintedNftsView(MintedNfts, category='NFT'),
@@ -63,6 +68,6 @@ model_views = [
     PointView(PointLog, category='Point'),
 
     PaymentView(Payment, category='Payment'),
-    NftCollectionView(NftCollection, category='NFT')
+    NftCollectionView(NftCollection, category='NFT'),
 
 ]
