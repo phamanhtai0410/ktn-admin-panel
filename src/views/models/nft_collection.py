@@ -10,6 +10,7 @@ from src.config import Config
 from src.models.nft_collection import NftCollection
 from src.models.nft_detail import NftDetail
 from src.views.base import MyBaseModelView, RowActionListMixin
+from src.utils.s3_image_uploader import S3ImageUploadField
 
 from wtforms.fields import SelectMultipleField
 
@@ -35,7 +36,13 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
         'collection_id': 'Id'
     }
 
-    form_overrides = dict(nfts=SelectMultipleField,collection_id=HiddenField, rarity_nfts=HiddenField, address=HiddenField)
+    form_overrides = dict(nfts=SelectMultipleField,
+                          collection_id=HiddenField,
+                          rarity_nfts=HiddenField,
+                          address=HiddenField,
+                          image=S3ImageUploadField
+
+                          )
     form_subdocuments = {
 
     }
