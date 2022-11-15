@@ -1,0 +1,60 @@
+{% import 'admin/lib.html' as lib with context %}
+
+{% macro form_wrap_web3(form=None, action=None, id=None) %}
+    <form action="{{ action or '' }}" method="POST" id="{{ id or '' }}" role="form" class="admin-form form-horizontal" enctype="multipart/form-data">
+      {{ caller() }}
+    </form>
+{% endmacro %}
+
+
+{% macro call_wallet(abis) %}
+
+    <script>
+
+             async function initContract() {
+
+                if(!window.signer) {
+                   await connectWallet()
+                }
+
+                window.contract = await new ethers.Contract("{{ address }}", {{ _abis | tojson(indent=2) }}, window.provider).connect(window.signer);
+
+            }
+
+            $(document).ready(function(){
+                initContract()
+            })
+
+    </script>
+
+    {%  for abi in _abis %}
+        {% if abi.get('type') == 'function' %}
+            {{ load_function(abi) }}
+        {% endif %}
+    {% endfor %}
+
+{% endmacro %}
+
+{% macro connect_wallet() %}
+    <script>
+         async function connectWallet(){
+
+                if(!window.ethereum) {
+                    alert("Please install the wallet.")
+                }
+
+                window.provider = new ethers.providers.Web3Provider(window.ethereum)
+
+                await window.provider.send("eth_requestAccounts", []);
+
+                window.signer = window.provider.getSigner()
+                var wallet = await window.signer.getAddress()
+                $('#connect_wallet').replaceWith($('<h3> Address: ' + wallet + '</h3>'));
+          }
+
+    </script>
+    <div>
+        <button id="connect_wallet" class="btn btn-success" onclick="connectWallet">Connect Wallet</button>
+    </div>
+
+{% endmacro %}

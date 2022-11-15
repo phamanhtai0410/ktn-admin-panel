@@ -4,7 +4,7 @@ ROLES_PAGE_ACCESS = [
     ('order', 'Order'),
     # ('nft','Nft'),
     ('minted_nfts', 'Minted Nfts'),
-    ('nft_detail', 'Nft Detail'),
+    ('nftdetail', 'Nft Detail'),
     ('referral', 'Referral'),
     ('promotion', 'Promotion'),
     ('userapp', 'User App'),
@@ -12,9 +12,12 @@ ROLES_PAGE_ACCESS = [
     ('pointlog', 'Point Log'),
     ('payment', 'Payment'),
     ('nft_history', 'NftHistory'),
-    ('nfttype', 'Nft Type')
+    ('nftrarity', 'Nft Rarity')
 ]
-LOCK_PAGE = ['Order', 'Minted Nfts', 'Nft Type', 'User App', 'Referral', 'Nft Detail', 'Exchange Log', 'Point Log', 'Nft History']
+
+LOCK_PAGE = ['Order', 'Minted Nfts', 'Nft Rarity', 'User App', 'Referral',
+             'Nft Detail', 'Exchange Log', 'Point Log', 'Nft History']
+
 ROLES__PAGE_ACCESS_DISPLAY = {
     'user': 'User',
     'role': 'Role',
@@ -22,12 +25,12 @@ ROLES__PAGE_ACCESS_DISPLAY = {
     # 'nft': 'Nft',
     'minted_nfts': 'Minted Nfts',
     'userapp': 'User App',
-    'nft_detail': 'Nft Detail',
+    'nftdetail': 'Nft Detail',
     'referral': 'Referral',
     'promotion': 'Promotion',
     'exchangelog': 'Exchange Log',
     'pointlog': 'Point Log',
     'payment': 'Payment',
     'nft_history': 'Nft History',
-    'nfttype': 'Nft Type'
+    'nftrarity': 'Nft Rarity'
 }

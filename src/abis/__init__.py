@@ -20,3 +20,8 @@ creator_abi = None
 with open("src/abis/CREATER.json") as f:
     creator_abi = json.loads(f.read())
     f.close()
+
+factory_abi = None
+with open("src/abis/FACTORY.json") as f:
+    factory_abi = json.loads(f.read())
+    f.close()

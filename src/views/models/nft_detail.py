@@ -1,162 +1,98 @@
-import traceback
 import uuid
-from gettext import gettext
-from flask_admin.form import Select2Widget, FileUploadField
-
 from markupsafe import Markup
-from pydash import get, find
 from wtforms.fields.core import SelectField
 
-from src.connect import bsc
-from src.models.nft_type import NftType
+from src.abis import factory_abi
+from src.config import Config
+from src.models.nft_collection import NftCollection
+from src.models.nft_detail import NftDetail
+from src.models.nft_rarity import NftRarity
 from src.utils.s3_image_uploader import S3ImageUploadField
 from src.views.base import MyBaseModelView
 
-from wtforms import validators
+from wtforms import HiddenField
 
 
 def your_namegen_func_here(file):
     return str(uuid.uuid4())
-# class S3Upload(S3ImageUploadInput):
 
 
 class NftDetailView(MyBaseModelView):
-    column_list = ['nft_id', 'name', 'type', 'rarity', 'description',
-                   'image', 'price', 'discount', 'commission',
+    column_list = ['nft_id', 'name', 'rarity_code',
+                   'rarity', 'description',
+                   'image', 'price', 'discount',
+                   'commission',
                    'is_show', 'created_time']
+    create_template = 'form/models/nft_detail/create.html'
+    edit_template = 'form/models/nft_detail/edit.html'
+
     can_edit = True
     can_create = True
-    can_delete = True
+    can_delete = False
     # column_editable_list = ['price', 'is_show']
-    edit_modal = True
-    create_modal = True
+    edit_modal = False
     can_view_details = True
+
     form_overrides = dict(
-        type=SelectField,
-        image=S3ImageUploadField
+        rarity_code=SelectField,
+        image=S3ImageUploadField,
+        rarity=HiddenField,
+        nft_id=HiddenField,
+        collection_id=SelectField,
+        address=HiddenField
     )
 
     def image_format(view, context, model, name):
         return Markup(f'<a target="_blank" href="{model["image"]}"> image </a>')
 
-    def format_type(view, context, model, name):
-        _type = find(view.get_type_options(), lambda x: int(x[0]) == model['type'])
-        if _type:
-            return _type[1]
-        return model['type']
-
     column_searchable_list = ['name']
 
-    column_filters = ['type']
-
     column_default_sort = ('created_time', True)
+
     column_formatters = {
-        'image': image_format,
-        'type': format_type
+        'image': image_format
     }
 
-    def get_type_options(self):
-        return [(f'{x.type_id}', x.name) for x in NftType.objects()]
-
     def scaffold_form(self):
-        print("scaffold_form here", )
-        self.form_args = {
-            'type': {
-                'choices': [],
-                'widget': Select2Widget(multiple=False)
-            }
-        }
         _form = super(NftDetailView, self).scaffold_form()
-        _form.type.kwargs['choices'] = self.form_args['type']['choices']
         return _form
 
-    def on_model_change(self, form, model, is_created):
-        try:
+    def get_collection_options(self):
+        return [(x.collection_id, x.name) for x in NftCollection.objects()]
 
-            _type = NftType.objects(type_id=form.type.data)
-            print('_type_type_type')
-            if _type and _type[0]:
-                _type = _type[0]
-            else:
-                raise Exception("Not found type")
-            if _type.max_rarity < form.rarity.data:
-                raise Exception(f"Invalid rarity: must be < {_type.max_rarity}")
-            if is_created:
-                max_rarity = bsc.smc_nft.functions.getMaxRarityValue(
-                    bsc.toInt(text=str(form.type.data))
-                ).call()
-                print("max", max_rarity)
-                if max_rarity < form.rarity.data:
-                    raise Exception(f"[On chain]Invalid rarity: must be < {max_rarity}")
-                # raise Exception(max_rarity)
-
-            else:
-                print(self.before_price)
-                print(form.price.data)
-                print('form.is_show.data', form.is_show.data, self.before_is_show)
-
-                if self.before_price != form.price.data:
-                    tx = bsc.smc_creator.functions.updatePrice(
-                        bsc.toInt(text=str(form.type.data)),
-                        bsc.toInt(text=str(form.rarity.data)),
-                        bsc.toWei(form.price.data, unit='ether')
-                    ).buildTransaction({
-                        'gasPrice': bsc.eth.gas_price,
-                        'nonce': bsc.eth.getTransactionCount(bsc.my_account.address)
-                    })
-                    signed_tx = bsc.my_account.signTransaction(tx)
-                    _txn = bsc.eth.send_raw_transaction(signed_tx.rawTransaction)
-
-                    _tx_hash = _txn.hex()
-                    _txn_receipt = bsc.eth.wait_for_transaction_receipt(_tx_hash)
-                    print(f"Log tx hash: {_tx_hash}")
-                    if get(_txn_receipt, 'status') != 1:
-                        raise Exception(f"Failed: Update tx {_tx_hash}. Please re-check.")
-
-                if self.before_is_show != form.is_show.data:
-                    _force_price = form.price.data
-                    if not form.is_show.data:
-                        _force_price = 10000000
-
-                    tx = bsc.smc_creator.functions.updatePrice(
-                        bsc.toInt(text=str(form.type.data)),
-                        bsc.toInt(text=str(form.rarity.data)),
-                        bsc.toWei(_force_price, unit='ether')
-                    ).buildTransaction({
-                        'gasPrice': bsc.eth.gas_price,
-                        'nonce': bsc.eth.getTransactionCount(bsc.my_account.address)
-                    })
-                    signed_tx = bsc.my_account.signTransaction(tx)
-                    _txn = bsc.eth.send_raw_transaction(signed_tx.rawTransaction)
-                    _tx_hash = _txn.hex()
-                    print("_tx_hash", _tx_hash)
-                    print(f"Log tx hash: {_tx_hash}")
-                    _txn_receipt = bsc.eth.wait_for_transaction_receipt(_tx_hash)
-
-                    if get(_txn_receipt, 'status') != 1:
-                        raise Exception(f"Failed: Update tx {_tx_hash}. Please re-check.")
-                    # pass
-
-        except Exception as e:
-            # flash(gettext(f'{e}'), 'error')
-            traceback.print_exc()
-            raise validators.ValidationError(e)
-            # return redirect(self.get_url('.index_view'))
+    def get_collection_addresses(self):
+        return [(x.collection_id, x.address) for x in NftCollection.objects()]
 
     def create_form(self, obj=None):
-        self.form_widget_args = {}
+        self.form_widget_args = {
+            'rarity': {
+                'disabled': True
+            }
+        }
+
+        _cols = NftDetail.objects()
+
+        _max_id = max([col.nft_id for col in _cols]) or 0
+
         _form = super(NftDetailView, self).create_form(obj)
-        _form.type.choices = self.get_type_options()
+
+        _form.nft_id.data = _max_id + 1
+        _form.collection_id.choices = self.get_collection_options()
+        _form.rarity_code.choices = self.get_nft_rarity_options()
+
         return _form
 
     def edit_form(self, obj=None):
         try:
 
             self.form_widget_args = {
-                'type': {
+                'rarity': {
                     'disabled': True
                 },
-                'rarity': {
+                'rarity_code': {
+                    'disabled': True
+                },
+                'collection_id': {
                     'disabled': True
                 }
             }
@@ -167,8 +103,29 @@ class NftDetailView(MyBaseModelView):
         except AttributeError:
             pass
         _form = super(NftDetailView, self).edit_form(obj)
-        _form.type.choices = self.get_type_options()
+        _form.rarity_code.choices = self.get_nft_rarity_options()
+        _form.collection_id.choices = self.get_collection_options()
+
         return _form
+
+    def get_nft_rarity_options(self):
+        return [(x.code, x.name) for x in NftRarity.objects()]
 
     def lock_admin(self):
         return True
+
+    def render(self, template, **kwargs):
+
+        kwargs['factory_abi'] = factory_abi
+        kwargs['factory_address'] = Config.NFT_FACTORY_ADDRESS
+
+        kwargs['before_price'] = 0
+        kwargs['before_is_show'] = False
+        kwargs['address_of_collections'] = self.get_collection_addresses()
+        if hasattr(self, 'before_price'):
+            kwargs['before_price'] = self.before_price
+
+        if hasattr(self, 'before_is_show'):
+            kwargs['before_is_show'] = self.before_is_show
+
+        return super(NftDetailView, self).render(template, **kwargs)

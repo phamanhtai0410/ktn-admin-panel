@@ -9,16 +9,13 @@ from mongoengine import StringField, IntField
 from src.models.base import BaseDocument
 
 
-class NftType(BaseDocument):
+class NftRarity(BaseDocument):
     meta = {
         'strict': False,
-        'collection': 'nft_types'
+        'collection': 'nft_rarities'
     }
-    type_id = IntField()
-    name = StringField()
-    description = StringField()
-    image = StringField()
-    max_rarity = IntField(required=True)
+    name = StringField(required=True)
+    code = StringField()
 
     def __str__(self):
         return self.name if self else ''

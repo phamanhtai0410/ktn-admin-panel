@@ -34,7 +34,7 @@ class Config:
     STAKING_ADDRESS = os.getenv('STAKING_ADDRESS')
     CREATOR_ADDRESS = os.getenv('CREATOR_ADDRESS')
     BSC_RPC = os.getenv('BSC_RPC')
-
+    NFT_FACTORY_ADDRESS = os.getenv('NFT_FACTORY_ADDRESS')
     # S3
     AWS_KEY = os.getenv('AWS_KEY')
     AWS_SECRET = os.getenv('AWS_SECRET')

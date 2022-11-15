@@ -13,7 +13,7 @@ from .exchange import ExchangeView
 from .minted_nfts import MintedNftsView
 from .nft_collection import NftCollectionView
 from .nft_detail import NftDetailView
-from .nft_type import NftTypeView
+from .nft_rarity import NftRarityView
 from .nft_history import NftHistoryView
 from .order import OrderView
 from .point import PointView
@@ -34,7 +34,7 @@ from ...models.order import Order
 from ...models.security import User, Role
 from ...models.user import UserApp
 from ...models.nft_detail import NftDetail
-from ...models.nft_type import NftType
+from ...models.nft_rarity import NftRarity
 
 from ...models.nft_history import NftHistory
 
@@ -54,7 +54,7 @@ model_views = [
     ReferralView(Referral, category='Referral'),
     # ReferralRewardConfigView(ReferralRewardConfig, category='Referral'),
 
-    NftTypeView(NftType, category='NFT'),
+    NftRarityView(NftRarity, category='NFT'),
 
     NftHistoryView(NftHistory, category='NFT'),
 
