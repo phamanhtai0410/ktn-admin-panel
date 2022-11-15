@@ -101,7 +101,6 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
         _max_id = max([col.collection_id for col in _cols]) or 0
 
         _form.collection_id.data = _max_id + 1
-        _form.nfts.choices = get_nfts_options()
         _form.rarity_nfts.data = None
         return _form
 
