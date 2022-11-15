@@ -66,7 +66,7 @@ class NftDetailView(MyBaseModelView):
     def create_form(self, obj=None):
         self.form_widget_args = {
             'rarity': {
-                'disabled': True
+                'readonly': True
             }
         }
 
@@ -87,13 +87,13 @@ class NftDetailView(MyBaseModelView):
 
             self.form_widget_args = {
                 'rarity': {
-                    'disabled': True
+                    'readonly': True
                 },
                 'rarity_code': {
-                    'disabled': True
+                    'readonly': True
                 },
                 'collection_id': {
-                    'disabled': True
+                    'readonly': True
                 }
             }
 

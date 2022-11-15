@@ -19,7 +19,7 @@ class NftCollection(BaseDocument):
     description = StringField(required=True)
     image = StringField(required=True)
     # nfts = ListField(IntField(), default=[])
-    rarity_nfts = ListField(DictField())
+    # rarity_nfts = ListField(DictField())
     address = StringField()
     max_rarity = IntField(default=0)
 

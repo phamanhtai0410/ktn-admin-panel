@@ -31,17 +31,17 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     create_template = 'form/models/factory/create.html'
     # form_columns = ['collection_id', 'name', 'description','image', 'nfts']
 
-    edit_modal = True
+    # edit_modal = True
     column_labels = {
         'collection_id': 'Id'
     }
 
     form_overrides = dict(nfts=SelectMultipleField,
                           collection_id=HiddenField,
-                          rarity_nfts=HiddenField,
+                          # rarity_nfts=HiddenField,
                           address=HiddenField,
-                          image=S3ImageUploadField
-
+                          image=S3ImageUploadField,
+                          max_rarity=HiddenField
                           )
     form_subdocuments = {
 
@@ -64,8 +64,6 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
         # _image = model['image']
         return Markup(f'<a target="_blank" href="{model["image"]}"> image </a>')
 
-
-
     def scaffold_form(self):
         self.form_args = {
             'nfts': {
@@ -87,13 +85,13 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
         }
         self.form_widget_args = {
             'collection_id': {
-                'disabled': True
+                'readonly': True
             },
             'nfts': {
-                'disabled': True
+                'readonly': True
             },
             'max_rarity': {
-                'disabled': True
+                'readonly': True
             }
         }
         _form = super(NftCollectionView, self).create_form(obj)
@@ -101,36 +99,21 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
         _max_id = max([col.collection_id for col in _cols]) or 0
 
         _form.collection_id.data = _max_id + 1
-        _form.rarity_nfts.data = None
+        # _form.rarity_nfts.data = None
         return _form
 
     def edit_form(self, obj=None):
-        self.form_args = {
-            'nfts': {
-                'choices': [],
-                'widget': Select2Widget(multiple=True)
-            }
-        }
-        self.form_widget_args = {
-            'collection_id': {
-                'disabled': True
-            },
-            'name': {
-                'disabled': True
 
+
+        self.form_widget_args = {
+            'name': {
+                'readonly': True
             },
             'symbol': {
-                'disabled': True
-            },
-            'nfts': {
-                'disabled': True
-            },
-            'max_rarity': {
-                'disabled': True
+                'readonly': True
             }
         }
         _form = super(NftCollectionView, self).edit_form(obj)
-        _form.nfts.choices = self.get_nfts_options()
         return _form
 
     def get_nfts_options(self):
