@@ -12,6 +12,7 @@ class CustomViewImageWidget(ImageUploadInput):
 
 
 class S3ImageUploadField(FileUploadField):
+
     data_template = ('<div class="image-thumbnail">'
                      ' <img %(image)s>'
                      ' <input type="checkbox" name="%(marker)s">Delete</input>'

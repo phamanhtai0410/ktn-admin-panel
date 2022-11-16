@@ -89,25 +89,25 @@
 {%- endmacro %}
 
 {% macro load_abi(_abis=None) %}
-{% if _abis is none %}{% set _abis = abis %}{% endif %}
-<script>
+    {% if _abis is none %}{% set _abis = abis %}{% endif %}
+    <script>
 
-         async function initContract() {
+             async function initContract() {
 
-            if(!window.signer) {
-               await  connectWallet()
-            }
-            window.contract = await new ethers.Contract("{{ address }}", {{ _abis | tojson(indent=2) }}, window.provider).connect(window.signer);
-         }
-        $(document).ready(function(){
-            initContract()
-        })
+                if(!window.signer) {
+                   await  connectWallet()
+                }
+                window.contract = await new ethers.Contract("{{ address }}", {{ _abis | tojson(indent=2) }}, window.provider).connect(window.signer);
+             }
+            $(document).ready(function(){
+                initContract()
+            })
 
-</script>
-{%  for abi in _abis %}
-{% if abi.get('type') == 'function' %}
-{{ load_function(abi) }}
-{% endif %}
-{% endfor %}
+    </script>
+    {%  for abi in _abis %}
+        {% if abi.get('type') == 'function' %}
+            {{ load_function(abi) }}
+        {% endif %}
+    {% endfor %}
 {% endmacro %}
 

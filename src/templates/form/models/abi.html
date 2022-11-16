@@ -1,0 +1,98 @@
+
+
+{% macro call_smc(form_id, before, is_create=False) %}
+
+  {% if is_create %}
+      <script>
+            var _next = false;
+            $('#{{ form_id }}').submit(async function(event){
+                event.preventDefault();
+                await new Promise(async function(resolve, reject) {
+                    setTimeout(function(){
+                        event.currentTarget.submit();
+                        resolve();
+                    }, 2000)
+
+                });
+                console.log("done oke", event)
+
+            })
+      </script>
+
+  {% endif %}
+
+  {% if not is_create %}
+
+  {% endif %}
+
+{% endmacro %}
+
+
+{% macro connect_wallet_btn() %}
+    <script>
+         async function connectWalletBtn(){
+                try {
+                    console.log("connectWalletBtn")
+                    if(!window.ethereum) {
+                        alert("Please install the wallet.")
+                    }
+
+                    window.provider = new ethers.providers.Web3Provider(window.ethereum)
+
+                    await window.provider.send("eth_requestAccounts", []);
+
+                    window.signer = window.provider.getSigner()
+                    var wallet = await window.signer.getAddress()
+                    $('#connect_wallet').replaceWith($('<h3> Address: ' + wallet + '</h3>'));
+                } catch(e) {
+                    console.error(e)
+                    alert(e.toString())
+                }
+         }
+
+    </script>
+    <div>
+        <button id="connect_wallet" class="btn btn-success" onclick="connectWalletBtn()">
+            Connect Wallet </button> <i>This action must be called to blockchain. Please don't leave while the action is in progress.</i>
+    </div>
+
+{% endmacro %}
+
+{% macro script_abi() %}
+    <script>
+         async function connectWallet(){
+
+                if(!window.ethereum) {
+                    alert("Please install the wallet.")
+                }
+
+                window.provider = new ethers.providers.Web3Provider(window.ethereum)
+
+                await window.provider.send("eth_requestAccounts", []);
+
+                window.signer = window.provider.getSigner()
+         }
+
+         async function initSignerContract(address, abis) {
+            if(!window.signer) {
+               await connectWallet()
+            }
+            return await new ethers.Contract(address, abis, window.provider).connect(window.signer);
+         }
+
+         async function initContract(address, abis) {
+
+            if(!window.ethereum) {
+                alert("Please install the wallet.")
+            }
+
+            if(!window.provider) {
+                window.provider = new ethers.providers.Web3Provider(window.ethereum)
+            }
+
+            return await new ethers.Contract(address, abis, window.provider);
+         }
+
+    </script>
+{% endmacro %}
+

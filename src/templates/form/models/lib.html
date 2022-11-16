@@ -1,0 +1,22 @@
+{% import 'admin/lib.html' as lib with context %}
+
+{% macro form_wrap_web3(form=None, action=None, id=None) %}
+    <form action="{{ action or '' }}" method="POST" id="{{ id or '' }}" role="form" class="admin-form form-horizontal" enctype="multipart/form-data">
+      {{ caller() }}
+    </form>
+{% endmacro %}
+
+{% macro form_tag_id(form=None, action=None, id=None) %}
+    <form id="{{ id }}" action="{{ action or '' }}" method="POST" role="form" class="admin-form" enctype="multipart/form-data">
+    <fieldset>
+      {{ caller() }}
+    </fieldset>
+    </form>
+{% endmacro %}
+
+{% macro render_form_with_id(form, cancel_url, extra=None, form_opts=None, action=None, is_modal=False, id=None) -%}
+    {% call form_tag_id(action=action, id=id) %}
+        {{ lib.render_form_fields(form, form_opts=form_opts) }}
+        {{ lib.render_form_buttons(cancel_url, extra, is_modal) }}
+    {% endcall %}
+{% endmacro %}

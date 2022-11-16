@@ -74,11 +74,15 @@ from src.views import blueprints
 for _blueprint in blueprints:
     app.register_blueprint(_blueprint)
 
-from src.views.models import model_views
+from src.views.models import model_views, model_categories
 from src.views import pages
+for _model_ca in model_categories.values():
+    admin.add_category(**_model_ca)
 
 for _model_view in model_views:
     admin.add_view(_model_view)
+
+
 for _page in pages:
     admin.add_view(_page)
 

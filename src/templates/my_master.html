@@ -1,8 +1,11 @@
 {% extends 'admin/base.html' %}
-
 {% block access_control %}
 {% if current_user.is_authenticated %}
 <!-- User Account: style can be found in dropdown.less -->
+<script src="{{ admin_static.url(filename='vendor/jquery.min.js', v='3.5.1') }}" type="text/javascript"></script>
+
+<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+    type="application/javascript"></script>
 
 <li class="dropdown user user-menu">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">

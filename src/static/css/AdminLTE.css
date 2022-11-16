@@ -4944,3 +4944,7 @@ table.text-center th {
     white-space: normal !important;
   }
 }
+
+.fa-red {
+  color: red;
+}
