@@ -40,6 +40,7 @@ from ...models.referral import Referral
 from ...models.minted_nfts import MintedNfts
 from ...models.order import Order
 from ...models.security import User, Role
+from ...models.setting import Setting
 from ...models.user import UserApp
 from ...models.nft_detail import NftDetail
 from ...models.nft_rarity import NftRarity
