@@ -4,11 +4,17 @@
         -
         -
 """
-from mongoengine import StringField, IntField, BooleanField, FloatField
+from mongoengine import StringField, IntField, BooleanField, FloatField, EmbeddedDocument, \
+    EmbeddedDocumentField, \
+    ListField, ReferenceField
 
 from src.models.base import BaseDocument
+from src.models.variable import Variable
 
-from src.enums.nft_type import NftType, NftRarity
+
+class NftAttribute(EmbeddedDocument):
+    id = IntField()
+    value = IntField()
 
 
 class NftDetail(BaseDocument):
@@ -29,9 +35,8 @@ class NftDetail(BaseDocument):
     commission = FloatField(min_value=0, max_value=100)
     is_show = BooleanField(default=True)
     address = StringField()
+    metadata_cid = StringField()
 
     def __str__(self):
         return self.name if self else ''
 
-    def tracking(self):
-        return True

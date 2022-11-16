@@ -95,6 +95,37 @@
         }
         return false;
     }
+
+    async function createMetadata(description, name, rarity_code) {
+           return await new Promise(async function(resolve, reject) {
+                    var form = new FormData();
+                    var fileInput = $("#image").prop('files')
+                    console.log(fileInput)
+
+                    form.append("file", fileInput[0]);
+                    form.append("description", description);
+                    form.append("name", name);
+                    form.append("rarity_code", rarity_code);
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.withCredentials = true;
+                    xhr.responseType = 'json';
+                    xhr.addEventListener("readystatechange", function() {
+                      if(this.status === 200) {
+                        console.log('response', this.response);
+                        resolve(this.response.metadata_cid)
+                      }
+                      reject(null)
+                    });
+
+                    xhr.open("POST", "{{ url_for('root_blueprint.root_metadata') }}");
+
+                    xhr.send(form);
+
+
+                });
+    }
+
     $( document ).ready(function() {
         $("#collection_create_rarity").submit(async function(event){
                 event.preventDefault();
@@ -102,6 +133,9 @@
                 console.log(_fields)
                 var price = null;
                 var collection_id = null;
+                var description = null
+                var name= null;
+                var rarity_code = null;
 
                 for(const _field of _fields) {
                     if(_field.name == 'price') {
@@ -110,19 +144,30 @@
                     if(_field.name == 'collection_id') {
                         collection_id = _field.value
                     }
+                    if(_field.name == 'description') {
+                        description = _field.value
+                    }
+                    if(_field.name == 'name') {
+                        name = _field.value
+                    }
+                    if(_field.name == 'rarity_code') {
+                        rarity_code = _field.value
+                    }
                 }
+                var cid = await createMetadata(description, name, rarity_code);
+                if(cid) {
+                    var collection = address_of_collections.find(v=>v[0]==collection_id)
 
-                var collection = address_of_collections.find(v=>v[0]==collection_id)
+                    console.log(collection)
 
-                console.log(collection)
+                    var res = await addNewNftRarities(
+                        collection[1], [price]
+                    )
 
-                var res = await addNewNftRarities(
-                    collection[1], [price]
-                )
-
-                console.log("res", res)
-                if(res) {
-                  $(this).unbind('submit').submit();
+                    console.log("res", res)
+                    if(res) {
+                      $(this).unbind('submit').submit();
+                    }
                 }
         })
 

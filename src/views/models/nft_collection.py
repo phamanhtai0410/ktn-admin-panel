@@ -30,7 +30,7 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     create_modal_template = 'form/models/factory/modals/create.html'
     create_template = 'form/models/factory/create.html'
     # form_columns = ['collection_id', 'name', 'description','image', 'nfts']
-
+    can_delete = False
     # edit_modal = True
     column_labels = {
         'collection_id': 'Id'

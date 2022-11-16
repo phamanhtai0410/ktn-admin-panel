@@ -14,7 +14,7 @@
     var factoryContract = null;
 
 
-    async function createNftCollection(name, symbol, maxRarityValue, prices) {
+    async function createNftCollection(name, symbol, maxRarityValue, prices,_cids) {
         try {
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
             if(!factoryContract) {
@@ -23,7 +23,7 @@
 
             let _prices =  prices.map(_item=>ethers.utils.parseEther(_item))
             $("#process_text").text("Sign tx......")
-            var result = await factoryContract.createNftCollection(name, symbol, maxRarityValue, _prices);
+            var result = await factoryContract.createNftCollection(name, symbol, maxRarityValue, _cids,_prices);
             console.log(result)
             $("#process_text").text("Wait tx "+ result.hash +"......")
             var tx = await result.wait()
@@ -57,6 +57,8 @@
                 console.log(_fields)
                 var name, symbol;
                 var _prices = []
+                var _cids = []
+
                 var _max = 0
                 for(const _field of _fields) {
                     if(_field.name == 'name') {
@@ -69,7 +71,7 @@
 
 
                 var res = await createNftCollection(
-                    name, symbol, _max, _prices
+                    name, symbol, _max, _prices, _cids
                 )
                 console.log("res", res)
                 if(res) {

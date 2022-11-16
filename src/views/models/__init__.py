@@ -5,9 +5,13 @@
         -
 """
 from unicodedata import category
+
+from flask_admin.consts import ICON_TYPE_FONT_AWESOME
+
 from src.models.payment import Payment
 
 from src.views.models.payment import PaymentView
+from .box import BoxView
 
 from .exchange import ExchangeView
 from .minted_nfts import MintedNftsView
@@ -24,6 +28,8 @@ from .referral import ReferralView
 from .promotion import PromotionView
 from .nfts_statistic import NftsStatisticView
 from .referral_reward_config import ReferralRewardConfigView
+from .variable import VariableView
+from ...models.box import Box
 from ...models.exchange import ExchangeLog
 from ...models.nft_collection import NftCollection
 from ...models.point import PointLog
@@ -40,9 +46,33 @@ from ...models.nft_history import NftHistory
 
 from ...models.promotion import Promotion
 from ...models.nfts_statistic import NftsStatistic
+from ...models.variable import Variable
 
+model_categories = {
+    'Setting': {
+        'name': 'Setting',
+        'icon_type': ICON_TYPE_FONT_AWESOME,
+        'icon_value': 'fa-cog fa-red'
+    },
+    'NFT': {
+        'name': 'NFT',
+        'icon_type': ICON_TYPE_FONT_AWESOME,
+        'icon_value': 'fa-book'
+    },
+    'Application': {
+        'name': 'Application',
+        'icon_type': ICON_TYPE_FONT_AWESOME,
+        'icon_value': 'fa-desktop'
+    },
+    'Payment': {
+        'name': 'Payment',
+        'icon_type': ICON_TYPE_FONT_AWESOME,
+        'icon_value': 'fa-money'
+    }
+}
 model_views = [
-    UserView(User, category='Setting'),
+    UserView(User, category='Setting',
+             menu_icon_type=ICON_TYPE_FONT_AWESOME, menu_icon_value='fa-circle'),
     RolesView(Role, category='Setting'),
 
     OrderView(Order, category='NFT'),
@@ -51,18 +81,19 @@ model_views = [
     NftDetailView(NftDetail, category='NFT'),
     NftsStatisticView(NftsStatistic, category='NFT'),
 
-    ReferralView(Referral, category='Referral'),
+    ReferralView(Referral, category='Application'),
     # ReferralRewardConfigView(ReferralRewardConfig, category='Referral'),
 
     NftRarityView(NftRarity, category='NFT'),
 
     NftHistoryView(NftHistory, category='NFT'),
 
-    PromotionView(Promotion, category='Promotion'),
-    ExchangeView(ExchangeLog, category="Point"),
-    PointView(PointLog, category='Point'),
+    PromotionView(Promotion, category='Application'),
+    ExchangeView(ExchangeLog, category="Payment"),
+    PointView(PointLog, category='Payment'),
 
     PaymentView(Payment, category='Payment'),
-    NftCollectionView(NftCollection, category='NFT')
-
+    NftCollectionView(NftCollection, category='NFT'),
+    VariableView(Variable, category='NFT'),
+    BoxView(Box, category='NFT')
 ]

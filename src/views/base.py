@@ -6,6 +6,7 @@
 """
 from flask import redirect, url_for, request, flash, session
 from flask_admin import AdminIndexView, BaseView, expose
+from flask_admin.consts import ICON_TYPE_FONT_AWESOME
 from flask_admin.contrib.mongoengine import ModelView
 from flask_login import current_user, logout_user
 import pydash as py_
@@ -19,6 +20,13 @@ from src.routes import LOCK_PAGE
 
 
 class MyBaseModelView(ModelView):
+    def __init__(self, *args, **kwargs):
+        if not 'menu_icon_type' in kwargs.keys():
+            kwargs['menu_icon_type'] = ICON_TYPE_FONT_AWESOME
+        if not 'menu_icon_value' in kwargs.keys():
+            kwargs['menu_icon_value'] = 'fa-circle'
+        super(MyBaseModelView, self).__init__(*args, **kwargs)
+
     def is_accessible(self):
         # if user is inactive when using, logout this user
         if not current_user.is_authenticated or current_user['active'] == False:

@@ -1,5 +1,15 @@
+import io
+import json
 import uuid
+
+import requests
+from flask import request
+from flask_admin import expose
+from flask_admin.form import RenderTemplateWidget
+from flask_admin.model.fields import InlineFieldList
+from flask_admin.model.widgets import InlineFieldListWidget
 from markupsafe import Markup
+from pydash import get
 from wtforms.fields.core import SelectField
 
 from src.abis import factory_abi
@@ -7,22 +17,32 @@ from src.config import Config
 from src.models.nft_collection import NftCollection
 from src.models.nft_detail import NftDetail
 from src.models.nft_rarity import NftRarity
+from src.models.variable import Variable
 from src.utils.s3_image_uploader import S3ImageUploadField
 from src.views.base import MyBaseModelView
 
-from wtforms import HiddenField
+from wtforms import HiddenField, validators
 
 
 def your_namegen_func_here(file):
     return str(uuid.uuid4())
 
 
+class TypesFieldListWidget(RenderTemplateWidget):
+    def __init__(self):
+        super(TypesFieldListWidget, self).__init__('widgets/nft_types.html')
+
+
 class NftDetailView(MyBaseModelView):
     column_list = ['nft_id', 'name', 'rarity_code',
                    'rarity', 'description',
-                   'image', 'price', 'discount',
+                   'image',
+                   'price',
+                   'variables',
+                   'discount',
                    'commission',
                    'is_show', 'created_time']
+
     create_template = 'form/models/nft_detail/create.html'
     edit_template = 'form/models/nft_detail/edit.html'
 
@@ -39,18 +59,27 @@ class NftDetailView(MyBaseModelView):
         rarity=HiddenField,
         nft_id=HiddenField,
         collection_id=SelectField,
-        address=HiddenField
+        address=HiddenField,
+        metadata_cid=HiddenField
     )
 
     def image_format(view, context, model, name):
         return Markup(f'<a target="_blank" href="{model["image"]}"> image </a>')
+
+    def variables_format(self, context, model, name):
+        _variables = Variable.objects(nft_id=model['nft_id'])
+        permission = '<ul>'
+        for item in _variables:
+            permission += f'<li href="{item.image}" target="_blank" >{item.type_id}: {item.price} USD </li>'
+        return Markup(permission + "</ul>")
 
     column_searchable_list = ['name']
 
     column_default_sort = ('created_time', True)
 
     column_formatters = {
-        'image': image_format
+        'image': image_format,
+        'variables': variables_format
     }
 
     def scaffold_form(self):
@@ -59,6 +88,8 @@ class NftDetailView(MyBaseModelView):
 
     def get_collection_options(self):
         return [(x.collection_id, x.name) for x in NftCollection.objects()]
+
+    # def on_model_change(self, form, model, is_created):
 
     def get_collection_addresses(self):
         return [(x.collection_id, x.address) for x in NftCollection.objects()]

@@ -1,16 +1,12 @@
-from markupsafe import Markup
-from pydash import get, slugify
+from pydash import slugify
 
-from src.connect import bsc
 from src.views.base import MyBaseModelView, RowActionListMixin
-from flask_admin import expose
-from flask import request, redirect, render_template
 
 from wtforms import validators
 
 
 class NftRarityView(MyBaseModelView, RowActionListMixin):
-    column_list = ['name', 'code', 'created_time']
+    column_list = ['rarity_id', 'name', 'code', 'created_time']
     create_modal = True
     edit_modal = True
     # list_template = 'custom/nft_type.html'
@@ -18,13 +14,32 @@ class NftRarityView(MyBaseModelView, RowActionListMixin):
 
     form_widget_args = {
         'code': {
-            'disabled': True
+            'readonly': True
         }
     }
 
     column_searchable_list = ['name']
 
-    column_default_sort = ('created_time', True)
+    column_default_sort = ('rarity_id')
+
+    def edit_form(self, obj=None):
+        self.form_widget_args = {
+            'code': {
+                'readonly': True
+            },
+            'rarity_id': {
+                'readonly': True
+            }
+        }
+        return super(NftRarityView, self).edit_form(obj)
+
+    def create_form(self, obj=None):
+        self.form_widget_args = {
+            'code': {
+                'readonly': True
+            }
+        }
+        return super(NftRarityView, self).edit_form(obj)
 
     def on_model_change(self, form, model, is_created):
 
@@ -35,4 +50,3 @@ class NftRarityView(MyBaseModelView, RowActionListMixin):
 
         except Exception as e:
             raise validators.ValidationError(e)
-
