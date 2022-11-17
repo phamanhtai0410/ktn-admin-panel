@@ -45,5 +45,5 @@ class Config:
     S3_STATIC = os.getenv('S3_STATIC')
     # IPFS
     IPFS_TOKEN = os.getenv('IPFS_TOKEN')
-    FLASK_ADMINLTE_LAYOUT_OPTIONS = ['sidebar-mini', 'layout-navbar-fixed', 'layout-fixed', '']
+    FLASK_ADMINLTE_LAYOUT_OPTIONS = ['sidebar-mini', 'layout-navbar-fixed', 'layout-fixed', 'text-sm']
     pass

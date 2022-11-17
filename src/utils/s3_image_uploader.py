@@ -10,7 +10,7 @@ class CustomViewImageWidget(ImageUploadInput):
                      ' Current: <img style="width: 250px;"  %(image)s>'
                      '</div>'
                      '<input class="image_preview" %(file)s>')
-
+    empty_template = '<input class="image_preview" %(file)s>'
     def get_url(self, field):
         return field.data
 
