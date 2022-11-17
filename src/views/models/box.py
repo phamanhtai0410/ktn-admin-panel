@@ -9,6 +9,7 @@ from src.abis import factory_abi, box_creator_abi
 from src.config import Config
 from src.models.nft_collection import NftCollection
 from src.models.nft_detail import NftDetail
+from src.utils.s3_image_uploader import S3ImageUploadField
 from src.views.base import MyBaseModelView, RowActionListMixin
 
 
@@ -22,8 +23,10 @@ class BoxView(MyBaseModelView, RowActionListMixin):
     can_create = False
     # edit_modal = True
     can_view_details = True
-    form_overrides = dict(collection=SelectField
-                          )
+    form_overrides = dict(
+        collection=SelectField,
+        image=S3ImageUploadField
+    )
     form_subdocuments = {
 
     }

@@ -61,7 +61,7 @@
                 var description = null
                 var name= null;
                 var rarity_code = null;
-
+                var submit = true;
                 for(const _field of _fields) {
                     if(_field.name == 'price') {
                         price = _field.value
@@ -102,7 +102,7 @@
                 console.log(_fields)
 
                 var price = null;
-
+                var submit = true;
                 for(const _field of _fields) {
                     if(_field.name == 'price') {
                         price = Number(_field.value)
