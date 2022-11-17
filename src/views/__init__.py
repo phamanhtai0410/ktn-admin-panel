@@ -11,7 +11,7 @@ blueprints = [
     root_blueprint
 ]
 pages = [
-    SettingNFTView(name="Nft", category="Blockchain"),
-    SettingStakingView(name="Staking", category="Blockchain"),
-    SettingMarketView(name="Market", category="Blockchain")
+    # SettingNFTView(name="Nft", category="Blockchain"),
+    # SettingStakingView(name="Staking", category="Blockchain"),
+    # SettingMarketView(name="Market", category="Blockchain")
 ]
