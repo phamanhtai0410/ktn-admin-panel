@@ -6,6 +6,10 @@ from src.config import Config
 
 
 class CustomViewImageWidget(ImageUploadInput):
+    data_template = ('<div>'
+                     ' Current: <img style="width: 250px;"  %(image)s>'
+                     '</div>'
+                     '<input class="image_preview" %(file)s>')
 
     def get_url(self, field):
         return field.data
@@ -13,11 +17,6 @@ class CustomViewImageWidget(ImageUploadInput):
 
 class S3ImageUploadField(FileUploadField):
 
-    data_template = ('<div class="image-thumbnail">'
-                     ' <img %(image)s>'
-                     ' <input type="checkbox" name="%(marker)s">Delete</input>'
-                     '</div>'
-                     '<input %(file)s>')
 
     def __init__(self, *args, **kwargs):
         super(S3ImageUploadField, self).__init__(*args, **kwargs)
@@ -34,12 +33,10 @@ class S3ImageUploadField(FileUploadField):
 
     # Saving
     def _save_file(self, data, filename):
-        print('___data', data)
         savedUrl = self._save_image(data, filename)
         return savedUrl
 
     def _save_image(self, image, path):
-        print(image)
         s3 = boto3.client(
             "s3",
             endpoint_url=Config.S3_HOST,
