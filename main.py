@@ -65,7 +65,7 @@ def create_user():
     admin_root = app.config.get('ADMIN_ROOT')
     if not UserDatastore.find_user(email=admin_root):
         UserDatastore.create_user(email=admin_root,
-                                  password=hash_password("root"),
+                                  password="root",
                                   is_admin=True)
 
 

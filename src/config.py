@@ -29,7 +29,7 @@ class Config:
     ASSETS_ROOT = '/static/assets'
     # security
     SECURITY_USER_IDENTITY_ATTRIBUTES = ('email')
-    ADMIN_ROOT = 'root@katana.com'
+    ADMIN_ROOT = 'dev@katana.com'
     NFT_ADDRESS = os.getenv('NFT_ADDRESS')
     STAKING_ADDRESS = os.getenv('STAKING_ADDRESS')
     CREATOR_ADDRESS = os.getenv('CREATOR_ADDRESS')
