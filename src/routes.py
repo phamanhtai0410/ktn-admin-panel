@@ -15,8 +15,8 @@ ROLES_PAGE_ACCESS = [
     ('nftrarity', 'Nft Rarity')
 ]
 
-LOCK_PAGE = ['Order', 'Minted Nfts', 'Nft Rarity', 'User App', 'Referral',
-             'Nft Detail', 'Exchange Log', 'Point Log', 'Nft History', 'Nft Collection','Box']
+LOCK_PAGE = ['Order', 'Minted Nfts','Mesh', 'Nft Rarity', 'User App', 'Referral',
+             'Mesh Material', 'Exchange Log', 'Point Log', 'Nft History', 'Nft Collection','Box']
 
 ROLES__PAGE_ACCESS_DISPLAY = {
     'user': 'User',

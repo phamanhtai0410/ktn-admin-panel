@@ -27,13 +27,14 @@
   {% endblock %}
 
   {% block edit_form %}
-    {{ model_lib.render_form_with_id(form, return_url, extra(), form_opts, id="nft_detail_edit") }}
+    {{ model_lib.render_form_with_id(form, return_url, extra(), form_opts, id="mesh_edit") }}
   {% endblock %}
+
 {% endblock %}
 
 {% block tail %}
   {{ super() }}
   {{ lib.form_js() }}
-  {% include 'form/models/nft_detail/abi.html' %}
+  {% include 'form/models/mesh/abi.html' %}
 
 {% endblock %}

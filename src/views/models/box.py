@@ -8,7 +8,7 @@ from wtforms import HiddenField, SelectField
 from src.abis import factory_abi, box_creator_abi
 from src.config import Config
 from src.models.nft_collection import NftCollection
-from src.models.nft_detail import NftDetail
+from src.models.mesh_material import MeshMaterial
 from src.utils.s3_image_uploader import S3ImageUploadField
 from src.views.base import MyBaseModelView, RowActionListMixin
 
@@ -38,7 +38,7 @@ class BoxView(MyBaseModelView, RowActionListMixin):
         return Markup(f'<a target="_blank" href="{model["image"]}"> image </a>')
 
     def get_nfts(self):
-        return NftDetail.objects()
+        return MeshMaterial.objects()
 
     def create_form(self, obj=None):
         self.form_widget_args = {}

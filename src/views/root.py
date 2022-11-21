@@ -71,7 +71,15 @@ def root_metadata():
         'attributes': [
             {
                 "trait_type": "rarity",
-                "value": _json['rarity_code']
+                "value": _json['rarity']
+            },
+            {
+                "trait_type": "mesh_index",
+                "value": _json['mesh_index']
+            },
+            {
+                "trait_type": "mesh_material",
+                "value": _json['material']
             }
         ]
     }
@@ -79,5 +87,5 @@ def root_metadata():
     print(_metadata)
     file = io.BytesIO(json.dumps(_metadata).encode())
     metadata_cid = upload_file(file)
-
+    print('metadata_cid', metadata_cid)
     return jsonify({'metadata_cid': metadata_cid})

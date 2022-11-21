@@ -15,8 +15,9 @@ class NftRarity(BaseDocument):
         'collection': 'nft_rarities'
     }
     name = StringField(required=True)
-    code = StringField()
     rarity_id = IntField()
+    collection_id = IntField()
+    collection_address = StringField()
 
     def __str__(self):
         return self.name if self else ''

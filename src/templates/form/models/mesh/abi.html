@@ -14,6 +14,7 @@
     var factoryContract = null;
     var before_price = {{ before_price }}
     var before_is_show = {{ before_is_show | tojson(indent=2)  }}
+
     if(before_is_show) {
         before_is_show = "y"
     } else {
@@ -171,7 +172,7 @@
                 }
         })
 
-        $("#nft_detail_edit").submit(async function(event){
+        $("#mesh_edit").submit(async function(event){
                 event.preventDefault();
                 var _fields = $(this).serializeArray()
                 console.log(_fields)

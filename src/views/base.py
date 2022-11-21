@@ -27,6 +27,15 @@ class MyBaseModelView(ModelView):
             kwargs['menu_icon_value'] = 'fa-circle'
         super(MyBaseModelView, self).__init__(*args, **kwargs)
 
+    def create_form(self, obj=None):
+        form = super(MyBaseModelView, self).create_form(obj)
+        _args = request.args.to_dict()
+        for key, val in _args.items():
+            if hasattr(form, key):
+                form[key].data = val
+
+        return form
+
     def is_accessible(self):
         # if user is inactive when using, logout this user
         if not current_user.is_authenticated or current_user['active'] == False:

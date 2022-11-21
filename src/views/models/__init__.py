@@ -14,9 +14,10 @@ from src.views.models.payment import PaymentView
 from .box import BoxView
 
 from .exchange import ExchangeView
+from .mesh_material import MeshMaterialView
 from .minted_nfts import MintedNftsView
 from .nft_collection import NftCollectionView
-from .nft_detail import NftDetailView
+from .nft_mesh import MeshView
 from .nft_rarity import NftRarityView
 from .nft_history import NftHistoryView
 from .order import OrderView
@@ -28,12 +29,13 @@ from .referral import ReferralView
 from .promotion import PromotionView
 from .nfts_statistic import NftsStatisticView
 from .referral_reward_config import ReferralRewardConfigView
-from .variable import VariableView
 from ...models.box import Box
 from .setting import SettingView
 
 from ...models.exchange import ExchangeLog
+from ...models.mesh_material import MeshMaterial
 from ...models.nft_collection import NftCollection
+from ...models.nft_mesh import Mesh
 from ...models.point import PointLog
 
 from ...models.referral import Referral
@@ -42,14 +44,12 @@ from ...models.order import Order
 from ...models.security import User, Role
 from ...models.setting import Setting
 from ...models.user import UserApp
-from ...models.nft_detail import NftDetail
 from ...models.nft_rarity import NftRarity
 
 from ...models.nft_history import NftHistory
 
 from ...models.promotion import Promotion
 from ...models.nfts_statistic import NftsStatistic
-from ...models.variable import Variable
 
 model_categories = {
     'Setting': {
@@ -61,6 +61,11 @@ model_categories = {
         'name': 'NFT',
         'icon_type': ICON_TYPE_FONT_AWESOME,
         'icon_value': 'fa-book'
+    },
+    'Master Data': {
+        'name': 'Master Data',
+        'icon_type': ICON_TYPE_FONT_AWESOME,
+        'icon_value': 'fa-database'
     },
     'Application': {
         'name': 'Application',
@@ -82,13 +87,11 @@ model_views = [
     OrderView(Order, category='NFT'),
     MintedNftsView(MintedNfts, category='NFT'),
     UserAppView(UserApp, category='Application'),
-    NftDetailView(NftDetail, category='NFT'),
     NftsStatisticView(NftsStatistic, category='NFT'),
 
     ReferralView(Referral, category='Application'),
     # ReferralRewardConfigView(ReferralRewardConfig, category='Referral'),
 
-    NftRarityView(NftRarity, category='NFT'),
 
     NftHistoryView(NftHistory, category='NFT'),
 
@@ -97,7 +100,10 @@ model_views = [
     PointView(PointLog, category='Payment'),
 
     PaymentView(Payment, category='Payment'),
-    NftCollectionView(NftCollection, category='NFT'),
-    VariableView(Variable, category='NFT'),
-    BoxView(Box, category='NFT')
+    NftCollectionView(NftCollection, category='Master Data'),
+
+    NftRarityView(NftRarity, category='Master Data'),
+    MeshView(Mesh, name="Mesh", category='Master Data'),
+    BoxView(Box, category='Master Data'),
+    MeshMaterialView(MeshMaterial, category='Master Data')
 ]

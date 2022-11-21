@@ -8,7 +8,7 @@ from wtforms import HiddenField
 from src.abis import factory_abi
 from src.config import Config
 from src.models.nft_collection import NftCollection
-from src.models.nft_detail import NftDetail
+from src.models.nft_mesh import Mesh
 from src.views.base import MyBaseModelView, RowActionListMixin
 from src.utils.s3_image_uploader import S3ImageUploadField
 
@@ -16,11 +16,8 @@ from wtforms.fields import SelectMultipleField
 
 
 def get_nfts_options():
-    return [(f'{x.nft_id}', x.name) for x in NftDetail.objects()]
+    return [(f'{x.mesh_id}', x.name) for x in Mesh.objects()]
 
-
-def get_nfts_prices():
-    return [(f'{x.nft_id}', x.price) for x in NftDetail.objects()]
 
 
 class NftCollectionView(MyBaseModelView, RowActionListMixin):
@@ -74,7 +71,7 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
         return super(NftCollectionView, self).scaffold_form()
 
     def get_nfts(self):
-        return NftDetail.objects()
+        return Mesh.objects()
 
     def create_form(self, obj=None):
         self.form_args = {
@@ -96,7 +93,11 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
         }
         _form = super(NftCollectionView, self).create_form(obj)
         _cols = NftCollection.objects()
-        _max_id = max([col.collection_id for col in _cols]) or 0
+
+        _max_id = 0
+
+        if _cols:
+            _max_id = max([col.collection_id for col in _cols]) or 0
 
         _form.collection_id.data = _max_id + 1
         # _form.rarity_nfts.data = None
@@ -123,7 +124,7 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
                 'widget': Select2Widget(multiple=True)
             }
         }
-        return [(f'{x.nft_id}', x.name) for x in NftDetail.objects()]
+        return [(f'{x.mesh_id}', x.name) for x in Mesh.objects()]
 
     column_searchable_list = ['name']
 
