@@ -64,18 +64,18 @@
 
 
 
-    async function updatePrice(_nftCollection, _rarity, _newPrice) {
+    async function configMesh(_nftCollection, _rarity, _meshIndex, _newPrice) {
         try {
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
             if(!factoryContract) {
                 factoryContract =  await initSignerContract(address, abi)
             }
 
-            let _price =  ethers.utils.parseEther(_newPrice)
-
+            let _price =  ethers.utils.parseEther(String(_newPrice))
+            _nftCollection = ethers.utils.getAddress(_nftCollection)
             $("#process_text").text("Sign tx......")
             console.log(_nftCollection, _rarity, _price)
-            var result = await factoryContract.updatePrice(ethers.utils.getAddress(_nftCollection), _rarity , _price);
+            var result = await factoryContract.configMesh(ethers.utils.getAddress(_nftCollection), _rarity , _meshIndex,_price);
             console.log(result)
 
             $("#process_text").text("Wait tx "+ result.hash +"......")
@@ -97,35 +97,6 @@
         return false;
     }
 
-    async function createMetadata(description, name, rarity_code) {
-           return await new Promise(async function(resolve, reject) {
-                    var form = new FormData();
-                    var fileInput = $("#image").prop('files')
-                    console.log(fileInput)
-
-                    form.append("file", fileInput[0]);
-                    form.append("description", description);
-                    form.append("name", name);
-                    form.append("rarity_code", rarity_code);
-
-                    var xhr = new XMLHttpRequest();
-                    xhr.withCredentials = true;
-                    xhr.responseType = 'json';
-                    xhr.addEventListener("readystatechange", function() {
-                      if(this.status === 200) {
-                        console.log('response', this.response);
-                        resolve(this.response.metadata_cid)
-                      }
-                      reject(null)
-                    });
-
-                    xhr.open("POST", "{{ url_for('root_blueprint.root_metadata') }}");
-
-                    xhr.send(form);
-
-
-                });
-    }
 
     $( document ).ready(function() {
         $("#collection_create_rarity").submit(async function(event){
@@ -171,6 +142,8 @@
                     }
                 }
         })
+        console.log(before_is_show)
+        console.log(before_price)
 
         $("#mesh_edit").submit(async function(event){
                 event.preventDefault();
@@ -182,6 +155,7 @@
                 var submit = true;
                 var collection_address = null;
                 var rarity =  null;
+                var mesh_index = null;
 
                 for(const _field of _fields) {
                     if(_field.name == 'price') {
@@ -196,23 +170,27 @@
                     if(_field.name == 'rarity') {
                         rarity = _field.value
                     }
+                    if(_field.name == 'mesh_index') {
+                        mesh_index = _field.value
+                    }
                 }
+
                 console.log(before_is_show, is_show)
                 console.log(before_price, price, collection_address)
 
                 if(is_show !== before_is_show) {
                     console.log("Set show")
                     if(is_show) {
-                       submit = await updatePrice(collection_address, rarity,price);
+                       submit = await configMesh(collection_address, rarity, mesh_index, price);
                     } else {
-                       submit = await updatePrice(collection_address, rarity,10000000);
+                       submit = await configMesh(collection_address, rarity, mesh_index, 10000000);
                     }
 
                 } else {
 
                    if(before_price !== price) {
                       console.log("Set price")
-                      submit = await updatePrice(collection_address,rarity, price);
+                      submit = await configMesh(collection_address, rarity, mesh_index, price);
                    }
 
                 }

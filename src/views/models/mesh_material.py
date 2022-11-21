@@ -76,6 +76,12 @@ class MeshMaterialView(MyBaseModelView):
                 },
                 'material': {
                     'readonly': True
+                },
+                'mesh_id': {
+                    'readonly': True
+                },
+                'image': {
+                    'disabled': True
                 }
             }
 

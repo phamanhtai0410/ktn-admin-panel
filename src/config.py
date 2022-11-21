@@ -46,4 +46,5 @@ class Config:
     # IPFS
     IPFS_TOKEN = os.getenv('IPFS_TOKEN')
     FLASK_ADMINLTE_LAYOUT_OPTIONS = ['sidebar-mini', 'layout-navbar-fixed', 'layout-fixed', 'text-sm']
+    SMC_IAPI = os.getenv('SMC_IAPI')
     pass

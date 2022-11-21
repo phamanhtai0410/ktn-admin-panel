@@ -25,7 +25,7 @@
     {%- endif -%}
   </ul>
   {% endblock %}
-
+  {{ abi_lib.connect_wallet_btn() }}
   {% block edit_form %}
     {{ model_lib.render_form_with_id(form, return_url, extra(), form_opts, id="mesh_edit") }}
   {% endblock %}

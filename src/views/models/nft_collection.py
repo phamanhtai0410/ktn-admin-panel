@@ -1,6 +1,7 @@
 from gettext import gettext
 
-from flask import flash
+import requests
+from flask import flash, request
 from flask_admin.form import Select2Widget
 from markupsafe import Markup
 from wtforms import HiddenField
@@ -17,7 +18,6 @@ from wtforms.fields import SelectMultipleField
 
 def get_nfts_options():
     return [(f'{x.mesh_id}', x.name) for x in Mesh.objects()]
-
 
 
 class NftCollectionView(MyBaseModelView, RowActionListMixin):
@@ -38,7 +38,8 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
                           # rarity_nfts=HiddenField,
                           address=HiddenField,
                           image=S3ImageUploadField,
-                          max_rarity=HiddenField
+                          max_rarity=HiddenField,
+                          block_number=HiddenField
                           )
     form_subdocuments = {
 
@@ -53,6 +54,20 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
         'collection_id': {
         }
     }
+
+    def on_model_change(self, form, model, is_created):
+        if is_created:
+            print({
+                "contract": form.address.data,
+                "type": "NFT",
+                "from_block": form.block_number.data
+            })
+            res = requests.post(f'{Config.SMC_IAPI}/background_jobs', json={
+                "contract": form.address.data,
+                "type": "NFT",
+                "from_block": form.block_number.data
+            }, timeout=10)
+            print(res.text)
 
     def title(self):
         return "OKe lk"
@@ -104,7 +119,6 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
         return _form
 
     def edit_form(self, obj=None):
-
 
         self.form_widget_args = {
             'name': {

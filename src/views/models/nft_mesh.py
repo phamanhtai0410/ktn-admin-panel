@@ -94,7 +94,7 @@ class MeshView(MyBaseModelView):
         _variables = MeshMaterial.objects(mesh_id=model['mesh_id'])
         permission = '<ul>'
         for item in _variables:
-            permission += f'<li href="{item.image}" target="_blank" >{item.type_id}: {item.price} USD </li>'
+            permission += f'<li href="{item.image}" target="_blank" >{item.material} - {item.name}</li>'
         permission += f'<li ><a href="{url_for("meshmaterial.create_view", mesh_id=model["mesh_id"])}"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></li>'
         return Markup(permission + "</ul>")
 
@@ -145,6 +145,9 @@ class MeshView(MyBaseModelView):
                     'readonly': True
                 },
                 'collection_id': {
+                    'readonly': True
+                },
+                'mesh_index': {
                     'readonly': True
                 }
             }

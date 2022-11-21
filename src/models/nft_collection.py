@@ -22,6 +22,6 @@ class NftCollection(BaseDocument):
     # rarity_nfts = ListField(DictField())
     address = StringField()
     max_rarity = IntField(default=0)
-
+    block_number = IntField()
     def __str__(self):
         return self.name if self else ''

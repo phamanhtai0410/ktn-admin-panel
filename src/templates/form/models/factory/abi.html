@@ -27,7 +27,7 @@
             $("#process_text").text("Wait tx "+ result.hash +"......")
             var tx = await result.wait()
             console.log(tx)
-
+            $("#block_number").val(tx.blockNumber)
             tx.events.forEach(event=>{
                   if(event.event==='CreateNftCollection') {
                      console.log("address",event.args[0])

@@ -18,7 +18,7 @@ class MeshMaterial(BaseDocument):
     nft_id = IntField()
     mesh_id = IntField(required=True)
     mesh_index = IntField()
-    material = IntField(unique=True)
+    material = IntField(required=True)
     image = StringField(required=True)
     description = StringField(required=True)
 
