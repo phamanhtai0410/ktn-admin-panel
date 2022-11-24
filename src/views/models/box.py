@@ -6,7 +6,6 @@ from flask_admin.contrib.mongoengine.fields import ModelFormField
 from flask_admin.form import FormOpts
 from markupsafe import Markup
 from wtforms import HiddenField, SelectField, FieldList, Form, IntegerField, validators
-from wtforms.validators import InputRequired
 
 from src.abis import factory_abi, box_creator_abi, box_factory_abi
 from src.config import Config
@@ -82,7 +81,7 @@ class BoxView(MyBaseModelView, RowActionListMixin):
         _cols = NftCollection.objects()
 
         self.before_price = obj.price
-
+        self.before_disable_mint = obj.disable_mint
         _form.collection.choices = [(x.address, x.name) for x in _cols]
         return _form
 
@@ -107,12 +106,22 @@ class BoxView(MyBaseModelView, RowActionListMixin):
 
         kwargs['creator_abi'] = box_creator_abi
         kwargs['creator_address'] = Config.BOX_CREATOR_ADDRESS
+
+
         kwargs['factory_abi'] = box_factory_abi
         kwargs['factory_address'] = Config.BOX_FACTORY_ADDRESS
         kwargs['pay_token'] = Config.PAY_TOKEN
         kwargs['before_price'] = 0
 
+        kwargs['before_disable_mint'] = False
+
+        kwargs['nft_factory_abi'] = factory_abi
+        kwargs['nft_factory_address'] = Config.NFT_FACTORY_ADDRESS
+
         if hasattr(self, 'before_price'):
             kwargs['before_price'] = self.before_price
+
+        if hasattr(self, 'before_disable_mint'):
+            kwargs['before_disable_mint'] = self.before_disable_mint
 
         return super(BoxView, self).render(template, **kwargs)

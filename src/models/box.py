@@ -28,13 +28,14 @@ class Box(BaseDocument):
     collection = StringField(required=True)
     # nfts = ListField(EmbeddedDocumentField(NFTRare))
     description = StringField(required=True)
-    image = StringField(required=True)
+    image = StringField()
     price = IntField(required=True)
     discount = FloatField(min_value=0, max_value=100)
     commission = FloatField(min_value=0, max_value=100)
     commission_level_2 = FloatField(min_value=0, max_value=100)
     active = BooleanField(default=False)
     block_number = IntField()
+    disable_mint = BooleanField(default=False)
 
     def __str__(self):
         return self.address if self else ''

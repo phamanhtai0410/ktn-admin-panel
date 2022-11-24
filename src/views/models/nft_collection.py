@@ -129,7 +129,7 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
             }
         }
 
-        self.before_delist = obj.delist
+        self.before_disable_mint = obj.disable_mint
 
         _form = super(NftCollectionView, self).edit_form(obj)
         return _form
@@ -153,9 +153,9 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     def render(self, template, **kwargs):
         kwargs['factory_abi'] = factory_abi
         kwargs['factory_address'] = Config.NFT_FACTORY_ADDRESS
-        kwargs['before_delist'] = 0
-        if hasattr(self, 'before_delist'):
-            kwargs['before_delist'] = self.before_delist
+        kwargs['before_disable_mint'] = 0
+        if hasattr(self, 'before_disable_mint'):
+            kwargs['before_disable_mint'] = self.before_disable_mint
 
         return super(NftCollectionView, self).render(template, **kwargs)
 

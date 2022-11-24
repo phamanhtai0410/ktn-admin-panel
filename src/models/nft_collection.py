@@ -21,7 +21,8 @@ class NftCollection(BaseDocument):
     address = StringField()
     max_rarity = IntField(default=0)
     block_number = IntField()
-    delist = BooleanField(default=False)
+    # delist = BooleanField(default=False)
+    disable_mint = BooleanField(default=False)
 
     def __str__(self):
         return self.name if self else ''

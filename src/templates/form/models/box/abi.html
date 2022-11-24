@@ -10,16 +10,69 @@
 <script>
     var abi = {{ creator_abi | tojson(indent=2) }}
     var factory_abi = {{ factory_abi | tojson(indent=2) }}
-
     var address = "{{ creator_address }}"
     var factory_address = "{{ factory_address }}"
+
+    var nft_factory_abi = {{ nft_factory_abi | tojson(indent=2) }}
+    var nft_factory_address = "{{ nft_factory_address }}"
+    var nftFactoryContract = null;
 
     var creatorContract = null;
     var before_price = {{ before_price }}
     var payToken = "{{ pay_token }}";
     var factoryContract = null;
 
+    var before_disable_mint = {{ before_disable_mint | tojson(indent=2) }}
 
+    var IMPLEMENTATION_ROLE = "0x8f257e937a449d287051f1249e0edc3b5d08b547aa4f08807b9ce2a406bcf60f"
+    if(before_disable_mint) {
+      before_disable_mint = "y"
+    } else {
+       before_disable_mint = null
+    }
+    async function grantRole(box_address) {
+
+        try {
+
+            $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Set role for box...</h3> </section> </div>')
+
+            if(!nftFactoryContract) {
+                nftFactoryContract =  await initSignerContract(nft_factory_address, nft_factory_abi)
+            }
+
+            let _box_address =  ethers.utils.getAddress(box_address)
+
+            $("#process_text").text("Sign tx......")
+            console.log(box_address)
+            var result = await nftFactoryContract.grantRole(IMPLEMENTATION_ROLE,_box_address);
+            console.log(result)
+
+            $("#process_text").text("Grant role: Wait tx "+ result.hash +"......")
+            var tx = await result.wait()
+            console.log(tx)
+            return true;
+
+        } catch(e) {
+
+           console.error(e)
+
+           console.log(e.data?.message)
+
+           console.log(e.toString())
+
+           console.log(e.data?.message)
+
+           var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+
+           $("#msg_nft_detail").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+
+           console.error(e)
+
+           $("#abi_lock_page").html('')
+
+        }
+        return false;
+    }
     async function updatePrice(price) {
 
         try {
@@ -67,7 +120,7 @@
         return false;
     }
 
-    async function deployBox(name, symbol, payToken) {
+    async function deployBox(name, symbol, payToken, collection) {
       try {
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
 
@@ -76,8 +129,11 @@
             }
 
             $("#process_text").text("Deploy a box......")
+            collection = ethers.utils.getAddress(collection)
 
-            var result = await factoryContract.createBoxMystery(name, symbol, payToken);
+            console.log(name, symbol, payToken, collection);
+
+            var result = await factoryContract.createBoxMystery(name, symbol, payToken, collection);
             console.log(result)
 
             $("#process_text").text("Deploy: wait tx "+ result.hash +"......")
@@ -90,7 +146,7 @@
             var address;
 
             tx.events.forEach( event=>{
-                  if(event.event === 'CreateNftCollection') {
+                  if(event.event === 'CreateBoxCollection') {
                      console.log("address", event.args[0])
 
                      address = event.args[0]
@@ -98,7 +154,12 @@
                      $("#address").val(event.args[0].toLowerCase())
                   }
             })
+            var _hasRole = await grantRole(address)
+            if(!_hasRole) {
 
+                $("#msg_factory").html('<div   class="alert alert-danger" role="alert"> grant role error </div>')
+                return false;
+            }
             return address;
 
         } catch(e) {
@@ -112,11 +173,11 @@
         }
         return false;
     }
-    async function createBox(name, symbol, description, price, cid) {
+    async function createBox(collection, name, symbol, description, price, cid) {
 
                try {
                     var _payToken = ethers.utils.getAddress(payToken)
-                    var address = await deployBox(name, symbol, _payToken)
+                    var address = await deployBox(name, symbol, _payToken, collection)
                     if(address) {
                             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Config box...</h3> </section> </div>')
 
@@ -188,6 +249,40 @@
 
                 });
     }
+
+
+    async function updatePurchasableOfBox( box_address, isBool) {
+        try {
+
+            $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
+
+            if(!factoryContract) {
+                factoryContract =  await initSignerContract(factory_address, factory_abi)
+            }
+
+            $("#process_text").text("Sign tx......")
+            var _box_address = ethers.utils.getAddress(box_address)
+
+            var result = await factoryContract.updateBuyable(_box_address, isBool);
+            console.log(result)
+
+            $("#process_text").text("Wait tx "+ result.hash +"......")
+            var tx = await result.wait()
+
+            $("#process_text").html('<div  class="alert alert-success" role="alert"> Successfully </div>')
+            return true;
+        } catch(e) {
+           console.error(e)
+           console.log(e.data?.message)
+           console.log(e.toString())
+           console.log(e.data?.message)
+           var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+           $("#msg_factory").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+           console.error(e)
+           $("#abi_lock_page").html('')
+        }
+        return false;
+    }
     $( document ).ready(function() {
 
         $("#factory_create_box").submit(async function(event){
@@ -199,7 +294,7 @@
 
                console.log(_fields)
 
-               var name, symbol, price, description;
+               var name, symbol, price, description, collection;
 
                var price = null;
 
@@ -222,12 +317,15 @@
                     if(_field.name == 'price') {
                         price = _field.value;
                     }
+                    if(_field.name == 'collection') {
+                        collection = _field.value;
+                    }
                }
               $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Waiting for create metadata...</h3> </section> </div>')
 
                var cid = await createCIDForBox(description, name);
                if(cid) {
-                    submit = await createBox(name, symbol, description, price, cid)
+                    submit = await createBox(collection , name, symbol, description, price, cid)
 
                }
 
@@ -258,12 +356,22 @@
 
                     var price = null;
                     var submit = true;
-
+                    var disable_mint, address;
                     for(const _field of _fields) {
 
+                        if(_field.name == 'address') {
+
+                            address = ethers.utils.getAddress(_field.value)
+
+                        }
                         if(_field.name == 'price') {
 
                             price = Number(_field.value)
+
+                        }
+                        if(_field.name == 'disable_mint') {
+
+                            disable_mint = disable_mint
 
                         }
                     }
@@ -275,6 +383,17 @@
                           console.log("Set")
 
                           submit = await updatePrice(price);
+
+                    }
+
+
+                    if(disable_mint !== before_disable_mint) {
+
+                       if(disable_mint) {
+                            submit = await updatePurchasableOfBox(address, false);
+                        } else {
+                          submit = await updatePurchasableOfBox(address, true);
+                        }
 
                     }
                     if(submit) {

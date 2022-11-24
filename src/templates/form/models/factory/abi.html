@@ -12,12 +12,12 @@
     var address = "{{ factory_address }}"
 
     var factoryContract = null;
-    var before_delist = {{ before_delist | tojson(indent=2)  }}
+    var before_disable_mint = {{ before_disable_mint | tojson(indent=2)  }}
 
-    if(before_delist) {
-        before_delist = "y"
+    if(before_disable_mint) {
+        before_disable_mint = "y"
     } else {
-       before_delist = null
+       before_disable_mint = null
     }
 
     async function createNftCollection(name, symbol) {
@@ -54,6 +54,9 @@
         }
         return false;
     }
+
+
+
     $( document ).ready(function() {
         $("#factory_create_collection").submit(async function(event){
                 event.preventDefault();
@@ -87,26 +90,24 @@
                 var _fields = $(this).serializeArray()
                 console.log(_fields)
 
-                var delist = null;
+                var disable_mint = null;
+                var collection_address;
                 var submit = true;
 
                 for(const _field of _fields) {
-                    if(_field.name == 'delist') {
-                        delist = _field.delist
-
+                    if(_field.name == 'disable_mint') {
+                        disable_mint = _field.value
+                    }
+                   if(_field.name == 'address') {
+                        collection_address = _field.value
                     }
                 }
 
-                console.log(before_is_show, is_show)
-                console.log(before_price, price, collection_address)
+                console.log(before_disable_mint, collection_address)
 
-                if(delist !== before_delist) {
-                    console.log("Set delist")
-                    if(delist) {
-                       // submit = await configMesh(collection_address, rarity, mesh_index, price);
-                    } else {
-                      // submit = await configMesh(collection_address, rarity, mesh_index, 10000000);
-                    }
+                if(disable_mint !== before_disable_mint) {
+                    console.log("Set disable_mint")
+
 
                 }
 
