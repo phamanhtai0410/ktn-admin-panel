@@ -16,7 +16,8 @@ ROLES_PAGE_ACCESS = [
 ]
 
 LOCK_PAGE = ['Order', 'Minted Nfts','Mesh', 'Nft Rarity', 'User App', 'Referral',
-             'Mesh Material', 'Exchange Log', 'Point Log', 'Nft History', 'Nft Collection','Box']
+             'Mesh Material', 'Exchange Log', 'Point Log', 'Nft History',
+             'Nft Collection','Box', 'Rate Of Box']
 
 ROLES__PAGE_ACCESS_DISPLAY = {
     'user': 'User',

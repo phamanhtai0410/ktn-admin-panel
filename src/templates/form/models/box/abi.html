@@ -9,15 +9,23 @@
 
 <script>
     var abi = {{ creator_abi | tojson(indent=2) }}
+    var factory_abi = {{ factory_abi | tojson(indent=2) }}
+
     var address = "{{ creator_address }}"
+    var factory_address = "{{ factory_address }}"
 
     var creatorContract = null;
     var before_price = {{ before_price }}
+    var payToken = "{{ pay_token }}";
+    var factoryContract = null;
 
 
     async function updatePrice(price) {
+
         try {
+
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
+
             if(!creatorContract) {
                 creatorContract =  await initSignerContract(address, abi)
             }
@@ -36,93 +44,257 @@
 
             $("#process_text").html('<div  class="alert alert-success" role="alert"> Successfully </div>')
             return true;
+
         } catch(e) {
+
            console.error(e)
+
+           console.log(e.data?.message)
+
+           console.log(e.toString())
+
+           console.log(e.data?.message)
+
+           var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+
+           $("#msg_nft_detail").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+
+           console.error(e)
+
+           $("#abi_lock_page").html('')
+
+        }
+        return false;
+    }
+
+    async function deployBox(name, symbol, payToken) {
+      try {
+            $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
+
+            if(!factoryContract) {
+                factoryContract =  await initSignerContract(factory_address, factory_abi)
+            }
+
+            $("#process_text").text("Deploy a box......")
+
+            var result = await factoryContract.createBoxMystery(name, symbol, payToken);
+            console.log(result)
+
+            $("#process_text").text("Deploy: wait tx "+ result.hash +"......")
+
+            var tx = await result.wait()
+
+            console.log(tx)
+
+            $("#block_number").val(tx.blockNumber)
+            var address;
+
+            tx.events.forEach( event=>{
+                  if(event.event === 'CreateNftCollection') {
+                     console.log("address", event.args[0])
+
+                     address = event.args[0]
+
+                     $("#address").val(event.args[0].toLowerCase())
+                  }
+            })
+
+            return address;
+
+        } catch(e) {
            console.log(e.data?.message)
            console.log(e.toString())
            console.log(e.data?.message)
            var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
-           $("#msg_nft_detail").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+           $("#msg_factory").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
            console.error(e)
            $("#abi_lock_page").html('')
         }
         return false;
     }
+    async function createBox(name, symbol, description, price, cid) {
+
+               try {
+                    var _payToken = ethers.utils.getAddress(payToken)
+                    var address = await deployBox(name, symbol, _payToken)
+                    if(address) {
+                            $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Config box...</h3> </section> </div>')
+
+                            var result = await factoryContract.configOne(address, cid, price, 0);
+
+                            console.log(result)
+
+                            $("#process_text").text("Config: wait tx "+ result.hash +"......")
+
+                            var tx = await result.wait()
+
+                            $("#process_text").html('<div  class="alert alert-success" role="alert"> Successfully </div>')
+
+                            return true;
+                    }
 
 
+               } catch(e) {
 
+                   console.error(e)
+
+                   console.log(e.data?.message)
+                   console.log(e.toString())
+
+                   console.log(e.data?.message)
+                   var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+
+                   $("#msg_nft_detail").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+                   console.error(e)
+                   $("#abi_lock_page").html('')
+
+               }
+               return false;
+        }
+    async function createCIDForBox(description, name) {
+           return await new Promise(async function(resolve, reject) {
+                    var form = new FormData();
+                    var fileInput = $("#image").prop('files')
+                    console.log(fileInput)
+
+                    form.append("file", fileInput[0]);
+
+                    form.append("description", description);
+
+                    form.append("name", name);
+
+                    var xhr = new XMLHttpRequest();
+
+                    xhr.withCredentials = true;
+
+                    xhr.responseType = 'json';
+
+                    xhr.addEventListener("readystatechange", function() {
+                        if(this.readyState === 4) {
+                          console.log('response', this.response);
+                          if(this.response) {
+                            resolve(this.response.metadata_cid)
+                          }
+                          reject(null)
+                        }
+
+
+                    });
+
+                    xhr.open("POST", "{{ url_for('root_blueprint.box_cid') }}");
+
+                    xhr.send(form);
+
+
+                });
+    }
     $( document ).ready(function() {
-        $("#collection_create_rarity").submit(async function(event){
-                event.preventDefault();
-                var _fields = $(this).serializeArray()
-                console.log(_fields)
-                var price = null;
-                var collection_id = null;
-                var description = null
-                var name= null;
-                var rarity_code = null;
-                var submit = true;
-                for(const _field of _fields) {
-                    if(_field.name == 'price') {
-                        price = _field.value
-                    }
-                    if(_field.name == 'collection_id') {
-                        collection_id = _field.value
-                    }
-                    if(_field.name == 'description') {
-                        description = _field.value
-                    }
+
+        $("#factory_create_box").submit(async function(event){
+
+           try {
+
+               event.preventDefault();
+               var _fields = $(this).serializeArray()
+
+               console.log(_fields)
+
+               var name, symbol, price, description;
+
+               var price = null;
+
+               var submit = true;
+
+               for(const _field of _fields) {
+
                     if(_field.name == 'name') {
-                        name = _field.value
+                        name = _field.value;
                     }
-                    if(_field.name == 'rarity_code') {
-                        rarity_code = _field.value
+
+                    if(_field.name == 'symbol') {
+                        symbol = _field.value;
                     }
-                }
-                var cid = await createMetadata(description, name, rarity_code);
-                if(cid) {
-                    var collection = address_of_collections.find(v=>v[0]==collection_id)
 
-                    console.log(collection)
-
-                    var res = await addNewNftRarities(
-                        collection[1], [price]
-                    )
-
-                    console.log("res", res)
-                    if(res) {
-                      $(this).unbind('submit').submit();
+                    if(_field.name == 'description') {
+                        description = _field.value;
                     }
-                }
+
+                    if(_field.name == 'price') {
+                        price = _field.value;
+                    }
+               }
+              $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Waiting for create metadata...</h3> </section> </div>')
+
+               var cid = await createCIDForBox(description, name);
+               if(cid) {
+                    submit = await createBox(name, symbol, description, price, cid)
+
+               }
+
+               if(submit) {
+                   $(this).unbind('submit').submit();
+               }
+
+           } catch(e) {
+               console.error(e)
+               console.log(e.data?.message)
+               console.log(e.toString())
+               console.log(e.data?.message)
+               var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+               $("#msg_nft_detail").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+               console.error(e)
+               $("#abi_lock_page").html('')
+           }
+
         })
 
         $("#box_edit").submit(async function(event){
-                event.preventDefault();
-                var _fields = $(this).serializeArray()
-                console.log(_fields)
 
-                var price = null;
-                var submit = true;
-                for(const _field of _fields) {
-                    if(_field.name == 'price') {
-                        price = Number(_field.value)
+            try {
+
+                    event.preventDefault();
+                    var _fields = $(this).serializeArray()
+                    console.log(_fields)
+
+                    var price = null;
+                    var submit = true;
+
+                    for(const _field of _fields) {
+
+                        if(_field.name == 'price') {
+
+                            price = Number(_field.value)
+
+                        }
                     }
-                }
-                console.log(before_price, price)
-                if(before_price !== price && price > 0) {
-                      console.log("Set price")
-                      submit = await updatePrice(price);
-                }
-                if(submit) {
-                   $(this).unbind('submit').submit();
-                }
+
+                    console.log(before_price, price)
+
+                    if(before_price !== price && price > 0) {
+
+                          console.log("Set")
+
+                          submit = await updatePrice(price);
+
+                    }
+                    if(submit) {
+                       $(this).unbind('submit').submit();
+                    }
+
+            } catch(e) {
+               console.error(e)
+               console.log(e.data?.message)
+               console.log(e.toString())
+               console.log(e.data?.message)
+               var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+               $("#msg_nft_detail").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+               console.error(e)
+               $("#abi_lock_page").html('')
+            }
+
 
         })
 
     });
-
-
-
-
 
 </script>

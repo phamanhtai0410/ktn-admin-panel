@@ -43,7 +43,7 @@
 
                     window.signer = window.provider.getSigner()
                     var wallet = await window.signer.getAddress()
-                    $('#connect_wallet').replaceWith($('<h3> Address: ' + wallet + '</h3>'));
+                    $('#connect_wallet').replaceWith($('<h4> Address: ' + wallet + '</h4>'));
                 } catch(e) {
                     console.error(e)
                     alert(e.toString())
@@ -51,9 +51,9 @@
          }
 
     </script>
-    <div>
-        <button id="connect_wallet" class="btn btn-success" onclick="connectWalletBtn()">
-            Connect Wallet </button> <i>This action must be called to blockchain. Please don't leave while the action is in progress.</i>
+    <div class="card d-flex align-items-center justify-content-center p-3">
+        <button id="connect_wallet" style="max-width: 200px !important;" class="btn btn-success m-2" onclick="connectWalletBtn()">
+            Connect Wallet </button> <i class="m-2">This action must be called to blockchain. Please don't leave while the action is in progress.</i>
     </div>
 
 {% endmacro %}

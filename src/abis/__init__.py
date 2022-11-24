@@ -31,3 +31,8 @@ box_creator_abi = None
 with open("src/abis/BOX_CREATOR.json") as f:
     box_creator_abi = json.loads(f.read())
     f.close()
+
+box_factory_abi = None
+with open("src/abis/BOX_FACTORY.json") as f:
+    box_factory_abi = json.loads(f.read())
+    f.close()

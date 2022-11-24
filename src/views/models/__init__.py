@@ -22,6 +22,7 @@ from .nft_rarity import NftRarityView
 from .nft_history import NftHistoryView
 from .order import OrderView
 from .point import PointView
+from .rate_box import RateBoxView
 from .roles import RolesView
 from .user import UserView
 from .user_app import UserAppView
@@ -31,6 +32,7 @@ from .nfts_statistic import NftsStatisticView
 from .referral_reward_config import ReferralRewardConfigView
 from ...models.box import Box
 from .setting import SettingView
+from ...models.box_rate import RateOfBox
 
 from ...models.exchange import ExchangeLog
 from ...models.mesh_material import MeshMaterial
@@ -105,5 +107,6 @@ model_views = [
     NftRarityView(NftRarity, category='Master Data'),
     MeshView(Mesh, name="Mesh", category='Master Data'),
     BoxView(Box, category='Master Data'),
+    RateBoxView(RateOfBox, category='Master Data'),
     MeshMaterialView(MeshMaterial, category='Master Data')
 ]

@@ -20,15 +20,18 @@
   {{ abi_lib.connect_wallet_btn() }}
 
   {% block create_form %}
-    {{ model_lib.render_form_with_id(form, return_url, extra(), form_opts, id="factory_create_box") }}
+    {{ model_lib.render_form_with_id(form, return_url, extra(), form_opts, id="create_rate_of_box") }}
   {% endblock %}
 
 {% endblock %}
 
 {% block tail %}
+
   {{ super() }}
+
   {{ lib.form_js() }}
-  {% include 'form/models/box/abi.html' %}
+
+  {% include 'form/models/rate_of_box/abi.html' %}
 
 {% endblock %}
 

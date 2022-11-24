@@ -48,10 +48,9 @@ def root_view():
 w3 = w3storage.API(
     token=Config.IPFS_TOKEN)
 
+
 def upload_file(file):
     return w3.post_upload(file)
-
-
 
 
 @root_blueprint.route('/metadata_cid', methods=['POST'])
@@ -82,6 +81,30 @@ def root_metadata():
                 "value": _json['material']
             }
         ]
+    }
+
+    print(_metadata)
+    file = io.BytesIO(json.dumps(_metadata).encode())
+    metadata_cid = upload_file(file)
+    print('metadata_cid', metadata_cid)
+    return jsonify({'metadata_cid': metadata_cid})
+
+
+@root_blueprint.route('/box_cid', methods=['POST'])
+@login_required
+def box_cid():
+    print(request.form.to_dict())
+    _json = request.form.to_dict()
+    _image = request.files['file']
+
+    _cid = upload_file(_image)
+
+    _metadata = {
+        "description": _json['description'],
+        "external_url": "",
+        "image": f'https://{_cid}.ipfs.w3s.link',
+        "name": _json['name'],
+        'attributes': []
     }
 
     print(_metadata)

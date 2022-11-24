@@ -4,7 +4,7 @@
         -
         -
 """
-from mongoengine import StringField, IntField, ListField, DictField
+from mongoengine import StringField, IntField, ListField, DictField, BooleanField
 from src.models.base import BaseDocument
 
 
@@ -18,10 +18,10 @@ class NftCollection(BaseDocument):
     symbol = StringField(required=True)
     description = StringField(required=True)
     image = StringField(required=True)
-    # nfts = ListField(IntField(), default=[])
-    # rarity_nfts = ListField(DictField())
     address = StringField()
     max_rarity = IntField(default=0)
     block_number = IntField()
+    delist = BooleanField(default=False)
+
     def __str__(self):
         return self.name if self else ''

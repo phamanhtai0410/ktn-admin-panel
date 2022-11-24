@@ -12,7 +12,13 @@
     var address = "{{ factory_address }}"
 
     var factoryContract = null;
+    var before_delist = {{ before_delist | tojson(indent=2)  }}
 
+    if(before_delist) {
+        before_delist = "y"
+    } else {
+       before_delist = null
+    }
 
     async function createNftCollection(name, symbol) {
         try {
@@ -74,6 +80,40 @@
                 if(res) {
                    $(this).unbind('submit').submit();
                 }
+        })
+
+        $("#factory_edit").submit(async function(event){
+                event.preventDefault();
+                var _fields = $(this).serializeArray()
+                console.log(_fields)
+
+                var delist = null;
+                var submit = true;
+
+                for(const _field of _fields) {
+                    if(_field.name == 'delist') {
+                        delist = _field.delist
+
+                    }
+                }
+
+                console.log(before_is_show, is_show)
+                console.log(before_price, price, collection_address)
+
+                if(delist !== before_delist) {
+                    console.log("Set delist")
+                    if(delist) {
+                       // submit = await configMesh(collection_address, rarity, mesh_index, price);
+                    } else {
+                      // submit = await configMesh(collection_address, rarity, mesh_index, 10000000);
+                    }
+
+                }
+
+                if(submit) {
+                   $(this).unbind('submit').submit();
+                }
+
         })
 
     });

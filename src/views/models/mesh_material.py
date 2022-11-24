@@ -4,7 +4,8 @@ import uuid
 from gettext import gettext
 
 import requests
-from flask import request, flash
+from flask import request, flash, jsonify
+from flask_admin import expose
 from flask_admin.form import RenderTemplateWidget
 from wtforms.fields.core import SelectField
 
@@ -115,3 +116,15 @@ class MeshMaterialView(MyBaseModelView):
             return super(MeshMaterialView, self).create_model(*args, **kwargs)
         except Exception as e:
             flash(gettext(str(e)), 'error')
+
+    @expose('/id', methods=['GET'])
+    def get_id(self):
+        _nft_id = request.args.get('nft_id', type=int)
+        material = MeshMaterial.objects(nft_id=_nft_id).first()
+        if material:
+            _result = json.loads(material.to_json() or "{}")
+            _mesh = Mesh.objects(mesh_id=material.mesh_id).first()
+            print(_result)
+            _result['rarity'] = _mesh.rarity
+            return jsonify(_result)
+        return jsonify({})
