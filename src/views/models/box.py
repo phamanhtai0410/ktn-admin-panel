@@ -41,7 +41,8 @@ class BoxView(MyBaseModelView, RowActionListMixin):
         image=S3ImageUploadField,
         address=HiddenField,
         block_number=HiddenField,
-        box_id=HiddenField
+        box_id=HiddenField,
+        cid=HiddenField
     )
 
     def image_format(view, context, model, name):

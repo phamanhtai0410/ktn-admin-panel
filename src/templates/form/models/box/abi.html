@@ -78,52 +78,6 @@
         return false;
     }
 
-    async function updatePrice(price) {
-
-        try {
-
-            $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
-
-            if(!creatorContract) {
-                creatorContract =  await initSignerContract(address, abi)
-            }
-
-            let _price =  ethers.utils.parseEther(price.toString())
-
-            $("#process_text").text("Sign tx......")
-            console.log(_price)
-            var result = await creatorContract.updatePrice(_price);
-            console.log(result)
-
-            $("#process_text").text("Wait tx "+ result.hash +"......")
-            var tx = await result.wait()
-            console.log(tx)
-
-
-            $("#process_text").html('<div  class="alert alert-success" role="alert"> Successfully </div>')
-            return true;
-
-        } catch(e) {
-
-           console.error(e)
-
-           console.log(e.data?.message)
-
-           console.log(e.toString())
-
-           console.log(e.data?.message)
-
-           var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
-
-           $("#msg_nft_detail").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
-
-           console.error(e)
-
-           $("#abi_lock_page").html('')
-
-        }
-        return false;
-    }
 
     async function deployBox(name, symbol, payToken, collection) {
       try {
@@ -180,6 +134,41 @@
         }
         return false;
     }
+    async function configOne(address, cid, price, defaultIndex) {
+      try {
+            if(!factoryContract) {
+                factoryContract =  await initSignerContract(factory_address, factory_abi)
+            }
+            console.log(address, cid, price, defaultIndex)
+            $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Config box...</h3> </section> </div>')
+            var _price = ethers.utils.parseEther(price.toString())
+            var result = await factoryContract.configOne(address, cid, _price, defaultIndex);
+
+            console.log(result)
+
+            $("#process_text").text("Config: wait tx "+ result.hash +"......")
+
+            var tx = await result.wait()
+
+            $("#process_text").html('<div  class="alert alert-success" role="alert"> Successfully </div>')
+
+            return true;
+      }  catch(e) {
+
+           console.error(e)
+
+           console.log(e.data?.message)
+           console.log(e.toString())
+
+           console.log(e.data?.message)
+           var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+
+           $("#msg_nft_detail").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+           console.error(e)
+           $("#abi_lock_page").html('')
+      }
+          return false;
+    }
 
     async function createBox(collection, name, symbol, description, price, cid) {
 
@@ -187,22 +176,9 @@
                     var _payToken = ethers.utils.getAddress(payToken)
                     var address = await deployBox(name, symbol, _payToken, collection)
                     if(address) {
-                            $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Config box...</h3> </section> </div>')
-                            var _price = ethers.utils.parseEther(price.toString())
-                            var result = await factoryContract.configOne(address, cid, _price, 0);
-
-                            console.log(result)
-
-                            $("#process_text").text("Config: wait tx "+ result.hash +"......")
-
-                            var tx = await result.wait()
-
-                            $("#process_text").html('<div  class="alert alert-success" role="alert"> Successfully </div>')
-
-                            return true;
+                      return await configOne(address, cid, price, 0)
                     }
-
-
+                    return false;
                } catch(e) {
 
                    console.error(e)
@@ -332,7 +308,10 @@
               $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Waiting for create metadata...</h3> </section> </div>')
 
                var cid = await createCIDForBox(description, name);
+
                if(cid) {
+
+                    $("#cid").val(cid)
                     submit = await createBox(collection , name, symbol, description, price, cid)
 
                }
@@ -363,8 +342,9 @@
                     console.log(_fields)
 
                     var price = null;
+                    var disable_mint = null;
                     var submit = true;
-                    var disable_mint, address;
+                    var address, cid = null;
                     for(const _field of _fields) {
 
                         if(_field.name == 'address') {
@@ -377,33 +357,62 @@
                             price = Number(_field.value)
 
                         }
+                        if(_field.name == 'cid') {
+
+                            cid = _field.value
+
+                        }
                         if(_field.name == 'disable_mint') {
 
-                            disable_mint = disable_mint
+                            disable_mint = _field.value
 
                         }
                     }
 
-                    console.log(before_price, price)
+                    console.log(before_price, price, cid)
+                    if(!cid || cid==='') {
+                        $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Create metadata...</h3> </section> </div>')
 
+                        var description, name;
+                        for(const _field of _fields) {
+
+
+                            if(_field.name == 'name') {
+
+                                name = _field.value
+
+                            }
+                            if(_field.name == 'description') {
+
+                                description = _field.value
+
+                            }
+                        }
+                        cid = await createCIDForBox(description, name);
+                        $("#cid").val(cid)
+                    }
                     if(before_price !== price && price > 0) {
 
-                          console.log("Set")
+                          console.log("Set price")
 
-                          submit = await updatePrice(price);
+                          submit = await configOne(address, cid, price, 0)
 
                     }
 
+                    if(submit) {
+                        console.log('disable_mint',disable_mint , before_disable_mint)
+                        if(disable_mint !== before_disable_mint) {
 
-                    if(disable_mint !== before_disable_mint) {
+                           if(disable_mint) {
+                                submit = await updatePurchasableOfBox(address, false);
+                            } else {
+                              submit = await updatePurchasableOfBox(address, true);
+                            }
 
-                       if(disable_mint) {
-                            submit = await updatePurchasableOfBox(address, false);
-                        } else {
-                          submit = await updatePurchasableOfBox(address, true);
                         }
 
                     }
+
                     if(submit) {
                        $(this).unbind('submit').submit();
                     }

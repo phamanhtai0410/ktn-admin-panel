@@ -36,6 +36,6 @@ class Box(BaseDocument):
     active = BooleanField(default=False)
     block_number = IntField()
     disable_mint = BooleanField(default=False)
-
+    cid = StringField()
     def __str__(self):
         return self.address if self else ''
