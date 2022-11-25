@@ -30,6 +30,7 @@
     } else {
        before_disable_mint = null
     }
+
     async function grantRole(box_address) {
 
         try {
@@ -37,12 +38,14 @@
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Set role for box...</h3> </section> </div>')
 
             if(!nftFactoryContract) {
+
                 nftFactoryContract =  await initSignerContract(nft_factory_address, nft_factory_abi)
+
             }
 
             let _box_address =  ethers.utils.getAddress(box_address)
 
-            $("#process_text").text("Sign tx......")
+            $("#process_text").text("Sign tx ......")
             console.log(box_address)
             var result = await nftFactoryContract.grantRole(IMPLEMENTATION_ROLE,_box_address);
             console.log(result)
@@ -73,6 +76,7 @@
         }
         return false;
     }
+
     async function updatePrice(price) {
 
         try {
@@ -122,6 +126,7 @@
 
     async function deployBox(name, symbol, payToken, collection) {
       try {
+
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
 
             if(!factoryContract) {
@@ -129,11 +134,13 @@
             }
 
             $("#process_text").text("Deploy a box......")
+
             collection = ethers.utils.getAddress(collection)
 
             console.log(name, symbol, payToken, collection);
 
             var result = await factoryContract.createBoxMystery(name, symbol, payToken, collection);
+
             console.log(result)
 
             $("#process_text").text("Deploy: wait tx "+ result.hash +"......")
@@ -173,6 +180,7 @@
         }
         return false;
     }
+
     async function createBox(collection, name, symbol, description, price, cid) {
 
                try {
@@ -180,8 +188,8 @@
                     var address = await deployBox(name, symbol, _payToken, collection)
                     if(address) {
                             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Config box...</h3> </section> </div>')
-
-                            var result = await factoryContract.configOne(address, cid, price, 0);
+                            var _price = ethers.utils.parseEther(price.toString())
+                            var result = await factoryContract.configOne(address, cid, _price, 0);
 
                             console.log(result)
 
