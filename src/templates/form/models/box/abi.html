@@ -46,8 +46,9 @@
             let _box_address =  ethers.utils.getAddress(box_address)
 
             $("#process_text").text("Sign tx ......")
+
             console.log(box_address)
-            var result = await nftFactoryContract.grantRole(IMPLEMENTATION_ROLE,_box_address);
+            var result = await nftFactoryContract.grantRole(IMPLEMENTATION_ROLE, _box_address);
             console.log(result)
 
             $("#process_text").text("Grant role: Wait tx "+ result.hash +"......")
@@ -161,12 +162,11 @@
                      $("#address").val(event.args[0].toLowerCase())
                   }
             })
-            var _hasRole = await grantRole(address)
-            if(!_hasRole) {
-
-                $("#msg_factory").html('<div   class="alert alert-danger" role="alert"> grant role error </div>')
-                return false;
-            }
+            // var _hasRole = await grantRole(address)
+            // if(!_hasRole) {
+                // $("#msg_factory").html('<div   class="alert alert-danger" role="alert"> grant role error </div>')
+                // return false;
+            // }
             return address;
 
         } catch(e) {
