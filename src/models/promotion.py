@@ -18,5 +18,4 @@ class Promotion(BaseDocument):
     discount = FloatField(required=True)
     used = IntField(required=True)
     total = IntField(required=True)
-    status = BooleanField(default=True)
     

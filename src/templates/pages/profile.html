@@ -1,0 +1,48 @@
+{% extends "my_master.html" %}
+
+{% block title %} Profile {% endblock title %}
+{% macro render_field(field) %}
+    <p>{{ field.label }} {{ field(**kwargs)|safe }}</p>
+{% endmacro %}
+
+
+{% macro render_field_with_errors(field) %}
+     <p>{{ field.label }} {{ field(**kwargs)|safe }}</p>
+
+
+      {% if field.errors %}
+      <div class="block">
+            <ul>
+            {% for error in field.errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+      </div>
+
+  {% endif %}
+{% endmacro %}
+
+{% block body %}
+{% macro render_field_submit(field) %}
+  <p>{{ field(**kwargs)|safe }}</p>
+{% endmacro %}
+<div class="card">
+    <div class="card-body login-card-body">
+        <form method="POST" name="edit_user">
+            <div class="input-group mb-3">
+                {{ form.csrf_token }}
+                {{ form.hidden_tag() }}
+            </div>
+            {{ render_field_with_errors(form.password, type="password" ,class="form-control", placeholder="Password", icon="envelope")
+            }}
+            {{ render_field_with_errors(form.password2, type="password", class="form-control", placeholder="Confirm Password", icon="lock")
+            }}
+            <div class="row">
+                <div class="col-4">
+                    {{ render_field_submit(form.submit, class="btn btn-primary btn-block") }}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock body %}

@@ -1,0 +1,170 @@
+{% import 'form/models/abi.html' as abi_lib with context %}
+<div style="  position: fixed;   top: 100px; right: 0;   width: fit-content;  z-index: 100000; " id="msg_factory">
+
+</div>
+<div id="abi_lock_page">
+
+</div>
+{{ abi_lib.script_abi() }}
+
+<script>
+    var abi = {{ factory_abi | tojson(indent=2) }}
+    var address = "{{ factory_address }}"
+
+    var factoryContract = null;
+
+
+    async function createCID(description, name, rarity, mesh_index, material) {
+           return await new Promise(async function(resolve, reject) {
+                    var form = new FormData();
+                    var fileInput = $("#image").prop('files')
+                    console.log(fileInput)
+
+                    form.append("file", fileInput[0]);
+                    form.append("description", description);
+                    form.append("name", name);
+
+                    form.append("rarity", rarity);
+                    form.append("mesh_index", mesh_index);
+                    form.append("material", material);
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.withCredentials = true;
+                    xhr.responseType = 'json';
+                    xhr.addEventListener("readystatechange", function() {
+                        if(this.readyState === 4) {
+                          console.log('response', this.response);
+                          if(this.response) {
+                            resolve(this.response.metadata_cid)
+                          }
+                          reject(null)
+                        }
+
+
+                    });
+
+                    xhr.open("POST", "{{ url_for('root_blueprint.root_metadata') }}");
+
+                    xhr.send(form);
+
+
+                });
+    }
+    async function configOne(_nftCollection, _rarity, _meshIndex, _price, _meshMaterial, _cid) {
+        try {
+            if(!factoryContract) {
+                factoryContract =  await initSignerContract(address, abi)
+            }
+
+            _price = ethers.utils.parseEther(_price)
+            _nftCollection = ethers.utils.getAddress(_nftCollection)
+
+
+            $("#process_text").text("Sign tx......")
+            console.log(_nftCollection, _rarity, _meshIndex, _price, _meshMaterial, _cid)
+            var result = await factoryContract.configOne(_nftCollection, _rarity, _meshIndex, _price, _meshMaterial, _cid);
+            console.log(result)
+            $("#process_text").text("Wait tx "+ result.hash +"......")
+            var tx = await result.wait()
+            console.log(tx)
+
+            tx.events.forEach(event=>{
+                  if(event.event==='ConfigOne') {
+                     console.log("event",event.args)
+                  }
+            })
+            $("#process_text").html('<div  class="alert alert-success" role="alert"> Successfully </div>')
+            return true;
+        } catch(e) {
+           console.error(e)
+           console.log(e.data?.message)
+           console.log(e.toString())
+           console.log(e.data?.message)
+           var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+           $("#msg_factory").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+           console.error(e)
+           $("#abi_lock_page").html('')
+        }
+        return false;
+    }
+
+    async function getData(url, form) {
+        return await new Promise(async function(resolve, reject) {
+
+               return await $.ajax(
+               {
+                    dataType: 'json',
+					url: url,
+					"method": "POST",
+                    contentType: 'application/json',
+                    "data" : JSON.stringify(form),
+					success: function ( json ) {
+					    console.log(json);
+						resolve(json)
+					},
+					error: function (e) {
+						 console.error(e);
+					}
+               })
+         });
+    }
+
+    $( document ).ready(async function() {
+        $("#create_mesh_material").submit(async function(event){
+                $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Load metadata...</h3> </section> </div>')
+
+                event.preventDefault();
+                 // continues    event.currentTarget.submit();
+                var _fields = $(this).serializeArray()
+                console.log(_fields)
+                var material, description;
+                var mesh_id = null;
+                var formData = {
+
+                }
+                for(const _field of _fields) {
+                    if(_field.name == 'material') {
+                        material = _field.value
+                    }
+                    if(_field.name == 'description') {
+                        description = _field.value
+                    }
+                     if(_field.name == 'mesh_id') {
+                        mesh_id = _field.value
+                    }
+                }
+
+                var mesh = await getData( "{{ url_for('mesh.get_mesh') }}", {
+                   "mesh_id": mesh_id
+                });
+
+                $("#mesh_index").val(mesh.mesh_index)
+
+                if(mesh) {
+
+                    var _cid = await createCID(
+                        description, mesh.name, mesh.rarity, mesh.mesh_index, material
+                    )
+
+                    $("#cid").val(_cid)
+
+                    var res = await configOne(
+                            mesh.address, mesh.rarity, mesh.mesh_index,
+                            mesh.price, material, _cid
+                    )
+
+                    console.log("res", res)
+                    if(res) {
+                       $(this).unbind('submit').submit();
+                    }
+
+                }
+
+        })
+
+    });
+
+
+
+
+</script>

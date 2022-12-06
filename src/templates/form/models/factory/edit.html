@@ -1,0 +1,40 @@
+{% extends 'admin/model/edit.html' %}
+{% import 'form/models/abi.html' as abi_lib with context %}
+{% import 'form/models/lib.html' as model_lib with context %}
+
+
+
+{% block body %}
+  {% block navlinks %}
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a href="{{ return_url }}" class="nav-link">{{ _gettext('List') }}</a>
+    </li>
+    {%- if admin_view.can_create -%}
+    <li class="nav-item">
+        <a href="{{ get_url('.create_view', url=return_url) }}" class="nav-link">{{ _gettext('Create') }}</a>
+    </li>
+    {%- endif -%}
+    <li class="nav-item">
+        <a href="javascript:void(0)" class="nav-link active">{{ _gettext('Edit') }}</a>
+    </li>
+    {%- if admin_view.can_view_details -%}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ get_url('.details_view', id=request.args.get('id'), url=return_url) }}">{{ _gettext('Details') }}</a>
+    </li>
+    {%- endif -%}
+  </ul>
+  {% endblock %}
+  {{ abi_lib.connect_wallet_btn() }}
+  {% block edit_form %}
+    {{ model_lib.render_form_with_id(form, return_url, extra(), form_opts, id="factory_edit") }}
+  {% endblock %}
+
+{% endblock %}
+
+{% block tail %}
+  {{ super() }}
+  {{ lib.form_js() }}
+  {% include 'form/models/factory/abi.html' %}
+
+{% endblock %}

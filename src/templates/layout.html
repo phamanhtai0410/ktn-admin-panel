@@ -28,12 +28,13 @@
           <li class="treeview {% if class_name %} {{ class_name }}{% endif %}">
         {%- endif %}
 
-     <a>
+      <a>
+            {{ menu_icon(item) }}
             <span>{{ item.name }}</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
-          </a>
+      </a>
       <ul class="treeview-menu">
         {%- for child in children -%}
           {%- if child.is_category() -%}
@@ -44,11 +45,11 @@
               {%- if child.is_active(admin_view) %}
                 <a class="dropdown-item active" href="{{ child.get_url() }}"{% if child.target %}
                    target="{{ child.target }}"{% endif %}>
-                  <i class="fa fa-circle-o"></i> {{ child.name }}</a>
+                  {{ menu_icon(child) }}  {{ child.name }}</a>
               {% else %}
                 <a class="dropdown-item" href="{{ child.get_url() }}"{% if child.target %}
                    target="{{ child.target }}"{% endif %}>
-                  <i class="fa fa-circle-o"></i> {{ child.name }}</a>
+                  {{ menu_icon(child) }}  {{ child.name }}</a>
               {%- endif %}
             </li>
           {%- endif %}

@@ -4,6 +4,8 @@
         -
         -
 """
+import traceback
+
 from flask_login import UserMixin
 from flask_mongoengine import Document
 from flask_security import MongoEngineUserDatastore, RoleMixin
@@ -63,21 +65,18 @@ class User(BaseDocument, UserMixin):
     roles = db.ListField(db.ReferenceField(Role), default=[])
 
     def _save_create(self, doc, force_insert, write_concern):
+        print("_save_create", doc["password"])
         doc["password"] = hash_password(doc["password"])
         return super()._save_create(doc, force_insert, write_concern)
 
-    # def verify_password(self, password):
-    #     return verify_password(password=password, password_hash=self.password)
-    #
-    # @property
-    # def password(self):
-    #     raise AttributeError('password not readable')
-    #
-    # @password.setter
-    # def password(self, password):
-    #     if not password:
-    #         password = "000000"
-    #     self.password = hash_password(password)
+    @classmethod
+    def get_by_email(cls, email):
+        try:
+            print('email', email)
+            return cls.objects.get(email=email)
+        except:
+            traceback.print_exc()
+            return None
 
     # Required for administrative interface
     def __unicode__(self):
