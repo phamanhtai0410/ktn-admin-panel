@@ -14,4 +14,6 @@ class Setting(BaseDocument):
         'strict': False,
         'collection': 'setting'
     }
+
+    key = StringField()
     referral_cookies = IntField()

@@ -9,6 +9,8 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from src.config import Config
 from src.extensions import db, security
 
+from src.models.setting import Setting
+
 app = Flask(__name__, template_folder='./src/templates/', static_folder='./src/static/', static_url_path='/static')
 app.config.update(Config.__dict__)
 
@@ -68,6 +70,10 @@ def create_user():
                                   password=hash_password("root"),
                                   is_admin=True)
 
+    print('setting', Setting.objects.get(key='setting'))
+    if not Setting.objects.get(key='setting'):
+        Setting(key='setting', referral_cookies=30).save()
+
 
 from src.views import blueprints
 
@@ -94,4 +100,4 @@ if Config.SENTRY_DSN:
     )
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=True, port=5100)
