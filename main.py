@@ -3,7 +3,7 @@ import traceback
 import sentry_sdk
 from flask import Flask, g, url_for, render_template
 from flask_admin import Admin, helpers
-from flask_security.utils import hash_password
+# from flask_security.utils import hash_password
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 from src.config import Config

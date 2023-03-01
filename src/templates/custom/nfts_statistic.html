@@ -6,15 +6,16 @@
         <div class="row">
             <div class="col-lg-12 col-xs-12">
                 <!-- small box -->
-                <div class="small-box bg-green">
+                <div class="small-box bg-white">
                     <div class="inner">
                         <h1 class="text-center text-bold"> {{ data|sum(attribute='total') }} USD </h1>
                     </div>
                     <div class="icon">
                         <i class="ion ion-pie-graph"></i>
                     </div>
-                    <spans class="small-box-footer">
-                        <p>Total</p></span>
+                    <span class="small-box-footer">
+                        <p>Total</p>
+                    </span>
                 </div>
             </div>
         </div>
@@ -22,7 +23,7 @@
             {% for row in data %}
             <div class="col-lg-3 col-xs-6">
                 <!-- small box -->
-                <div class="small-box bg-green">
+                <div class="small-box bg-white">
                     <div class="inner">
                         <h3>{{ get_value(row, 'total') }} USD</h3>
                         <p></p>

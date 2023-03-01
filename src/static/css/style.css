@@ -1,0 +1,110 @@
+body {
+    background: #F5F5F5;
+    color: #2B2E4A;
+    font-family: 'Inter';
+    font-style: normal;
+}
+
+.small-box {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px;
+    gap: 24px;
+    background: #FFFFFF;
+    border-radius: 8px;
+
+    /* Inside auto layout */
+
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+    /*height: 100%;*/
+}
+
+.bg-aqua {
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0px;
+}
+
+.small-box .icon > i.ion {
+    font-size: 30px;
+}
+
+.small-box .icon > i {
+    /*left: 15px;*/
+}
+
+[class*="sidebar-dark-"] {
+    background-color: #F5F5F5;
+    color: #0a0e14;
+}
+
+.nav-link {
+    color: #0a0e14 !important;
+}
+.d-block {
+        color: #0a0e14 !important;
+}
+.nav-link:hover {
+    color: #0c84ff !important;
+}
+.brand-link:not([class*="navbar"]) {
+    background-color: #F5F5F5;
+    /*color: #0a0e14;*/
+}
+.elevation-4 {
+    box-shadow: 0px 32px 70px -12px rgba(16, 24, 40, 0.08) !important;
+    border-radius: 8px;
+}
+.content-title h3 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 54px;
+}
+.content-title i {
+    color: #9091A9;
+}
+.content-main > div {
+    background: #FFFFFF;
+    box-shadow: 0px 32px 70px -12px rgba(16, 24, 40, 0.08);
+    border-radius: 8px;
+    margin: 12px;
+}
+.wallet h4 {
+    color: #3742FA;
+    font-weight: 700;
+    font-size: 32px;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.sidebar .nav-link p {
+    color: #485984;
+    font-weight: 500;
+    font-size: 14px;
+}
+.nav-sidebar > .nav-item .nav-icon {
+    color: #273B4A;
+}
+.nav-legacy.nav-sidebar .nav-item > .nav-link {
+    padding: 16px 24px;
+    gap: 8px;
+}
+.text-sm .nav-legacy.nav-sidebar .nav-item > .nav-link > .fa-circle {
+    font-size: 0px;
+    min-width: 25px;
+}
+[class*="sidebar-dark"] .user-panel {
+    border-bottom: 1px solid rgba(215, 216, 229, 1);
+}
+.layout-navbar-fixed .wrapper .sidebar-dark-primary .brand-link:not([class*="navbar"]) {
+    background-color: #FFFFFF;
+}
+.brand-text {
+    color: #2B2E4A;
+}
+[class*="sidebar-dark"] .brand-link {
+        border-bottom: 1px solid rgba(215, 216, 229, 1);
+
+}

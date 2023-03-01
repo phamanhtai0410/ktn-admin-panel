@@ -2,14 +2,10 @@ import requests
 from flask import request, render_template, redirect
 from flask_login import current_user
 from flask_security.utils import hash_password
-from markupsafe import Markup
 from flask_admin import BaseView, expose
-from pydash import get
 
-from src.abis import nft_abi, staking_abi, creator_abi
-from src.config import Config
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, validators, SubmitField, PasswordField, validators
+from wtforms import SubmitField, PasswordField, validators
 
 from src.models.security import User
 from src.utils.s3_image_uploader import S3ImageUploadField
