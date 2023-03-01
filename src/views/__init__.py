@@ -17,6 +17,6 @@ pages = [
     # SettingStakingView(name="Staking", category="Blockchain"),
     # SettingMarketView(name="Market", category="Blockchain")
     ProfileView(name="Password", category="Account"),
-    RoyaltyView(name="Royalty", category="Royalty")
+    RoyaltyView(name="Royalty")
 
 ]
