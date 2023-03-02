@@ -3,7 +3,7 @@ import traceback
 import sentry_sdk
 from flask import Flask, g, url_for, render_template
 from flask_admin import Admin, helpers
-from flask_security.utils import hash_password
+# from flask_security.utils import hash_password
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 from src.config import Config
@@ -67,7 +67,7 @@ def create_user():
     admin_root = app.config.get('ADMIN_ROOT')
     if not UserDatastore.find_user(email=admin_root):
         UserDatastore.create_user(email=admin_root,
-                                  password=hash_password("root"),
+                                  password="root",
                                   is_admin=True)
 
     print('setting', Setting.objects.get(key='setting'))
@@ -80,11 +80,15 @@ from src.views import blueprints
 for _blueprint in blueprints:
     app.register_blueprint(_blueprint)
 
-from src.views.models import model_views
+from src.views.models import model_views, model_categories
 from src.views import pages
+for _model_ca in model_categories.values():
+    admin.add_category(**_model_ca)
 
 for _model_view in model_views:
     admin.add_view(_model_view)
+
+
 for _page in pages:
     admin.add_view(_page)
 

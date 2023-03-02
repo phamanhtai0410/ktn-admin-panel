@@ -4,10 +4,18 @@
         -
         -
 """
+import io
+import json
+import w3storage
+
+import requests
 from flask_login import login_required
 from jinja2 import TemplateNotFound
 
 from flask import Blueprint, request, render_template, redirect, url_for, jsonify
+from pydash import get
+
+from src.config import Config
 
 root_blueprint = Blueprint(
     'root_blueprint',
@@ -36,16 +44,78 @@ def get_segment(request):
 def root_view():
     return redirect(url_for('admin.index'))
 
-# @root_blueprint.route('/get_nft_detail', methods= ['POST'])
-# @login_required
-# def index():
-#     nfts= {
-#         'nft_id': 1,
-#         'name': 'thanh',
-#         'rarity': 2,
-#         'is_active': True
-#     }
-#     print(nfts)
-#     return jsonify({'htmlresponse': render_template('custom/nft_type.html',nfts=nfts)})
-# return nfts
-# return redirect(url_for('admin.index'))
+
+w3 = w3storage.API(
+    token=Config.IPFS_TOKEN)
+
+
+def upload_file(file):
+    return w3.post_upload(file)
+
+
+@root_blueprint.route('/metadata_cid', methods=['POST'])
+@login_required
+def root_metadata():
+    print(request.form.to_dict())
+    _json = request.form.to_dict()
+    _image = request.files['file']
+
+    _cid = upload_file(_image)
+
+    _metadata = {
+        "description": _json['description'],
+        "external_url": "",
+        "image": f'https://{_cid}.ipfs.w3s.link',
+        "name": _json['name'],
+        'attributes': [
+            {
+                "trait_type": "rarity",
+                "value": _json['rarity']
+            },
+            {
+                "trait_type": "mesh_index",
+                "value": _json['mesh_index']
+            },
+            {
+                "trait_type": "mesh_material",
+                "value": _json['material']
+            }
+        ]
+    }
+
+    print(_metadata)
+    file = io.BytesIO(json.dumps(_metadata).encode())
+    metadata_cid = upload_file(file)
+    print('metadata_cid', metadata_cid)
+    return jsonify({'metadata_cid': metadata_cid})
+
+
+@root_blueprint.route('/box_cid', methods=['POST'])
+@login_required
+def box_cid():
+    print(request.form.to_dict())
+    _json = request.form.to_dict()
+    _image = request.files['file']
+
+    _cid = upload_file(_image)
+
+    _metadata = {
+        "description": _json['description'],
+        "external_url": "",
+        "image": f'https://{_cid}.ipfs.w3s.link',
+        "name": _json['name'],
+        'attributes': []
+    }
+
+    print(_metadata)
+    file = io.BytesIO(json.dumps(_metadata).encode())
+    metadata_cid = upload_file(file)
+    print('metadata_cid', metadata_cid)
+    return jsonify({'metadata_cid': metadata_cid})
+
+
+@root_blueprint.route('/file/ipfs', methods=['POST'])
+def upload_ipfs():
+    _image = request.files['file']
+    _cid = upload_file(_image)
+    return jsonify({'ipfs': f'https://{_cid}.ipfs.w3s.link'})

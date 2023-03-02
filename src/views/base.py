@@ -6,19 +6,36 @@
 """
 from flask import redirect, url_for, request, flash, session
 from flask_admin import AdminIndexView, BaseView, expose
+from flask_admin.consts import ICON_TYPE_FONT_AWESOME
 from flask_admin.contrib.mongoengine import ModelView
 from flask_login import current_user, logout_user
 import pydash as py_
 
 from src.models.minted_nfts import MintedNfts
+from src.models.nft_collection import NftCollection
 from src.models.order import Order
 from src.models.user import UserApp
 from src.models.nfts_statistic import NftsStatistic
-from src.models.nft_type import NftType
 from src.routes import LOCK_PAGE
 
 
 class MyBaseModelView(ModelView):
+    def __init__(self, *args, **kwargs):
+        if not 'menu_icon_type' in kwargs.keys():
+            kwargs['menu_icon_type'] = ICON_TYPE_FONT_AWESOME
+        if not 'menu_icon_value' in kwargs.keys():
+            kwargs['menu_icon_value'] = 'fa-circle'
+        super(MyBaseModelView, self).__init__(*args, **kwargs)
+
+    def create_form(self, obj=None):
+        form = super(MyBaseModelView, self).create_form(obj)
+        _args = request.args.to_dict()
+        for key, val in _args.items():
+            if hasattr(form, key):
+                form[key].data = val
+
+        return form
+
     def is_accessible(self):
         # if user is inactive when using, logout this user
         if not current_user.is_authenticated or current_user['active'] == False:
@@ -111,7 +128,7 @@ class MyAdminIndexView(AdminIndexView):
         _total_users = UserApp.objects.count({})
         _total_orders = Order.objects.count({})
         _total_nfts = MintedNfts.objects.count({})
-        _total_collection = NftType.objects.count({})
+        _total_collection = NftCollection.objects.count({})
         _total_nfts_statistic = NftsStatistic.objects().aggregate([
             {
                 "$match": {}

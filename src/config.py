@@ -29,11 +29,13 @@ class Config:
     ASSETS_ROOT = '/static/assets'
     # security
     SECURITY_USER_IDENTITY_ATTRIBUTES = ('email')
-    ADMIN_ROOT = 'root@katana.com'
+    ADMIN_ROOT = 'dev@katana.com'
     NFT_ADDRESS = os.getenv('NFT_ADDRESS')
     STAKING_ADDRESS = os.getenv('STAKING_ADDRESS')
     CREATOR_ADDRESS = os.getenv('CREATOR_ADDRESS')
     BSC_RPC = os.getenv('BSC_RPC')
+    NFT_FACTORY_ADDRESS = os.getenv('NFT_FACTORY_ADDRESS')
+    BOX_CREATOR_ADDRESS = os.getenv('BOX_CREATOR_ADDRESS')
 
     # S3
     AWS_KEY = os.getenv('AWS_KEY')
@@ -41,4 +43,10 @@ class Config:
     BUCKET_NAME = os.getenv('BUCKET_NAME')
     S3_HOST = os.getenv('S3_HOST')
     S3_STATIC = os.getenv('S3_STATIC')
+    # IPFS
+    IPFS_TOKEN = os.getenv('IPFS_TOKEN')
+    FLASK_ADMINLTE_LAYOUT_OPTIONS = ['sidebar-mini', 'layout-navbar-fixed', 'layout-fixed', 'text-sm']
+    SMC_IAPI = os.getenv('SMC_IAPI')
+    BOX_FACTORY_ADDRESS = os.getenv('BOX_FACTORY_ADDRESS')
+    PAY_TOKEN = '0x69c76f1bfd9b85142716f7d766968028fc6b6a1d'
     pass

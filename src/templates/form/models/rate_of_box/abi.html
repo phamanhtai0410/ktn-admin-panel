@@ -1,0 +1,145 @@
+{% import 'form/models/abi.html' as abi_lib with context %}
+<div style="  position: fixed;   top: 100px; right: 0;   width: fit-content;  z-index: 100000; " id="msg_nft_detail">
+
+</div>
+<div id="abi_lock_page">
+
+</div>
+{{ abi_lib.script_abi() }}
+
+<script>
+    var factory_abi = {{ factory_abi | tojson(indent=2) }}
+
+    var factory_address = "{{ factory_address }}"
+
+    var before_proportion = {{ before_proportion }}
+    var payToken = "{{ pay_token }}";
+    var factoryContract = null;
+
+
+    async function getMaterial(url) {
+        return await new Promise(async function(resolve, reject) {
+
+               return await $.ajax(
+               {
+                    dataType: 'json',
+					url: url,
+					"method": "GET",
+                    contentType: 'application/json',
+					success: function ( json ) {
+					    console.log(json);
+						resolve(json)
+					},
+					error: function (e) {
+						 console.error(e);
+					}
+               })
+         });
+    }
+
+    async function configDropRate(boxAddress, _rarity, _meshIndex, _meshMaterial, _proportion) {
+
+               try {
+                   $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>');
+
+                    if(!factoryContract) {
+                        factoryContract =  await initSignerContract(factory_address, factory_abi)
+                    }
+                    console.log("boxAddress", boxAddress)
+                    var _boxAddress = ethers.utils.getAddress(boxAddress)
+                    $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Config box...</h3> </section> </div>')
+
+                    console.log(_boxAddress, _rarity, _meshIndex, _meshMaterial, _proportion);
+
+                    var result = await factoryContract.configDropRate(_boxAddress, _rarity, _meshIndex, _meshMaterial, _proportion);
+
+                    console.log(result)
+
+                    $("#process_text").text("Config: wait tx "+ result.hash +"......")
+
+                    var tx = await result.wait()
+
+                    $("#process_text").html('<div  class="alert alert-success" role="alert"> Successfully </div>')
+
+                    return true;
+
+
+               } catch(e) {
+
+                   console.error(e)
+
+                   console.log(e.data?.message)
+                   console.log(e.toString())
+
+                   console.log(e.data?.message)
+                   var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+
+                   $("#msg_nft_detail").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+                   console.error(e)
+                   $("#abi_lock_page").html('')
+
+               }
+               return false;
+    }
+
+     $( document ).ready(function() {
+
+      $("#create_rate_of_box").submit(async function(event){
+        $("#msg_nft_detail").html('')
+         try {
+
+             event.preventDefault();
+
+             var _fields = $(this).serializeArray()
+
+             console.log(_fields)
+
+             var rarity, meshIndex, meshMaterial, proportion, nft_id, box_address;
+
+            var submit = true;
+
+            for(const _field of _fields) {
+
+                  if(_field.name == 'nft_id') {
+                      nft_id = _field.value;
+                  }
+                  if(_field.name == 'proportion') {
+                      proportion = Number(_field.value);
+                  }
+                  if(_field.name == 'box_address') {
+                      box_address = _field.value;
+                  }
+            }
+
+            if(!Number.isInteger(proportion) || proportion <0 || proportion>100) {
+                $("#msg_nft_detail").html('<div   class="alert alert-danger" role="alert"> Proportion must be integer 100 > proportion > 0 </div>')
+                return;
+            }
+
+            var material = await getMaterial("{{ url_for('meshmaterial.get_id') }}?nft_id="+nft_id )
+            console.log(material)
+            if(material) {
+              $("#rarity").val(material.rarity);
+              $("#mesh_index").val(material.mesh_index);
+              $("#mesh_material").val(material.material);
+
+                submit = await configDropRate(box_address, material.rarity, material.mesh_index, material.material, proportion)
+            }
+            if(submit) {
+                 $(this).unbind('submit').submit();
+            }
+
+         } catch(e) {
+             console.error(e)
+             console.log(e.data?.message)
+             console.log(e.toString())
+             console.log(e.data?.message)
+             var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+             $("#msg_nft_detail").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+             console.error(e)
+             $("#abi_lock_page").html('')
+         }
+      })
+   })
+
+</script>
