@@ -112,3 +112,10 @@ def box_cid():
     metadata_cid = upload_file(file)
     print('metadata_cid', metadata_cid)
     return jsonify({'metadata_cid': metadata_cid})
+
+
+@root_blueprint.route('/file/ipfs', methods=['POST'])
+def upload_ipfs():
+    _image = request.files['file']
+    _cid = upload_file(_image)
+    return jsonify({'ipfs': f'https://{_cid}.ipfs.w3s.link'})
