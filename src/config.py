@@ -36,6 +36,7 @@ class Config:
     BSC_RPC = os.getenv('BSC_RPC')
     NFT_FACTORY_ADDRESS = os.getenv('NFT_FACTORY_ADDRESS')
     BOX_CREATOR_ADDRESS = os.getenv('BOX_CREATOR_ADDRESS')
+    ROYALTY_CONTROLLER_ADDRESS = os.getenv('ROYALTY_CONTROLLER_ADDRESS')
 
     # S3
     AWS_KEY = os.getenv('AWS_KEY')

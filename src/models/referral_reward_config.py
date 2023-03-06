@@ -19,4 +19,4 @@ class ReferralRewardConfig(BaseDocument):
     reward_percent = FloatField()
 
     def __str__(self):
-        return self.token_id if self else ''
+        return self.nft_type if self else ''

@@ -20,8 +20,8 @@ class RateOfBox(BaseDocument):
     mesh_material = IntField()
     nft_id = IntField()
     box_id = IntField()
-    proportion = IntField(min_value=0, max_value=100)
+    proportion = IntField(default=20, min_value=0, max_value=100)
     box_address = StringField()
-    
+
     def __str__(self):
         return f'{self.nft_id}: {self.proportion}' if self else ''

@@ -76,6 +76,12 @@ class BoxView(MyBaseModelView, RowActionListMixin):
             },
             'box_id': {
                 'readonly': True
+            },
+            'total_supply': {
+                'readonly': True
+            },
+            'royalty_rate': {
+                'readonly': True
             }
         }
         _form = super(BoxView, self).edit_form(obj)

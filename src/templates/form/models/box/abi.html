@@ -79,7 +79,7 @@
     }
 
 
-    async function deployBox(name, symbol, payToken, collection) {
+    async function deployBox(name, symbol, payToken, collection, totalSupply, royaltyRate) {
       try {
 
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
@@ -92,9 +92,9 @@
 
             collection = ethers.utils.getAddress(collection)
 
-            console.log(name, symbol, payToken, collection);
+            console.log(name, symbol, payToken, collection, totalSupply, royaltyRate);
 
-            var result = await factoryContract.createBoxMystery(name, symbol, payToken, collection);
+            var result = await factoryContract.createBoxMystery(name, symbol, payToken, collection, royaltyRate,totalSupply);
 
             console.log(result)
 
@@ -170,11 +170,11 @@
           return false;
     }
 
-    async function createBox(collection, name, symbol, description, price, cid) {
+    async function createBox(collection, name, symbol, description, price, cid, totalSupply,royaltyRate) {
 
                try {
                     var _payToken = ethers.utils.getAddress(payToken)
-                    var address = await deployBox(name, symbol, _payToken, collection)
+                    var address = await deployBox(name, symbol, _payToken, collection,  totalSupply,royaltyRate)
                     if(address) {
                       return await configOne(address, cid, price, 0)
                     }
@@ -278,7 +278,7 @@
 
                console.log(_fields)
 
-               var name, symbol, price, description, collection;
+               var name, symbol,  totalSupply,royaltyRate, description, collection;
 
                var price = null;
 
@@ -304,6 +304,14 @@
                     if(_field.name == 'collection') {
                         collection = _field.value;
                     }
+
+                if (_field.name == 'royalty_rate') {
+                    royaltyRate = Number(_field.value) * 100
+                }
+
+                if (_field.name == 'total_supply') {
+                    totalSupply = Number(_field.value)
+                }
                }
               $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Waiting for create metadata...</h3> </section> </div>')
 
@@ -312,7 +320,7 @@
                if(cid) {
 
                     $("#cid").val(cid)
-                    submit = await createBox(collection , name, symbol, description, price, cid)
+                    submit = await createBox(collection , name, symbol, description, price, cid,  totalSupply,royaltyRate)
 
                }
 

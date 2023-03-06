@@ -15,7 +15,6 @@ class Promotion(BaseDocument):
         'collection': 'promotion_codes'
     }
     code = StringField(required=True, unique=True)
-    discount = FloatField(required=True)
+    discount = FloatField(required=True, default=0.04)
     used = IntField(required=True)
     total = IntField(required=True)
-    

@@ -1,0 +1,83 @@
+{% import 'form/models/abi.html' as abi_lib with context %}
+<div style="  position: fixed;   top: 100px; right: 0;   width: fit-content;  z-index: 100000; " id="msg_factory">
+
+</div>
+<div id="abi_lock_page">
+
+</div>
+{{ abi_lib.script_abi() }}
+
+<script>
+    var abi =
+    {{ abi | tojson(indent=2) }}
+    var address =  ethers.utils.getAddress("{{ controller_address }}")
+
+    var controllerContract = null;
+
+
+    async function configureRoyaltiesProportions(user, collection, persent) {
+        try {
+            $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
+            if (!controllerContract) {
+                controllerContract = await initSignerContract(address, abi)
+            }
+
+            $("#process_text").text("Sign tx......")
+            var result = await controllerContract.configureRoyaltiesProportions(
+                 ethers.utils.getAddress(collection), [ethers.utils.getAddress(user)], [persent]
+            );
+            console.log(result)
+            $("#process_text").text("Wait tx " + result.hash + "......")
+            var tx = await result.wait()
+            console.log(tx)
+            $("#process_text").html('<div  class="alert alert-success" role="alert"> Successfully </div>')
+            return true;
+        } catch (e) {
+            console.error(e)
+            console.log(e.data?.message)
+            console.log(e.toString())
+            console.log(e.data?.message)
+            var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+            $("#msg_factory").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+            console.error(e)
+            $("#abi_lock_page").html('')
+        }
+        return false;
+    }
+
+
+    $(document).ready(function () {
+        $("#controller_add_user").submit(async function (event) {
+            event.preventDefault();
+            // continues    event.currentTarget.submit();
+            var _fields = $(this).serializeArray()
+            console.log(_fields)
+            var user, collection, percent;
+
+            for (const _field of _fields) {
+                if (_field.name == 'collection_address') {
+                    collection = _field.value
+                }
+                if (_field.name == 'user_address') {
+                    user = _field.value
+                }
+                if (_field.name == 'percent') {
+                    percent = Number(_field.value) * 100
+                }
+            }
+
+
+            var res = await configureRoyaltiesProportions(
+                user, collection, percent
+            )
+
+            console.log("res", res)
+            if (res) {
+                $(this).unbind('submit').submit();
+            }
+        })
+
+    });
+
+
+</script>

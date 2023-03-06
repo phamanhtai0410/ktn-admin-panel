@@ -1,7 +1,7 @@
 from gettext import gettext
 
 import requests
-from flask import flash, request
+from flask import flash, request, url_for
 from flask_admin.form import Select2Widget
 from markupsafe import Markup
 from wtforms import HiddenField
@@ -10,6 +10,7 @@ from src.abis import factory_abi
 from src.config import Config
 from src.models.nft_collection import NftCollection
 from src.models.nft_mesh import Mesh
+from src.models.royalty import Royalty
 from src.views.base import MyBaseModelView, RowActionListMixin
 from src.utils.s3_image_uploader import S3ImageUploadField
 
@@ -21,7 +22,8 @@ def get_nfts_options():
 
 
 class NftCollectionView(MyBaseModelView, RowActionListMixin):
-    column_list = ['collection_id', 'name', 'symbol', 'address', 'description', 'created_time']
+    column_list = ['collection_id', 'name', 'symbol',
+                   'address', 'description', 'royalty','created_time']
     # create_modal = True
     # edit_template = 'form.abi.create_from.html'
     create_modal_template = 'form/models/factory/modals/create.html'
@@ -32,7 +34,13 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     column_labels = {
         'collection_id': 'Id'
     }
-
+    def royalty_format(self, context, model, name):
+        _royalty = Royalty.objects(collection_address=model['address'])
+        permission = '<ul>'
+        for item in _royalty:
+            permission += f'<li href="#" target="_blank" >{item.user_address} - {item.percent}</li>'
+        permission += f'<li ><a href="{url_for("royalty.create_view", collection_address=model["address"])}"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></li>'
+        return Markup(permission + "</ul>")
     form_overrides = dict(nfts=SelectMultipleField,
                           collection_id=HiddenField,
                           # rarity_nfts=HiddenField,
@@ -44,6 +52,7 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     form_subdocuments = {
 
     }
+
     form_args = {
         'nfts': {
             'choices': [],
@@ -126,6 +135,12 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
             },
             'symbol': {
                 'readonly': True
+            },
+            'royalty_rate': {
+                'readonly': True
+            },
+            'total_supply': {
+                'readonly': True
             }
         }
 
@@ -147,7 +162,8 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
 
     column_default_sort = ('created_time', True)
     column_formatters = {
-        'image': image_format
+        'image': image_format,
+        'royalty': royalty_format
     }
 
     def render(self, template, **kwargs):

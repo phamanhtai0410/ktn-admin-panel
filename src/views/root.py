@@ -6,6 +6,9 @@
 """
 import io
 import json
+import traceback
+from datetime import datetime
+
 import w3storage
 
 import requests
@@ -51,6 +54,10 @@ w3 = w3storage.API(
 
 def upload_file(file):
     return w3.post_upload(file)
+
+
+def upload_files(files):
+    return w3.post_upload(files)
 
 
 @root_blueprint.route('/metadata_cid', methods=['POST'])
@@ -116,6 +123,19 @@ def box_cid():
 
 @root_blueprint.route('/file/ipfs', methods=['POST'])
 def upload_ipfs():
-    _image = request.files['file']
-    _cid = upload_file(_image)
+    _file = request.files['file']
+    file = io.BytesIO(f'Game upload at: {datetime.now()}'.encode())
+
+    _cid = upload_files(_file)
     return jsonify({'ipfs': f'https://{_cid}.ipfs.w3s.link'})
+
+#
+# @root_blueprint.route('/prices', methods=['GET'])
+# def get_prices():
+#     try:
+#         res = requests.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=binancecoin,tether,wbnb")
+#         print(res.json())
+#         return jsonify(res.json())
+#     except:
+#         traceback.print_exc()
+#     return jsonify({})

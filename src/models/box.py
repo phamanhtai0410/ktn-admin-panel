@@ -4,7 +4,8 @@
         -
         -
 """
-from mongoengine import StringField, BooleanField, ListField, EmbeddedDocument, IntField, FloatField, EmbeddedDocumentField
+from mongoengine import StringField, BooleanField, ListField, EmbeddedDocument, IntField, FloatField, \
+    EmbeddedDocumentField
 
 from src.models.base import BaseDocument
 
@@ -37,5 +38,8 @@ class Box(BaseDocument):
     block_number = IntField()
     disable_mint = BooleanField(default=False)
     cid = StringField()
+    royalty_rate = IntField(required=True, default=20, min_value=0, max_value=100)
+    total_supply = IntField(required=True, default=10000, min_value=1)
+
     def __str__(self):
         return self.address if self else ''

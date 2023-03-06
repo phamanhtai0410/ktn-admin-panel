@@ -24,6 +24,7 @@ from .order import OrderView
 from .point import PointView
 from .rate_box import RateBoxView
 from .roles import RolesView
+from .royalty import RoyaltyConfigView
 from .user import UserView
 from .user_app import UserAppView
 from .referral import ReferralView
@@ -43,6 +44,7 @@ from ...models.point import PointLog
 from ...models.referral import Referral
 from ...models.minted_nfts import MintedNfts
 from ...models.order import Order
+from ...models.royalty import Royalty
 from ...models.security import User, Role
 from ...models.setting import Setting
 from ...models.user import UserApp
@@ -94,9 +96,8 @@ model_views = [
     ReferralView(Referral, category='Application'),
     # ReferralRewardConfigView(ReferralRewardConfig, category='Referral'),
 
-
     NftHistoryView(NftHistory, category='NFT'),
-
+    RoyaltyConfigView(Royalty, category='NFT'),
     PromotionView(Promotion, category='Application'),
     ExchangeView(ExchangeLog, category="Payment"),
     PointView(PointLog, category='Payment'),
