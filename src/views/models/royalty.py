@@ -11,7 +11,7 @@ from flask_admin.model.fields import InlineFieldList
 from flask_admin.model.widgets import InlineFieldListWidget
 from markupsafe import Markup
 from pydash import get
-from wtforms.fields.core import SelectField
+from wtforms.fields.core import SelectField, BooleanField, StringField
 
 from src.abis import factory_abi, royalty_controller_abi
 from src.config import Config
@@ -22,8 +22,29 @@ from src.models.nft_rarity import NftRarity
 from src.utils.s3_image_uploader import S3ImageUploadField
 from src.views.base import MyBaseModelView
 
-from wtforms import HiddenField, SelectField
+from wtforms import HiddenField, SelectField, Form
 
+from wtforms.validators import DataRequired
+
+class GreetingsForm(Form):
+    greeting1 = StringField(('Morning'),
+            description = ('Your morning Greeting'),
+            validators = [DataRequired()],
+            )    
+     
+    greeting2 = StringField(('Afternoon'),
+            description = ('Your Afternoon Greeting'),
+            validators = [DataRequired()],
+            )    
+ 
+    greeting3 = StringField(('Evening'),
+            description = ('Your Evening Greeting'),
+            )    
+ 
+    greeting4 = StringField(('Night'),
+            description = ('Your Night Greeting'),
+            )
+    
 
 class RoyaltyConfigView(MyBaseModelView):
     column_list = ['user_address',
@@ -44,10 +65,11 @@ class RoyaltyConfigView(MyBaseModelView):
     # cewe = 'form/models/mesh/edit.html'
 
     can_view_details = True
-
+    form = GreetingsForm
+    
     form_overrides = dict(
         # collection_id=SelectField,
-        collection_address=SelectField
+        collection_address=SelectField,
     )
 
     def image_format(view, context, model, name):
@@ -66,9 +88,8 @@ class RoyaltyConfigView(MyBaseModelView):
 
         _cols = Mesh.objects()
         _form = super(RoyaltyConfigView, self).create_form(obj)
-
         _form.collection_address.choices = self.get_collections()
-
+        
         return _form
 
     def lock_admin(self):
@@ -77,6 +98,6 @@ class RoyaltyConfigView(MyBaseModelView):
     def render(self, template, **kwargs):
 
         kwargs['abi'] = royalty_controller_abi
-        kwargs['controller_address'] = Config.ROYALTY_CONTROLLER_ADDRESS
+        kwargs['controller_address'] = Config.ROYALTY_CONTROLLER_ADDRESS 
 
         return super(RoyaltyConfigView, self).render(template, **kwargs)

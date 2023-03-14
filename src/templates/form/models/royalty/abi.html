@@ -15,8 +15,9 @@
     var controllerContract = null;
 
 
-    async function configureRoyaltiesProportions(user, collection, persent) {
+    async function configureRoyaltiesProportions(user, collection, percents) {
         try {
+            console.log(`"submit users: ${user}, percents: ${}`);
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
             if (!controllerContract) {
                 controllerContract = await initSignerContract(address, abi)
@@ -24,7 +25,7 @@
 
             $("#process_text").text("Sign tx......")
             var result = await controllerContract.configureRoyaltiesProportions(
-                 ethers.utils.getAddress(collection), [ethers.utils.getAddress(user)], [persent]
+                 ethers.utils.getAddress(collection), user, percents
             );
             console.log(result)
             $("#process_text").text("Wait tx " + result.hash + "......")
@@ -48,11 +49,12 @@
 
     $(document).ready(function () {
         $("#controller_add_user").submit(async function (event) {
+            
             event.preventDefault();
             // continues    event.currentTarget.submit();
             var _fields = $(this).serializeArray()
             console.log(_fields)
-            var user, collection, percent;
+            var user, collection, percent, lastUser, lastPercents;
 
             for (const _field of _fields) {
                 if (_field.name == 'collection_address') {
@@ -60,15 +62,33 @@
                 }
                 if (_field.name == 'user_address') {
                     user = _field.value
+                    users = user.split(",");
+                    let lastUser = [];
+                    for (let index = 0; index < users.length; index++) {
+                        let valueUser = users[index].trim();
+                        if (valueUser !== "") {
+                            lastUser.push(ethers.utils.getAddress(valueUser));
+                        }
+                    }
                 }
                 if (_field.name == 'percent') {
-                    percent = Number(_field.value) * 100
+                    // percent = Number(_field.value) * 100;
+                    percent = _field.value
+                    let percents = percent.split(",");
+                    lastPercents = [];
+                    for (let index = 0; index < percents.length; index++) {
+                        let valuePercent = percents[index].trim();
+                        if (valuePercent !== "") {
+                            lastPercents.push(Number(valuePercent) * 100);
+                        }
+                    }
+
                 }
             }
 
 
             var res = await configureRoyaltiesProportions(
-                user, collection, percent
+                lastUser, collection, lastPercents
             )
 
             console.log("res", res)
