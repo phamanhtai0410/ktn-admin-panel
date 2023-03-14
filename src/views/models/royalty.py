@@ -26,25 +26,7 @@ from wtforms import HiddenField, SelectField, Form
 
 from wtforms.validators import DataRequired
 
-class GreetingsForm(Form):
-    greeting1 = StringField(('Morning'),
-            description = ('Your morning Greeting'),
-            validators = [DataRequired()],
-            )    
-     
-    greeting2 = StringField(('Afternoon'),
-            description = ('Your Afternoon Greeting'),
-            validators = [DataRequired()],
-            )    
- 
-    greeting3 = StringField(('Evening'),
-            description = ('Your Evening Greeting'),
-            )    
- 
-    greeting4 = StringField(('Night'),
-            description = ('Your Night Greeting'),
-            )
-    
+
 
 class RoyaltyConfigView(MyBaseModelView):
     column_list = ['user_address',
@@ -65,7 +47,7 @@ class RoyaltyConfigView(MyBaseModelView):
     # cewe = 'form/models/mesh/edit.html'
 
     can_view_details = True
-    form = GreetingsForm
+    # form = GreetingsForm
     
     form_overrides = dict(
         # collection_id=SelectField,
