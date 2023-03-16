@@ -13,23 +13,25 @@ from src.models.nft_mesh import Mesh
 from src.models.royalty import Royalty
 from src.views.base import MyBaseModelView, RowActionListMixin
 from src.utils.s3_image_uploader import S3ImageUploadField
-
+from src.utils.s3_3d_models_uploader import S3_3D_ModelUploadField
 from wtforms.fields import SelectMultipleField
+from flask_admin.model.fields import InlineFormField
+from mongoengine import *
 
 
 def get_nfts_options():
     return [(f'{x.mesh_id}', x.name) for x in Mesh.objects()]
 
-
 class NftCollectionView(MyBaseModelView, RowActionListMixin):
     column_list = ['collection_id', 'name', 'symbol',
-                   'address', 'description', 'royalty','created_time']
+                   'address', 'description', 'royalty', 'types_list', 'created_time']
     # create_modal = True
     # edit_template = 'form.abi.create_from.html'
     create_modal_template = 'form/models/factory/modals/create.html'
     create_template = 'form/models/factory/create.html'
     # form_columns = ['collection_id', 'name', 'description','image', 'nfts']
     can_delete = False
+    can_view_details = True
     # edit_modal = True
     column_labels = {
         'collection_id': 'Id'
@@ -41,26 +43,34 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
             permission += f'<li href="#" target="_blank" >{item.user_address} - {item.percent}</li>'
         permission += f'<li ><a href="{url_for("royalty.create_view", collection_address=model["address"])}"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></li>'
         return Markup(permission + "</ul>")
-    form_overrides = dict(nfts=SelectMultipleField,
-                          collection_id=HiddenField,
-                          # rarity_nfts=HiddenField,
-                          address=HiddenField,
-                          image=S3ImageUploadField,
-                          max_rarity=HiddenField,
-                          block_number=HiddenField
-                          )
-    form_subdocuments = {
 
+    form_overrides = dict(
+        nfts=SelectMultipleField,
+        collection_id=HiddenField,
+        # rarity_nfts=HiddenField,
+        address=HiddenField,
+        image=S3ImageUploadField,
+        max_rarity=HiddenField,
+        block_number=HiddenField
+    )
+    form_subdocuments = {
+        'types_list': {
+            'form_subdocuments': {
+                None: {
+                    'form_overrides': dict(
+                        ImageUrl=S3ImageUploadField,
+                        AnimationModelUrl=S3_3D_ModelUploadField
+                    )
+                }
+            }
+            
+        }
     }
 
     form_args = {
         'nfts': {
             'choices': [],
             'widget': Select2Widget(multiple=True)
-        }
-    }
-    form_widget_args = {
-        'collection_id': {
         }
     }
 
@@ -84,6 +94,24 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     def image_format(view, context, model, name):
         # _image = model['image']
         return Markup(f'<a target="_blank" href="{model["image"]}"> image </a>')
+    
+    # def types_list_format(view, context, model, name):
+    #     print("*** DEBUG : model = ", model)
+    #     _display = '<ul>'
+    #     for _item in model:
+    #         _display += f'<li><pre>             \
+    #             {_item["AssetID"]}              \
+    #             {_item["DataTableID"]}          \
+    #             {_item["AssetRarity"]}          \
+    #             {_item["rate"]}                 \
+    #             {_item["AssetRarity"]}          \
+    #             {_item["ImageUrl"]}             \
+    #             {_item["AnimationModelUrl"]}    \
+    #         </pre></li>'
+
+    #     return Markup(
+    #         _display + '</ul>'
+    #     )
 
     def scaffold_form(self):
         self.form_args = {
@@ -131,15 +159,18 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
 
         self.form_widget_args = {
             'name': {
-                'readonly': True
+                'readonly': False
             },
             'symbol': {
-                'readonly': True
+                'readonly': False
             },
             'royalty_rate': {
-                'readonly': True
+                'readonly': False
             },
             'total_supply': {
+                'readonly': False
+            },
+            'types_list': {
                 'readonly': True
             }
         }
@@ -148,7 +179,14 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
 
         _form = super(NftCollectionView, self).edit_form(obj)
         return _form
+    
+    # def details_view(self, obj=None):
+    #     _view = super(NftCollectionView, self).details_view(obj)
+    #     return _view
 
+    # def get_save_return_url(self, model, is_created):
+    #     return self.get_url('.details_view', id=model.id)
+    
     def get_nfts_options(self):
         self.form_args = {
             'nfts': {
@@ -163,7 +201,8 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     column_default_sort = ('created_time', True)
     column_formatters = {
         'image': image_format,
-        'royalty': royalty_format
+        'royalty': royalty_format,
+        # 'types_list': types_list_format
     }
 
     def render(self, template, **kwargs):

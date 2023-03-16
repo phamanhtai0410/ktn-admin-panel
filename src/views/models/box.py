@@ -36,6 +36,7 @@ class BoxView(MyBaseModelView, RowActionListMixin):
     can_create = True
     # edit_modal = True
     can_view_details = True
+    
     form_overrides = dict(
         collection=SelectField,
         image=S3ImageUploadField,

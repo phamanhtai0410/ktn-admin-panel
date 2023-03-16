@@ -31,16 +31,16 @@ from .referral import ReferralView
 from .promotion import PromotionView
 from .nfts_statistic import NftsStatisticView
 from .referral_reward_config import ReferralRewardConfigView
-from ...models.box import Box
 from .setting import SettingView
-from ...models.box_rate import RateOfBox
+from .admin_default_configs import AdminDefaultConfigsView
 
+from ...models.box import Box
+from ...models.box_rate import RateOfBox
 from ...models.exchange import ExchangeLog
 from ...models.mesh_material import MeshMaterial
 from ...models.nft_collection import NftCollection
 from ...models.nft_mesh import Mesh
 from ...models.point import PointLog
-
 from ...models.referral import Referral
 from ...models.minted_nfts import MintedNfts
 from ...models.order import Order
@@ -49,11 +49,10 @@ from ...models.security import User, Role
 from ...models.setting import Setting
 from ...models.user import UserApp
 from ...models.nft_rarity import NftRarity
-
 from ...models.nft_history import NftHistory
-
 from ...models.promotion import Promotion
 from ...models.nfts_statistic import NftsStatistic
+from ...models.admin_default_config import AdminDefaultConfigs
 
 model_categories = {
     'Setting': {
@@ -105,9 +104,11 @@ model_views = [
     PaymentView(Payment, category='Payment'),
     NftCollectionView(NftCollection, category='Master Data'),
 
-    NftRarityView(NftRarity, category='Master Data'),
-    MeshView(Mesh, name="Mesh", category='Master Data'),
+    # NftRarityView(NftRarity, category='Master Data'),
+    # MeshView(Mesh, name="Mesh", category='Master Data'),
     BoxView(Box, category='Master Data'),
     RateBoxView(RateOfBox, category='Master Data'),
-    MeshMaterialView(MeshMaterial, category='Master Data')
+    # MeshMaterialView(MeshMaterial, category='Master Data'),
+
+    AdminDefaultConfigsView(AdminDefaultConfigs, category='Master Data'),
 ]
