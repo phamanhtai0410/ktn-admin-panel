@@ -11,7 +11,7 @@
     var abi =
     {{ factory_abi | tojson(indent=2) }}
     var address = "{{ factory_address }}"
-
+    var base_uri = "https://static.katanainu.com/metadata"
     var factoryContract = null;
     var before_disable_mint =
     {{ before_disable_mint | tojson(indent=2)  }}
@@ -22,7 +22,7 @@
         before_disable_mint = null
     }
 
-    async function createNftCollection(name, symbol, total_supply, _royaltyRate) {
+    async function createNftCollection(name, symbol, total_supply,treasury_address, _royaltyRate) {
         try {
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
             if (!factoryContract) {
@@ -30,16 +30,18 @@
             }
 
             $("#process_text").text("Sign tx......")
-            var result = await factoryContract.createNftCollection(name, symbol, _royaltyRate);
+            var result = await factoryContract.createNftCollection(name, symbol,base_uri,treasury_address, _royaltyRate);
             console.log(result)
             $("#process_text").text("Wait tx " + result.hash + "......")
             var tx = await result.wait()
+            let address = "";
             console.log(tx)
             $("#block_number").val(tx.blockNumber)
             tx.events.forEach(event => {
                 if (event.event === 'CreateNftCollection') {
-                    console.log("address", event.args[0])
-                    $("#address").val(event.args[0].toLowerCase())
+                    // console.log("address", event.args[0])
+                    // $("#address").val(event.args[0].toLowerCase())
+                    address = event.args[0].toLowerCase();
                 }
             })
             $("#process_text").html('<div  class="alert alert-success" role="alert"> Successfully </div>')
@@ -60,7 +62,8 @@
 
     $(document).ready(function () {
         $("#deploy_nft").on("click",async  function(event) {
-            alert("call deploy")
+            event.preventDefault();
+
             let object = event.target.getAttribute("data-object")
             if(object) {
                 try {
@@ -69,14 +72,42 @@
                     console.error(e)
                 }
             }
+            
             console.log(object)
+            if(!object.treasury_address) {
+                alert("Address treasury is required")
+                return;
+            }
+            if(!object.name) {
+                alert("name is required")
+                return;
+            }
+            if(!object.symbol) {
+                alert("symbol is required")
+                return;
+            }
+            if(!object.total_supply) {
+                alert("Total supply is required")
+                return;
+            }
+            if(!object.royalty_rate) {
+                alert("Royalty rate is required")
+                return;
+            }
+            var address = await createNftCollection(
+                object.name, object.symbol, object.total_supply, object.treasury_address, object.royalty_rate
+            )
+            if(address) {
+                console.log("Call BE")
+            }
+
         })
-        $("#factory_create_collection").submit(async function (event) {
+        $("#factory_create_collection_remove").submit(async function (event) {
             event.preventDefault();
             // continues    event.currentTarget.submit();
             var _fields = $(this).serializeArray()
             console.log(_fields)
-            var name, symbol, royaltyRate, totalSupply;
+            var name, symbol, royaltyRate, totalSupply,;
 
             for (const _field of _fields) {
                 if (_field.name == 'name') {
