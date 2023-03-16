@@ -33,6 +33,7 @@ from .nfts_statistic import NftsStatisticView
 from .referral_reward_config import ReferralRewardConfigView
 from .setting import SettingView
 from .admin_default_configs import AdminDefaultConfigsView
+from .raffle_config import RaffleConfigView
 
 from ...models.box import Box
 from ...models.box_rate import RateOfBox
@@ -53,6 +54,7 @@ from ...models.nft_history import NftHistory
 from ...models.promotion import Promotion
 from ...models.nfts_statistic import NftsStatistic
 from ...models.admin_default_config import AdminDefaultConfigs
+from ...models.raffle_config import RaffleConfig
 
 model_categories = {
     'Setting': {
@@ -111,4 +113,5 @@ model_views = [
     # MeshMaterialView(MeshMaterial, category='Master Data'),
 
     AdminDefaultConfigsView(AdminDefaultConfigs, category='Master Data'),
+    RaffleConfigView(RaffleConfig, category='Master Data'),
 ]

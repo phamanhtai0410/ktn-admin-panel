@@ -1,5 +1,4 @@
 from src.views.base import MyBaseModelView, RowActionListMixin
-from src.models.admin_default_config import AdminDefaultConfigs
 from flask import flash, request, url_for
 from gettext import gettext
 
