@@ -29,6 +29,7 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     # edit_template = 'form.abi.create_from.html'
     create_modal_template = 'form/models/factory/modals/create.html'
     create_template = 'form/models/factory/create.html'
+    details_template = "form/models/factory/details.html"
     # form_columns = ['collection_id', 'name', 'description','image', 'nfts']
     can_delete = False
     can_view_details = True

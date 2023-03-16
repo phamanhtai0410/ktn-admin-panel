@@ -59,6 +59,18 @@
 
 
     $(document).ready(function () {
+        $("#deploy_nft").on("click",async  function(event) {
+            alert("call deploy")
+            let object = event.target.getAttribute("data-object")
+            if(object) {
+                try {
+                    object = JSON.parse(object)
+                }catch (e) {
+                    console.error(e)
+                }
+            }
+            console.log(object)
+        })
         $("#factory_create_collection").submit(async function (event) {
             event.preventDefault();
             // continues    event.currentTarget.submit();
