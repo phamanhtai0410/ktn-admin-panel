@@ -34,6 +34,7 @@ from .referral_reward_config import ReferralRewardConfigView
 from .setting import SettingView
 from .admin_default_configs import AdminDefaultConfigsView
 from .raffle_config import RaffleConfigView
+from .raffle import RaffleView
 
 from ...models.box import Box
 from ...models.box_rate import RateOfBox
@@ -55,6 +56,7 @@ from ...models.promotion import Promotion
 from ...models.nfts_statistic import NftsStatistic
 from ...models.admin_default_config import AdminDefaultConfigs
 from ...models.raffle_config import RaffleConfig
+from ...models.raffle import Raffle
 
 model_categories = {
     'Setting': {
@@ -114,4 +116,5 @@ model_views = [
 
     AdminDefaultConfigsView(AdminDefaultConfigs, category='Master Data'),
     RaffleConfigView(RaffleConfig, category='Master Data'),
+    RaffleView(Raffle, category='Application')
 ]
