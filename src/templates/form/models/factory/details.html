@@ -45,7 +45,7 @@
             </div>
         </div>
     </section>
-    {{ abi_lib.connect_wallet_btn() }}
+{#    {{ abi_lib.connect_wallet_btn() }}#}
     {% if not model.deployed %}
     <div class="card d-flex align-items-center justify-content-center p-3">
         <button id="deploy_nft" data-object='{{ model | tojson(0)}}' style="max-width: 200px !important;"

@@ -4,7 +4,7 @@
         -
         -
 """
-from mongoengine import StringField, IntField, ListField, DictField, BooleanField, \
+from mongoengine import StringField, IntField, ListField, BooleanField, \
     FloatField, EmbeddedDocument, EmbeddedDocumentField
 from src.models.base import BaseDocument
 
@@ -20,6 +20,12 @@ class NftType(EmbeddedDocument):
     AnimationModelUrl = StringField(required=False)
     rate = FloatField(required=True)
 
+
+class Royalty(EmbeddedDocument):
+    user_address = StringField(required=True)
+    percent = FloatField(required=True, min_value=0, max_value=100)
+
+
 class NftCollection(BaseDocument):
     meta = {
         'strict': False,
@@ -32,15 +38,17 @@ class NftCollection(BaseDocument):
     image = StringField(required=True)
     address = StringField()
     # max_rarity = IntField(default=0)
-    block_number = IntField()
+    block_number = IntField(default=0)
     # delist = BooleanField(default=False)
     disable_mint = BooleanField(default=False)
-    royalty_rate = IntField(required=True, default=20, min_value=0, max_value=100)
-    total_supply = IntField(required=True,default=10000, min_value=1)
-    
-    types_list = ListField(EmbeddedDocumentField(NftType))
-    deployed = BooleanField(required=True)
+    total_supply = IntField(required=True, default=10000, min_value=1)
 
+    types_list = ListField(EmbeddedDocumentField(NftType))
+    royalty = ListField(EmbeddedDocumentField(Royalty))
+
+    deployed = BooleanField(default=False)
+    royalty_rate = IntField(required=True, default=20, min_value=0, max_value=100)
+    treasury_address = StringField()
 
     def __str__(self):
         return self.name if self else ''
