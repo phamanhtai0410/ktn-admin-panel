@@ -160,11 +160,7 @@
                 $("#treasury_address").val(address.toLowerCase())
             }
         })
-        try {
-            $("#royalty")?.before(`<button> Update smart contract<button/>`)
-        } catch (e) {
-            console.error(e)
-        }
+
         $("#deploy_nft").on("click", async function (event) {
             {#event.preventDefault();#}
             console.log("console")
