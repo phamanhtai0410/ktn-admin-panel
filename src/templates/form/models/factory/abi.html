@@ -255,6 +255,7 @@
             var disable_mint = null;
             var collection_address;
             var submit = true;
+            var deployed = false;
             var royalty_update = []
             for (const _field of _fields) {
                 if (_field.name == 'disable_mint') {
@@ -262,6 +263,14 @@
                 }
                 if (_field.name == 'address') {
                     collection_address = _field.value
+                }
+                if (_field.name == 'address') {
+                    if(_field.value==='y') {
+                    deployed = true;
+ 
+                    } else {
+                        deployed = false;
+                    }
                 }
                 if (_field.name.startsWith('royalty')) {
                     let _f = _field.name.split('-')
@@ -284,7 +293,10 @@
 
 
             }
-            let resRoy = await checkRoyaltyController(collection_address, royalty_update, true)
+            let resRoy = true;
+            if(deployed) {
+                resRoy = await checkRoyaltyController(collection_address, royalty_update, true)
+            }
             if (submit && resRoy) {
                 $(this).unbind('submit').submit();
             }
