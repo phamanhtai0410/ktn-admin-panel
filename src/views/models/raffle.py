@@ -1,9 +1,7 @@
 from src.views.base import MyBaseModelView, RowActionListMixin
-from markupsafe import Markup
-from datetime import datetime
 
 class RaffleView(MyBaseModelView, RowActionListMixin):
-    # View column
+     # View column
     column_list = [
         'address',
         'user_id_twitter',
@@ -15,21 +13,13 @@ class RaffleView(MyBaseModelView, RowActionListMixin):
         'entries',
         'created_time'
     ]
-    
-    can_delete = False
-    can_create = False
-    can_edit = False
-    
-    
-    column_searchable_list = ['address']
-    column_default_sort = ('created_time', True)
 
-    # def _time_formatter(view, context, model, name):
-    #     _start_time = datetime.fromtimestamp(model['created_time'])
-    #     return Markup(
-    #         f'<p>{_start_time}</p>'
-    #     )
-        
-    # column_formatters = {
-    #     'created_time': _time_formatter
-    # }
+    action_disallowed_list = ['create', 'delete']
+    
+    can_edit = False
+    can_create = False
+    can_delete = False
+
+    column_searchable_list = ['address']
+
+    column_default_sort = ('created_time', True)
