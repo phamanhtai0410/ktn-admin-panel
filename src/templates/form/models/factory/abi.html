@@ -152,28 +152,6 @@
         return false;
     }
 
-    async function submitNewCollectionAddressToAddBackgroundJobs(address, block_number) {
-        var _smc_iapi = "https://iapi-stag-ktn.esollabs.com/v1/smc"
-        var form = new FormData();
-        form.append("contract", address);
-        form.append("type", "NFT");
-        form.append('from_block', block_number)
-        var xhr = new XMLHttpRequest();
-        xhr.withCredentials = true;
-        xhr.responseType = 'json';
-        xhr.addEventListener("readystatechange", function () {
-            if (this.readyState === 4) {
-                console.log('response', this.response);
-                if (this.response) {
-                    resolve(this.response.metadata_cid)
-                }
-                reject(null)
-            }
-        });
-        xhr.open("POST", `${_smc_iapi}/background_jobs`);
-        xhr.send(form);
-    }
-
     $(document).ready(function () {
         {#console.log("treasury_address")#}
         $("#treasury_address")?.on("click", async function (event) {
@@ -229,7 +207,6 @@
                         alert("Royalty list has been fail. Please try again")
                     }
                 }
-                await submitNewCollectionAddressToAddBackgroundJobs(res.address, res.blockNumber)
             }
             location.reload()
         })
