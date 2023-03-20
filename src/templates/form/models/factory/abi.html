@@ -54,7 +54,7 @@
     async function callWriteRoyalty(collection_address, value) {
         try {
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
-            if (!factoryContract) {
+            if (!royaltyControllerContract) {
                 royaltyControllerContract = await initSignerContract(
                     ethers.utils.getAddress(royalty_controller_address), royalty_controller_abi)
             }
@@ -69,8 +69,11 @@
             $("#process_text").text("Sign tx......")
             console.log(ethers.utils.getAddress(collection_address),
                 receivers, proportions)
-            var result = await royaltyControllerContract.configureRoyaltiesProportions(ethers.utils.getAddress(collection_address),
-                receivers, proportions);
+            console.log("*** test - ", royaltyControllerContract, factoryContract);
+            var result = await royaltyControllerContract.configureRoyaltiesProportions(
+                ethers.utils.getAddress(collection_address),
+                receivers, proportions
+            );
             console.log(result)
             $("#process_text").text("Wait tx " + result.hash + "......")
             var tx = await result.wait()
@@ -114,7 +117,7 @@
         return true
     }
 
-    async function createNftCollection(name, symbol, total_supply, treasury_address, _royaltyRate) {
+    async function createNftCollection(name, symbol, total_supply, treasury_address, _royaltyRate, _prices) {
         try {
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
             if (!factoryContract) {
@@ -122,7 +125,9 @@
             }
 
             $("#process_text").text("Sign tx......")
-            var result = await factoryContract.createNftCollection(name, symbol, base_uri, total_supply, treasury_address, _royaltyRate);
+            var result = await factoryContract.createNftCollection(
+                name, symbol, base_uri, total_supply, treasury_address, _royaltyRate, _prices
+            );
             console.log(result)
             $("#process_text").text("Wait tx " + result.hash + "......")
             var tx = await result.wait()
@@ -194,8 +199,14 @@
                 alert("Royalty rate is required")
                 return;
             }
+            let _prices = object.types_list.map(item => ((item.price * 10 ** 18).toFixed(0)).toString())
             var res = await createNftCollection(
-                object.name, object.symbol, object.total_supply, object.treasury_address, object.royalty_rate
+                object.name,
+                object.symbol,
+                object.total_supply,
+                object.treasury_address,
+                object.royalty_rate,
+                _prices
             )
             if (res && res.address) {
                 console.log("Call BE")
