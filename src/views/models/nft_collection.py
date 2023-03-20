@@ -3,6 +3,7 @@ from gettext import gettext
 import requests
 from flask import flash, request, url_for
 from flask_admin.form import Select2Widget
+from flask_admin.model.template import EditRowAction
 from markupsafe import Markup
 from wtforms import HiddenField
 
@@ -29,6 +30,8 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     create_modal_template = 'form/models/factory/modals/create.html'
     create_template = 'form/models/factory/create.html'
     details_template = "form/models/factory/details.html"
+    list_template = 'custom/menu_bar_nft.html'
+
     # form_columns = ['collection_id', 'name', 'description','image', 'nfts']
     can_delete = False
     can_view_details = True
@@ -240,3 +243,25 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
             return super(NftCollectionView, self).create_model(form)
         except Exception as e:
             flash(gettext(str(e)), 'error')
+
+    def _can_edit(self, model):
+
+        # Put your logic here to allow edit per model
+        # return True to allow edit
+        return not model.deployed
+
+    def allow_row_action(self, action, model):
+        print("allow_row_action", action, model)
+
+        # # Deal with Edit Action
+        if isinstance(action, EditRowAction):
+            return self._can_edit(model)
+
+        # # Deal with Delete Action
+        # if isinstance(action, DeleteRowAction):
+        #     return self._can_delete(model)
+
+        # # Deal with other actions etc
+
+        # otherwise whatever the inherited method returns
+        return super().allow_row_action(action, model)
