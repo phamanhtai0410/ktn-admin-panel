@@ -19,6 +19,7 @@ from flask import Blueprint, request, render_template, redirect, url_for, jsonif
 from pydash import get
 
 from src.config import Config
+from src.models.nft_collection import NftCollection
 
 root_blueprint = Blueprint(
     'root_blueprint',
@@ -120,6 +121,30 @@ def box_cid():
     print('metadata_cid', metadata_cid)
     return jsonify({'metadata_cid': metadata_cid})
 
+
+@root_blueprint.route('/nft/record/address', methods=['POST'])
+@login_required
+def save_address_for_collection():
+    data = request.form.to_dict()
+    nft = NftCollection.objects(collection_id=get(data, 'collection_id')).first()
+    if nft:
+        if not nft.deployed:
+            nft.address = data['address']
+            nft.block_number = data['block_number']
+            nft.deployed = True
+            nft.save()
+            print({
+                "contract": nft.address,
+                "type": "NFT",
+                "from_block": data['block_number']
+            })
+            res = requests.post(f'{Config.SMC_IAPI}/background_jobs', json={
+                "contract": nft.address,
+                "type": "NFT",
+                "from_block": data['block_number']
+            }, timeout=10)
+            print(res.text)
+    return jsonify({})
 
 @root_blueprint.route('/file/ipfs', methods=['POST'])
 def upload_ipfs():

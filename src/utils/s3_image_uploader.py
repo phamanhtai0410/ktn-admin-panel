@@ -1,3 +1,4 @@
+import traceback
 from datetime import datetime
 
 import boto3
@@ -47,12 +48,16 @@ class S3ImageUploadField(FileUploadField):
         name_prefix = datetime.today().strftime('%hh%MM%ss')
 
         key_path_upload = f'{name_prefix}_{image.filename}'
-        s3.upload_fileobj(
-            image,
-            Config.BUCKET_NAME,
-            key_path_upload,
-            ExtraArgs={
-                "ContentType": image.content_type  # Set appropriate content type as per the file
-            }
-        )
+        try:
+            s3.upload_fileobj(
+                image,
+                Config.BUCKET_NAME,
+                key_path_upload,
+                ExtraArgs={
+                    "ContentType": image.content_type  # Set appropriate content type as per the file
+                }
+            )
+        except:
+            traceback.print_exc()
+            return ""
         return f'{Config.S3_STATIC}/{name_prefix}_{image.filename}'
