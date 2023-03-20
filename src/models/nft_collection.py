@@ -19,7 +19,7 @@ class NftType(EmbeddedDocument):
     ImageUrl = StringField(required=False)
     AnimationModelUrl = StringField(required=False)
     rate = FloatField(required=True)
-
+    price = FloatField(required=True)
 
 class Royalty(EmbeddedDocument):
     user_address = StringField(required=True)
