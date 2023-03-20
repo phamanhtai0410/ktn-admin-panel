@@ -16,7 +16,7 @@
     var royalty_controller_address = "{{  royalty_controller_address}}"
 
     var before_royalty = {{ before_royalty | tojson(indent=2) }};
-    var base_uri = "https://static.katanainu.com/metadata"
+    var base_uri = "https://s3.amazonaws.com/static.katanainu.com/metadata"
     var factoryContract = null;
     var royaltyControllerContract = null
     var before_disable_mint =
@@ -136,6 +136,7 @@
                     NFTAddress = event.args[0].toLowerCase();
                 }
             })
+
             $("#process_text").html('<div  class="alert alert-success" role="alert"> Successfully </div>')
             return {address: NFTAddress, blockNumber: blockNumber};
         } catch (e) {
@@ -151,6 +152,27 @@
         return false;
     }
 
+    async function submitNewCollectionAddressToAddBackgroundJobs(address, block_number) {
+        var _smc_iapi = "https://iapi-stag-ktn.esollabs.com/v1/smc"
+        var form = new FormData();
+        form.append("contract", address);
+        form.append("type", "NFT");
+        form.append('from_block', block_number)
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        xhr.responseType = 'json';
+        xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+                console.log('response', this.response);
+                if (this.response) {
+                    resolve(this.response.metadata_cid)
+                }
+                reject(null)
+            }
+        });
+        xhr.open("POST", `${_smc_iapi}/background_jobs`);
+        xhr.send(form);
+    }
 
     $(document).ready(function () {
         {#console.log("treasury_address")#}
@@ -199,6 +221,7 @@
             )
             if (res && res.address) {
                 console.log("Call BE")
+
                 await saveAddress(object.collection_id, res.address, res.blockNumber)
                 if (object.royalty?.length > 0) {
                     let resRoy = await checkRoyaltyController(res.address, object.royalty, true)
@@ -206,6 +229,7 @@
                         alert("Royalty list has been fail. Please try again")
                     }
                 }
+                await submitNewCollectionAddressToAddBackgroundJobs(res.address, res.blockNumber)
             }
             location.reload()
         })
