@@ -48,6 +48,7 @@ class Config:
     IPFS_TOKEN = os.getenv('IPFS_TOKEN')
     FLASK_ADMINLTE_LAYOUT_OPTIONS = ['sidebar-mini', 'layout-navbar-fixed', 'layout-fixed', 'text-sm']
     SMC_IAPI = os.getenv('SMC_IAPI')
+    DAPP_API = os.getenv('DAPP_API')
     BOX_FACTORY_ADDRESS = os.getenv('BOX_FACTORY_ADDRESS')
     PAY_TOKEN = '0x69c76f1bfd9b85142716f7d766968028fc6b6a1d'
     pass
