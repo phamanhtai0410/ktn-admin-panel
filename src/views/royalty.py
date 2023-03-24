@@ -20,8 +20,8 @@ class RoyaltyView(BaseView):
 
     @expose('/', methods=['GET', 'POST'])
     def index(self):
-        res = requests.get(f'{Config.DAPP_API}/royalty_info', timeout=10)
-        print("** Call to get Royalty Infos: ",res.text)
+        # res = requests.get(f'{Config.DAPP_API}/royalty_info', timeout=10)
+        # print("** Call to get Royalty Infos: ",res.text)
         return self.render('pages/royalty.html',
                            ROYALTY_CONTROLLER_ADDRESS=Config.ROYALTY_CONTROLLER_ADDRESS
                            )
