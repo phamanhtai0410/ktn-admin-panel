@@ -5,21 +5,22 @@ variables:
   # APP_NAME_NFT_CONFIRM_TX_QUEUE: ktn-nft-confirm-tx-queue
   # APP_NAME_DAPP_NFT_API_QUEUE: ktn-nft-dapp-api-queue
   # APP_NAME_NFT_PAYMENT_QUEUE: ktn-nft-payment-queue
-
   CONTAINER_REPO_ASIA_STAG: 968557029040.dkr.ecr.ap-southeast-1.amazonaws.com/stag/ktn-admin-panel
-  CONTAINER_REPO_ASIA_PROD: 968557029040.dkr.ecr.ap-southeast-1.amazonaws.com/prod/ktn-admin-panel
+  CONTAINER_REPO_ASIA_PROD: harbor.atomsolution.vn/ktn/ktn-admin-panel
   NAMESPACE_STAG: ktn-website-stag  
   NAMESPACE_PROD: ktn-website-prod  
   HELM_VALUE_FOLDER: katana
   FULLREPO_ASIA_DEV: $CONTAINER_REPO_ASIA_DEV:$CI_COMMIT_SHA
   FULLREPO_ASIA_TEST: $CONTAINER_REPO_ASIA_TEST:$CI_COMMIT_SHA
   FULLREPO_ASIA_STAG: $CONTAINER_REPO_ASIA_STAG:$CI_COMMIT_SHA
-  FULLREPO_ASIA_PROD: $CONTAINER_REPO_ASIA_PROD:$CI_COMMIT_SHA
+  FULLREPO_ASIA_PROD: $CONTAINER_REPO_ASIA_PROD:$CI_COMMIT_SHORT_SHA
   HELM_VALUE: ${CI_COMMIT_REF_NAME}
   HELM_VERSION: 3.0.2
   HELM_CRONJOB_VERSION: 0.1.9
   AWS_REGION: ap-southeast-1
   GITLAB_TOKEN: $GITLAB_RUNNER_TOKEN
+  PROD_SERVER_1_IP: 3.66.46.121
+  PROD_SERVER_USER: root
   DOCKER_DRIVER: overlay
   #DOCKER_HOST: tcp://localhost:2375
   DOCKER_TLS_CERTDIR: ""
@@ -90,6 +91,27 @@ build_stag:
     paths:
     - build_sync.json
 
+build:
+  stage: build
+  image: docker:19.03.1
+  services:
+    - docker:19.03.1-dind
+  tags:
+    - esol-stag-test
+  before_script:
+    - apk add --no-cache curl jq python py-pip wget git bash 
+    - git submodule add -f --branch stag https://read-token:$GITLAB_TOKEN@gitlab.rinznetwork.com/katana/ktn-lib.git lib
+    - git submodule sync --recursive
+    - git submodule update --init --remote --recursive
+  script:
+    - cp $PROD_ENV .env
+    - docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
+    - docker build -t $FULLREPO_ASIA_PROD . -f Dockerfile
+    - docker image push $FULLREPO_ASIA_PROD
+
+  only:
+    - master
+
 deploy_stag:
   stage: deploy
   image:  alpine/helm:3.2.1
@@ -114,3 +136,26 @@ deploy_stag:
   only:
     refs:
       - stag
+
+deploy-prod-server1:
+  stage: deploy
+  image: docker:19.03.1
+  services:
+    - docker:19.03.1-dind
+  tags:
+    - esol-stag
+  before_script:
+    - apk add openssh
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PROD_SERVER_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 400 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - ssh-keyscan -H $PROD_SERVER_1_IP >> ~/.ssh/known_hosts
+  script:
+    - sed -i -e "s#\[IMAGE_REPO\]#$FULLREPO_ASIA_PROD#g" docker-compose.yml 
+    - scp docker-compose.yml  root@${PROD_SERVER_1_IP}:/data/cicd/ktn-admin-panel/docker-compose.yml 
+    - ssh root@$PROD_SERVER_1_IP "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}"
+    - ssh root@$PROD_SERVER_1_IP "cd /data/cicd/ktn-admin-panel/ && docker-compose up --build -d"
+  only:
+    - master
