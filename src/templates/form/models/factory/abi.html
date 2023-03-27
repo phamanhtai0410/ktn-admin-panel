@@ -8,117 +8,310 @@
 {{ abi_lib.script_abi() }}
 
 <script>
-    var abi = {{ factory_abi | tojson(indent=2) }}
+    var abi =
+    {{ factory_abi | tojson(indent=2) }}
     var address = "{{ factory_address }}"
+    var royalty_controller_abi =
+    {{ royalty_controller_abi | tojson(indent=2) }}
+    var royalty_controller_address = "{{  royalty_controller_address}}"
 
+    var before_royalty = {{ before_royalty | tojson(indent=2) }};
+    var base_uri = "https://s3.amazonaws.com/static.katanainu.com/metadata"
     var factoryContract = null;
-    var before_disable_mint = {{ before_disable_mint | tojson(indent=2)  }}
+    var royaltyControllerContract = null
+    var before_disable_mint =
+    {{ before_disable_mint | tojson(indent=2)  }}
 
-    if(before_disable_mint) {
+    if (before_disable_mint) {
         before_disable_mint = "y"
     } else {
-       before_disable_mint = null
+        before_disable_mint = null
     }
 
-    async function createNftCollection(name, symbol) {
+    async function saveAddress(collection_id, address, block_number) {
+        return await new Promise(async function (resolve, reject) {
+            var form = new FormData();
+            form.append("address", address);
+            form.append("block_number", block_number);
+            form.append('collection_id', collection_id)
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.responseType = 'json';
+            xhr.addEventListener("readystatechange", function () {
+                if (this.readyState === 4) {
+                    console.log('response', this.response);
+                    if (this.response) {
+                        resolve(this.response.metadata_cid)
+                    }
+                    reject(null)
+                }
+            });
+            xhr.open("POST", "{{ url_for('root_blueprint.save_address_for_collection') }}");
+            xhr.send(form);
+        });
+    }
+
+    async function callWriteRoyalty(collection_address, value) {
         try {
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
-            if(!factoryContract) {
-                factoryContract =  await initSignerContract(address, abi)
+            if (!royaltyControllerContract) {
+                royaltyControllerContract = await initSignerContract(
+                    ethers.utils.getAddress(royalty_controller_address), royalty_controller_abi)
+            }
+            let receivers = []
+            let proportions = []
+            for (let member of value) {
+                console.log('member', member)
+                receivers.push(ethers.utils.getAddress(member.user_address))
+                proportions.push(Number(member.percent) * 100)
             }
 
             $("#process_text").text("Sign tx......")
-            var result = await factoryContract.createNftCollection(name, symbol );
+            console.log(ethers.utils.getAddress(collection_address),
+                receivers, proportions)
+            console.log("*** test - ", royaltyControllerContract, factoryContract);
+            var result = await royaltyControllerContract.configureRoyaltiesProportions(
+                ethers.utils.getAddress(collection_address),
+                receivers, proportions
+            );
             console.log(result)
-            $("#process_text").text("Wait tx "+ result.hash +"......")
+            $("#process_text").text("Wait tx " + result.hash + "......")
             var tx = await result.wait()
             console.log(tx)
-            $("#block_number").val(tx.blockNumber)
-            tx.events.forEach(event=>{
-                  if(event.event==='CreateNftCollection') {
-                     console.log("address",event.args[0])
-                     $("#address").val(event.args[0].toLowerCase())
-                  }
-            })
+
             $("#process_text").html('<div  class="alert alert-success" role="alert"> Successfully </div>')
             return true;
-        } catch(e) {
-           console.error(e)
-           console.log(e.data?.message)
-           console.log(e.toString())
-           console.log(e.data?.message)
-           var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
-           $("#msg_factory").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
-           console.error(e)
-           $("#abi_lock_page").html('')
+        } catch (e) {
+            console.error(e)
+            console.log(e.data?.message)
+            console.log(e.toString())
+            console.log(e.data?.message)
+            var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+            $("#msg_factory").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+            console.error(e)
+            $("#abi_lock_page").html('')
         }
         return false;
     }
 
+    async function checkRoyaltyController(collection_address, value, f_update) {
+        console.log("checkRoyaltyController")
+        let require_update = false;
+        for (let member of value) {
+            let _cu = before_royalty.findIndex(u => u.user_address.toLocaleLowerCase() === member.user_address.toLocaleLowerCase())
+            if (!_cu || _cu.percent !== member.percent) {
+                require_update = true;
+            }
+        }
+        console.log(require_update, f_update, value)
+        if (require_update || f_update) {
+            let total = value.reduce((value, item) => value + Number(item.percent), 0)
+            console.log(total)
+            if (total !== 100) {
+                $("#msg_factory").html('<div   class="alert alert-danger" role="alert"> Total percent must be 100%</div>')
+                return false
+            }
+            console.log("callWriteRoyalty", collection_address, value)
+            return await callWriteRoyalty(collection_address, value)
+        }
+        return true
+    }
 
+    async function createNftCollection(name, symbol, total_supply, treasury_address, _royaltyRate, _prices) {
+        try {
+            $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
+            if (!factoryContract) {
+                factoryContract = await initSignerContract(address, abi)
+            }
 
-    $( document ).ready(function() {
-        $("#factory_create_collection").submit(async function(event){
-                event.preventDefault();
-                 // continues    event.currentTarget.submit();
-                var _fields = $(this).serializeArray()
-                console.log(_fields)
-                var name, symbol;
-
-                for(const _field of _fields) {
-                    if(_field.name == 'name') {
-                        name = _field.value
-                    }
-                    if(_field.name == 'symbol') {
-                        symbol = _field.value
-                    }
+            $("#process_text").text("Sign tx......")
+            var result = await factoryContract.createNftCollection(
+                name, symbol, base_uri, total_supply, treasury_address, _royaltyRate, _prices
+            );
+            console.log(result)
+            $("#process_text").text("Wait tx " + result.hash + "......")
+            var tx = await result.wait()
+            let NFTAddress = false;
+            console.log(tx)
+            let blockNumber = tx.blockNumber
+            tx.events.forEach(event => {
+                if (event.event === 'CreateNftCollection') {
+                    // console.log("address", event.args[0])
+                    // $("#address").val(event.args[0].toLowerCase())
+                    NFTAddress = event.args[0].toLowerCase();
                 }
+            })
 
+            $("#process_text").html('<div  class="alert alert-success" role="alert"> Successfully </div>')
+            return {address: NFTAddress, blockNumber: blockNumber};
+        } catch (e) {
+            console.error(e)
+            console.log(e.data?.message)
+            console.log(e.toString())
+            console.log(e.data?.message)
+            var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+            $("#msg_factory").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+            console.error(e)
+            $("#abi_lock_page").html('')
+        }
+        return false;
+    }
 
-                var res = await createNftCollection(
-                    name, symbol
-                )
-
-                console.log("res", res)
-                if(res) {
-                   $(this).unbind('submit').submit();
-                }
+    $(document).ready(function () {
+        {#console.log("treasury_address")#}
+        $("#treasury_address")?.on("click", async function (event) {
+            let address = await connectWallet()
+            if (address) {
+                $("#treasury_address").val(address.toLowerCase())
+            }
         })
 
-        $("#factory_edit").submit(async function(event){
-                event.preventDefault();
-                var _fields = $(this).serializeArray()
-                console.log(_fields)
+        $("#deploy_nft").on("click", async function (event) {
+            {#event.preventDefault();#}
+            console.log("console")
+            let object = event.target.getAttribute("data-object")
+            if (object) {
+                try {
+                    object = JSON.parse(object)
+                } catch (e) {
+                    console.error(e)
+                }
+            }
 
-                var disable_mint = null;
-                var collection_address;
-                var submit = true;
+            console.log(object)
+            if (!object.treasury_address) {
+                alert("Treasury address  is required")
+                return;
+            }
+            if (!object.name) {
+                alert("name is required")
+                return;
+            }
+            if (!object.symbol) {
+                alert("symbol is required")
+                return;
+            }
+            if (!object.total_supply) {
+                alert("Total supply is required")
+                return;
+            }
+            if (!object.royalty_rate) {
+                alert("Royalty rate is required")
+                return;
+            }
+            let _prices = object.types_list.map(item => ((item.price * 10 ** 18).toFixed(0)).toString())
+            var res = await createNftCollection(
+                object.name,
+                object.symbol,
+                object.total_supply,
+                object.treasury_address,
+                object.royalty_rate,
+                _prices
+            )
+            if (res && res.address) {
+                console.log("Call BE")
 
-                for(const _field of _fields) {
-                    if(_field.name == 'disable_mint') {
-                        disable_mint = _field.value
+                await saveAddress(object.collection_id, res.address, res.blockNumber)
+                if (object.royalty?.length > 0) {
+                    let resRoy = await checkRoyaltyController(res.address, object.royalty, true)
+                    if (!resRoy) {
+                        alert("Royalty list has been fail. Please try again")
                     }
-                   if(_field.name == 'address') {
-                        collection_address = _field.value
+                }
+            }
+            location.reload()
+        })
+        $("#factory_create_collection_remove").submit(async function (event) {
+            event.preventDefault();
+            // continues    event.currentTarget.submit();
+            var _fields = $(this).serializeArray()
+            console.log(_fields)
+            var name, symbol, royaltyRate, totalSupply
+
+            for (const _field of _fields) {
+                if (_field.name == 'name') {
+                    name = _field.value
+                }
+                if (_field.name == 'symbol') {
+                    symbol = _field.value
+                }
+                if (_field.name == 'royalty_rate') {
+                    royaltyRate = Number(_field.value) * 100
+                }
+
+                if (_field.name == 'total_supply') {
+                    totalSupply = Number(_field.value)
+                }
+            }
+
+
+            var res = await createNftCollection(
+                name, symbol, totalSupply, royaltyRate
+            )
+
+            console.log("res", res)
+            if (res) {
+                $(this).unbind('submit').submit();
+            }
+        })
+
+        $("#factory_edit").submit(async function (event) {
+            event.preventDefault();
+            var _fields = $(this).serializeArray()
+            console.log(_fields)
+
+            var disable_mint = null;
+            var collection_address;
+            var submit = true;
+            var deployed = false;
+            var royalty_update = []
+            for (const _field of _fields) {
+                if (_field.name == 'disable_mint') {
+                    disable_mint = _field.value
+                }
+                if (_field.name == 'address') {
+                    collection_address = _field.value
+                }
+                if (_field.name == 'address') {
+                    if(_field.value==='y') {
+                    deployed = true;
+ 
+                    } else {
+                        deployed = false;
                     }
                 }
+                if (_field.name.startsWith('royalty')) {
+                    let _f = _field.name.split('-')
+                    if (_f.length === 3) {
+                        if (!royalty_update[Number(_f[1])]) {
+                            royalty_update[Number(_f[1])] = {}
+                        }
+                        {#royalty_update = _field.value#}
+                        royalty_update[Number(_f[1])][_f[2]] = _field.value
 
-                console.log(before_disable_mint, collection_address)
-
-                if(disable_mint !== before_disable_mint) {
-                    console.log("Set disable_mint")
-
+                    }
 
                 }
+            }
 
-                if(submit) {
-                   $(this).unbind('submit').submit();
-                }
+            console.log(before_disable_mint, collection_address)
+
+            if (disable_mint !== before_disable_mint) {
+                console.log("Set disable_mint")
+
+
+            }
+            let resRoy = true;
+            if(deployed) {
+                resRoy = await checkRoyaltyController(collection_address, royalty_update, true)
+            }
+            if (submit && resRoy) {
+                $(this).unbind('submit').submit();
+            }
 
         })
 
     });
-
 
 
 </script>

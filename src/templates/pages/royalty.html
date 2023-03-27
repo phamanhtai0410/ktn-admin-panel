@@ -9,10 +9,12 @@
 {#    <link rel="apple-touch-icon" href="/logo192.png"/>#}
 {#    <link rel="manifest" href="/manifest.json"/>#}
     <title>Royalty</title>
-    <script defer="defer" src="{{ url_for('static',filename='royalty/static/js/main.35607321.js') }}"></script>
+    <script>var royaltyAddress = "{{ ROYALTY_CONTROLLER_ADDRESS }}",
+        API_URI = "https://api-stag-ktn.esollabs.com/v1/dapp"</script>
+    <script defer="defer" src="{{ url_for('static',filename='royalty/static/js/main.ba6884d3.js') }}"></script>
 
 {#    <link href="/royalty/static/css/main.ccc875e0.css" rel="stylesheet">#}
-      <link href="{{url_for('static',filename='royalty/static/css/main.467b3a37.css')}}" rel="stylesheet"></link>
+      <link href="{{url_for('static',filename='royalty/static/css/main.587c75e1.css')}}" rel="stylesheet"></link>
 
 </head>
 <body>

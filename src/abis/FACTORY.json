@@ -2,8 +2,8 @@
     {
         "inputs": [
             {
-                "internalType": "contract INftConfigurations",
-                "name": "_nftConfigurations",
+                "internalType": "contract IConfiguration",
+                "name": "_nftConfiguration",
                 "type": "address"
             }
         ],
@@ -16,29 +16,17 @@
             {
                 "indexed": false,
                 "internalType": "address",
-                "name": "_nftCollection",
+                "name": "_collection",
                 "type": "address"
             },
             {
                 "indexed": false,
                 "internalType": "uint256",
-                "name": "_rarity",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_meshIndex",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_price",
+                "name": "_newTotal",
                 "type": "uint256"
             }
         ],
-        "name": "ConfigMesh",
+        "name": "ConfigNewTotalSupply",
         "type": "event"
     },
     {
@@ -47,41 +35,11 @@
             {
                 "indexed": false,
                 "internalType": "address",
-                "name": "_nftCollection",
+                "name": "boxAddress",
                 "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_rarity",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_meshIndex",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_price",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_meshMaterial",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "_cid",
-                "type": "string"
             }
         ],
-        "name": "ConfigOne",
+        "name": "CreateNewBox",
         "type": "event"
     },
     {
@@ -265,7 +223,8 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function"
+        "type": "function",
+        "constant": true
     },
     {
         "inputs": [],
@@ -278,91 +237,22 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function"
+        "type": "function",
+        "constant": true
     },
     {
-        "inputs": [
+        "inputs": [],
+        "name": "boxImplementationAddress",
+        "outputs": [
             {
                 "internalType": "address",
-                "name": "_nftCollection",
+                "name": "",
                 "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_rarity",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_meshIndex",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_price",
-                "type": "uint256"
             }
         ],
-        "name": "configMesh",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_nftCollection",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_rarity",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_meshIndex",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_price",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_meshMaterial",
-                "type": "uint256"
-            },
-            {
-                "internalType": "string",
-                "name": "_cid",
-                "type": "string"
-            }
-        ],
-        "name": "configOne",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "string",
-                "name": "_name",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "_symbol",
-                "type": "string"
-            }
-        ],
-        "name": "createNftCollection",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
     },
     {
         "inputs": [],
@@ -375,85 +265,8 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "value",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "txGas",
-                "type": "uint256"
-            },
-            {
-                "internalType": "bytes",
-                "name": "data",
-                "type": "bytes"
-            },
-            {
-                "internalType": "enum KatanaNftFactory.Operation",
-                "name": "operation",
-                "type": "uint8"
-            }
-        ],
-        "name": "execTx",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "index",
-                "type": "uint256"
-            }
-        ],
-        "name": "getCollectionAddress",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getCurrentDappCreatorAddress",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getCurrentNftConfigurations",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
+        "type": "function",
+        "constant": true
     },
     {
         "inputs": [
@@ -472,7 +285,8 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function"
+        "type": "function",
+        "constant": true
     },
     {
         "inputs": [
@@ -514,7 +328,8 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function"
+        "type": "function",
+        "constant": true
     },
     {
         "inputs": [],
@@ -527,7 +342,349 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [],
+        "name": "nftConfiguration",
+        "outputs": [
+            {
+                "internalType": "contract IConfiguration",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "openingCollectionOfBox",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "role",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+            }
+        ],
+        "name": "renounceRole",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "role",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+            }
+        ],
+        "name": "revokeRole",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract IConfiguration",
+                "name": "_nftConfiguration",
+                "type": "address"
+            }
+        ],
+        "name": "setConfiguration",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_collectionAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_nftIndex",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_price",
+                "type": "uint256"
+            }
+        ],
+        "name": "configCollection",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_symbol",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_baseMetadataUri",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_totalSupply",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "_treasuryAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint96",
+                "name": "_royaltyRate",
+                "type": "uint96"
+            },
+            {
+                "internalType": "uint256[]",
+                "name": "_prices",
+                "type": "uint256[]"
+            }
+        ],
+        "name": "createNftCollection",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_symbol",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_tokenURI",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_totalSupply",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "_treasuryAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint96",
+                "name": "_royaltyRate",
+                "type": "uint96"
+            },
+            {
+                "internalType": "contract ICollection",
+                "name": "_openingCollectionAddress",
+                "type": "address"
+            }
+        ],
+        "name": "createBox",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_boxAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_price",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_maxIndex",
+                "type": "uint256"
+            }
+        ],
+        "name": "configBox",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_collection",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_newTotal",
+                "type": "uint256"
+            }
+        ],
+        "name": "configNewTotalSupply",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes4",
+                "name": "interfaceId",
+                "type": "bytes4"
+            }
+        ],
+        "name": "supportsInterface",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [],
+        "name": "getCurrentDappCreatorAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [],
+        "name": "getCurrentConfiguration",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_boxAddress",
+                "type": "address"
+            }
+        ],
+        "name": "getOpeningCollectionOfBox",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "index",
+                "type": "uint256"
+            }
+        ],
+        "name": "getCollectionAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "index",
+                "type": "uint256"
+            }
+        ],
+        "name": "getBoxAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
     },
     {
         "inputs": [
@@ -546,35 +703,72 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function"
+        "type": "function",
+        "constant": true
     },
     {
-        "inputs": [],
-        "name": "nftConfigurations",
-        "outputs": [
+        "inputs": [
             {
-                "internalType": "contract INftConfigurations",
-                "name": "",
+                "internalType": "address",
+                "name": "_characterToken",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "_newMinter",
                 "type": "address"
             }
         ],
-        "stateMutability": "view",
+        "name": "setNewMinter",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
         "inputs": [
             {
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
+                "internalType": "address",
+                "name": "_boxAddress",
+                "type": "address"
             },
             {
                 "internalType": "address",
-                "name": "account",
+                "name": "_newMinter",
                 "type": "address"
             }
         ],
-        "name": "renounceRole",
+        "name": "setNewMinterForBox",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_nftCollection",
+                "type": "address"
+            },
+            {
+                "internalType": "bool",
+                "name": "_newState",
+                "type": "bool"
+            }
+        ],
+        "name": "updateStateDisableMinting",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_nftColleciton",
+                "type": "address"
+            }
+        ],
+        "name": "switchFreeTransferMode",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -616,66 +810,32 @@
     {
         "inputs": [
             {
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
                 "internalType": "address",
-                "name": "account",
-                "type": "address"
-            }
-        ],
-        "name": "revokeRole",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "contract INftConfigurations",
-                "name": "_nftConfigurations",
-                "type": "address"
-            }
-        ],
-        "name": "setConfiguration",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_characterToken",
+                "name": "to",
                 "type": "address"
             },
             {
-                "internalType": "address",
-                "name": "_newMinter",
-                "type": "address"
-            }
-        ],
-        "name": "setNewMinter",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_nftCollection",
-                "type": "address"
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
             },
             {
-                "internalType": "address",
-                "name": "_to",
-                "type": "address"
+                "internalType": "uint256",
+                "name": "txGas",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+            },
+            {
+                "internalType": "enum KatanaNftFactory.Operation",
+                "name": "operation",
+                "type": "uint8"
             }
         ],
-        "name": "setWhitelist",
+        "name": "execTx",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -683,12 +843,12 @@
     {
         "inputs": [
             {
-                "internalType": "bytes4",
-                "name": "interfaceId",
-                "type": "bytes4"
+                "internalType": "address",
+                "name": "_boxAddress",
+                "type": "address"
             }
         ],
-        "name": "supportsInterface",
+        "name": "checkIsValidBox",
         "outputs": [
             {
                 "internalType": "bool",
@@ -697,37 +857,7 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_nftColleciton",
-                "type": "address"
-            }
-        ],
-        "name": "switchFreeTransferMode",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_nftCollection",
-                "type": "address"
-            },
-            {
-                "internalType": "bool",
-                "name": "_newState",
-                "type": "bool"
-            }
-        ],
-        "name": "updateStateDisableMinting",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+        "type": "function",
+        "constant": true
     }
 ]

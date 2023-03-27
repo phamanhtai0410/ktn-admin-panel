@@ -2,13 +2,13 @@
 
 {% macro call_smc(form_id, before, is_create=False) %}
 
-  {% if is_create %}
-      <script>
+    {% if is_create %}
+        <script>
             var _next = false;
-            $('#{{ form_id }}').submit(async function(event){
+            $('#{{ form_id }}').submit(async function (event) {
                 event.preventDefault();
-                await new Promise(async function(resolve, reject) {
-                    setTimeout(function(){
+                await new Promise(async function (resolve, reject) {
+                    setTimeout(function () {
                         event.currentTarget.submit();
                         resolve();
                     }, 2000)
@@ -17,52 +17,23 @@
                 console.log("done oke", event)
 
             })
-      </script>
+        </script>
 
-  {% endif %}
+    {% endif %}
 
-  {% if not is_create %}
+    {% if not is_create %}
 
-  {% endif %}
+    {% endif %}
 
 {% endmacro %}
 
 
 {% macro connect_wallet_btn() %}
     <script>
-         async function connectWalletBtn(){
-                try {
-                    console.log("connectWalletBtn")
-                    if(!window.ethereum) {
-                        alert("Please install the wallet.")
-                    }
-
-                    window.provider = new ethers.providers.Web3Provider(window.ethereum)
-
-                    await window.provider.send("eth_requestAccounts", []);
-
-                    window.signer = window.provider.getSigner()
-                    var wallet = await window.signer.getAddress()
-                    $('#connect_wallet').replaceWith($('<h4> Address: ' + wallet + '</h4>'));
-                } catch(e) {
-                    console.error(e)
-                    alert(e.toString())
-                }
-         }
-
-    </script>
-    <div class="card d-flex align-items-center justify-content-center p-3">
-        <button id="connect_wallet" style="max-width: 200px !important;" class="btn btn-success m-2" onclick="connectWalletBtn()">
-            Connect Wallet </button> <i class="m-2">This action must be called to blockchain. Please don't leave while the action is in progress.</i>
-    </div>
-
-{% endmacro %}
-
-{% macro script_abi() %}
-    <script>
-         async function connectWallet(){
-
-                if(!window.ethereum) {
+        async function connectWalletBtn() {
+            try {
+                console.log("connectWalletBtn")
+                if (!window.ethereum) {
                     alert("Please install the wallet.")
                 }
 
@@ -71,27 +42,74 @@
                 await window.provider.send("eth_requestAccounts", []);
 
                 window.signer = window.provider.getSigner()
-         }
-
-         async function initSignerContract(address, abis) {
-            if(!window.signer) {
-               await connectWallet()
+                var wallet = await window.signer.getAddress()
+                $('#connect_wallet').replaceWith($('<h4> Address: ' + wallet + '</h4>'));
+            } catch (e) {
+                console.error(e)
+                alert(e.toString())
             }
-            return await new ethers.Contract(address, abis, window.provider).connect(window.signer);
-         }
+        }
 
-         async function initContract(address, abis) {
 
-            if(!window.ethereum) {
+    </script>
+    <div class="card d-flex align-items-center justify-content-center p-3">
+        <button id="connect_wallet" style="max-width: 200px !important;" class="btn btn-success m-2"
+                onclick="connectWalletBtn()">
+            Connect Wallet
+        </button>
+        <i class="m-2">This action must be called to blockchain. Please don't leave while the action is in progress.</i>
+    </div>
+
+{% endmacro %}
+
+{% macro script_abi() %}
+    <script>
+        async function connectWallet() {
+
+            if (!window.ethereum) {
                 alert("Please install the wallet.")
             }
 
-            if(!window.provider) {
+            window.provider = new ethers.providers.Web3Provider(window.ethereum)
+
+            await window.provider.send("eth_requestAccounts", []);
+
+            window.signer = window.provider.getSigner()
+            return await window.signer.getAddress()
+        }
+        $(document).ready(function () {
+            if (window.ethereum) {
+                window.ethereum.on("accountsChanged", async function () {
+                // Time to reload your interface with accounts[0]!
+                console.log("accountsChanged")
+                window.provider = new ethers.providers.Web3Provider(window.ethereum)            // accounts = await web3.eth.getAccounts();
+                window.signer = window.provider.getSigner()
+                console.log($('input[we3-address="input_address"]'))
+                $('input[we3-address="input_address"]').val(await window.signer.getAddress())
+                $('textarea[we3-address="input_address"]').val(await window.signer.getAddress())
+
+            });
+            }
+        })
+        async function initSignerContract(address, abis) {
+            if (!window.signer) {
+                await connectWallet()
+            }
+            return await new ethers.Contract(ethers.utils.getAddress(address), abis, window.provider).connect(window.signer);
+        }
+
+        async function initContract(address, abis) {
+
+            if (!window.ethereum) {
+                alert("Please install the wallet.")
+            }
+
+            if (!window.provider) {
                 window.provider = new ethers.providers.Web3Provider(window.ethereum)
             }
 
             return await new ethers.Contract(address, abis, window.provider);
-         }
+        }
 
     </script>
 {% endmacro %}

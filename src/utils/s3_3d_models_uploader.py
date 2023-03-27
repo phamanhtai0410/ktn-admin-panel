@@ -1,4 +1,3 @@
-import traceback
 from datetime import datetime
 
 import boto3
@@ -6,23 +5,32 @@ from flask_admin.form.upload import FileUploadField, ImageUploadInput, ImageUplo
 from src.config import Config
 
 
-class CustomViewImageWidget(ImageUploadInput):
-    data_template = ('<div>'
-                     ' Current: <img style="width: 250px;"  %(image)s>'
-                     '</div>'
-                     '<input class="image_preview" %(file)s>')
+class CustomView3dModelWidget(ImageUploadInput):
+    data_template = (
+        '<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>'
+        '<div>'
+        ' Current: <model-viewer style="width: 250px;"  %(image)s></model-viewer>'
+        '</div>'
+        # '<model-viewer alt="3D image" src="https://d1a370nemizbjq.cloudfront.net/0a08c3a8-c67a-41ea-bfdb-28d0e9894db7.glb" ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls auto-rotate></model-viewer>'
+        '<input class="image_preview" %(file)s>'
+    )
     empty_template = '<input class="image_preview" %(file)s>'
+    
+
+
+
+
     def get_url(self, field):
         return field.data
 
 
-class S3ImageUploadField(FileUploadField):
+class S3_3D_ModelUploadField(FileUploadField):
 
 
     def __init__(self, *args, **kwargs):
-        super(S3ImageUploadField, self).__init__(*args, **kwargs)
+        super(S3_3D_ModelUploadField, self).__init__(*args, **kwargs)
 
-    widget = CustomViewImageWidget()
+    widget = CustomView3dModelWidget()
 
     # Deletion
     def _delete_file(self, filename):
@@ -48,16 +56,12 @@ class S3ImageUploadField(FileUploadField):
         name_prefix = datetime.today().strftime('%hh%MM%ss')
 
         key_path_upload = f'{name_prefix}_{image.filename}'
-        try:
-            s3.upload_fileobj(
-                image,
-                Config.BUCKET_NAME,
-                key_path_upload,
-                ExtraArgs={
-                    "ContentType": image.content_type  # Set appropriate content type as per the file
-                }
-            )
-        except:
-            traceback.print_exc()
-            return ""
+        s3.upload_fileobj(
+            image,
+            Config.BUCKET_NAME,
+            key_path_upload,
+            ExtraArgs={
+                "ContentType": image.content_type  # Set appropriate content type as per the file
+            }
+        )
         return f'{Config.S3_STATIC}/{name_prefix}_{image.filename}'

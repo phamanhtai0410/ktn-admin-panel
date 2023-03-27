@@ -36,6 +36,7 @@ class BoxView(MyBaseModelView, RowActionListMixin):
     can_create = True
     # edit_modal = True
     can_view_details = True
+    
     form_overrides = dict(
         collection=SelectField,
         image=S3ImageUploadField,
@@ -75,6 +76,12 @@ class BoxView(MyBaseModelView, RowActionListMixin):
                 'readonly': True
             },
             'box_id': {
+                'readonly': True
+            },
+            'total_supply': {
+                'readonly': True
+            },
+            'royalty_rate': {
                 'readonly': True
             }
         }

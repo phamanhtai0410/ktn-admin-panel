@@ -6,6 +6,9 @@
 """
 import io
 import json
+import traceback
+from datetime import datetime
+
 import w3storage
 
 import requests
@@ -16,6 +19,7 @@ from flask import Blueprint, request, render_template, redirect, url_for, jsonif
 from pydash import get
 
 from src.config import Config
+from src.models.nft_collection import NftCollection
 
 root_blueprint = Blueprint(
     'root_blueprint',
@@ -51,6 +55,10 @@ w3 = w3storage.API(
 
 def upload_file(file):
     return w3.post_upload(file)
+
+
+def upload_files(files):
+    return w3.post_upload(files)
 
 
 @root_blueprint.route('/metadata_cid', methods=['POST'])
@@ -114,8 +122,45 @@ def box_cid():
     return jsonify({'metadata_cid': metadata_cid})
 
 
+@root_blueprint.route('/nft/record/address', methods=['POST'])
+@login_required
+def save_address_for_collection():
+    data = request.form.to_dict()
+    nft = NftCollection.objects(collection_id=get(data, 'collection_id')).first()
+    if nft:
+        if not nft.deployed:
+            nft.address = data['address']
+            nft.block_number = data['block_number']
+            nft.deployed = True
+            nft.save()
+            print({
+                "contract": nft.address,
+                "type": "NFT",
+                "from_block": data['block_number']
+            })
+            res = requests.post(f'{Config.SMC_IAPI}/background_jobs', json={
+                "contract": nft.address,
+                "type": "NFT",
+                "from_block": data['block_number']
+            }, timeout=10)
+            print(res.text)
+    return jsonify({})
+
 @root_blueprint.route('/file/ipfs', methods=['POST'])
 def upload_ipfs():
-    _image = request.files['file']
-    _cid = upload_file(_image)
+    _file = request.files['file']
+    file = io.BytesIO(f'Game upload at: {datetime.now()}'.encode())
+
+    _cid = upload_files(_file)
     return jsonify({'ipfs': f'https://{_cid}.ipfs.w3s.link'})
+
+#
+# @root_blueprint.route('/prices', methods=['GET'])
+# def get_prices():
+#     try:
+#         res = requests.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=binancecoin,tether,wbnb")
+#         print(res.json())
+#         return jsonify(res.json())
+#     except:
+#         traceback.print_exc()
+#     return jsonify({})
