@@ -4,6 +4,7 @@
         -
         -
 """
+import json
 import os
 from dotenv import load_dotenv
 
@@ -51,4 +52,6 @@ class Config:
     DAPP_API = os.getenv('DAPP_API')
     BOX_FACTORY_ADDRESS = os.getenv('BOX_FACTORY_ADDRESS')
     PAY_TOKEN = '0x69c76f1bfd9b85142716f7d766968028fc6b6a1d'
+
+    NFT_CHAIN_SUPPORTED = json.loads(os.getenv('NFT_CHAIN_SUPPORTED', '{}'))
     pass

@@ -16,8 +16,8 @@ class NftType(EmbeddedDocument):
     AssetRarity = StringField(required=True)
     EventDataTableID = StringField(required=False)
     AssetUniqueIndex = StringField(required=False)
-    ImageUrl = StringField(required=False)
-    AnimationModelUrl = StringField(required=False)
+    ImageUrl = StringField(required=False, default='', missing='')
+    AnimationModelUrl = StringField(required=False, default='', missing='')
     rate = FloatField(required=True)
     price = FloatField(required=True)
 
@@ -52,6 +52,11 @@ class NftCollection(BaseDocument):
     deployed = BooleanField(default=False)
     royalty_rate = IntField(required=True, default=20, min_value=0, max_value=100)
     treasury_address = StringField()
+
+    chain_id = IntField(required=False, default=None)
+    chain = StringField(required=False, default=None)
+    pay_token_address = StringField(required=False, default=None)
+    dapp_creator_address = StringField(required=False, default=None)
 
     def __str__(self):
         return self.name if self else ''

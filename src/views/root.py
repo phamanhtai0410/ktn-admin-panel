@@ -129,9 +129,13 @@ def save_address_for_collection():
     nft = NftCollection.objects(collection_id=get(data, 'collection_id')).first()
     if nft:
         if not nft.deployed:
-            nft.address = data['address']
+            nft.address = data['address'].lower()
             nft.block_number = data['block_number']
             nft.deployed = True
+            nft.chain_id = data['chain_id']
+            nft.chain = data['chain']
+            nft.pay_token_address = data['pay_token_address'].lower()
+            nft.dapp_creator_address = data['dapp_creator_address'].lower()
             nft.save()
             print({
                 "contract": nft.address,
@@ -141,7 +145,8 @@ def save_address_for_collection():
             res = requests.post(f'{Config.SMC_IAPI}/background_jobs', json={
                 "contract": nft.address,
                 "type": "NFT",
-                "from_block": data['block_number']
+                "from_block": data['block_number'],
+                "chain": data['chain']
             }, timeout=10)
             print(res.text)
     return jsonify({})

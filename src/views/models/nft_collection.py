@@ -190,6 +190,18 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
             },
             'deployed': {
                 'disabled': True
+            },
+            'chain_id': {
+                'disabled': True
+            },
+            'chain': {
+                'disabled': True
+            },
+            'pay_token_address': {
+                'disabled': True
+            },
+            'dapp_creator_address': {
+                'disabled': True
             }
         }
 
@@ -236,6 +248,7 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
         kwargs['before_royalty'] = []
         if hasattr(self, 'before_disable_mint'):
             kwargs['before_royalty'] = self.before_royalty
+        kwargs['nft_chain_supported'] = Config.NFT_CHAIN_SUPPORTED
         return super(NftCollectionView, self).render(template, **kwargs)
 
     def create_model(self, form):
