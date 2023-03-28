@@ -30,6 +30,20 @@
 
     var nft_chain_supported = {{ nft_chain_supported | tojson(indent=2)}}
 
+    async function validateChainInfo() {
+        if (!window.signer) {
+            await connectWallet()
+        }
+
+        const chain_info = await window.provider.getNetwork()
+
+        if(!chain_info['chainId'] || !(chain_info['chainId'] in nft_chain_supported)) {
+            throw new Error('Smart Contract Do Not Supported Current Chain')
+        }
+
+        return chain_info
+    }
+
     async function saveAddress(collection_id, address, block_number, chainInfo) {
         return await new Promise(async function (resolve, reject) {
             var form = new FormData();
@@ -61,9 +75,18 @@
     async function callWriteRoyalty(collection_address, value) {
         try {
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
+            
+            const chain_info = await validateChainInfo()
+
+            console.log(`chain_info: ${chain_info}, royalty_controller_address: ${nft_chain_supported[chain_info['chainId']]['royalty_controller_address']}`);
+
+            const royaltyControllerAddress = nft_chain_supported[chain_info['chainId']]['royalty_controller_address']
+
+            console.log(`royaltyControllerAddress: ${royaltyControllerAddress}`);
+
             if (!royaltyControllerContract) {
                 royaltyControllerContract = await initSignerContract(
-                    ethers.utils.getAddress(royalty_controller_address), royalty_controller_abi)
+                    ethers.utils.getAddress(royaltyControllerAddress), royalty_controller_abi)
             }
             let receivers = []
             let proportions = []
@@ -127,14 +150,14 @@
     async function createNftCollection(name, symbol, total_supply, treasury_address, _royaltyRate, _prices) {
         try {
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
+            const chain_info = await validateChainInfo()
+
+            console.log(`chain_info: ${chain_info}, ${chain_info['chainId']}, factoryAddress: ${nft_chain_supported[chain_info['chainId']]['factory_address']}`);
+
+            const factoryAddress = nft_chain_supported[chain_info['chainId']]['factory_address']
+
             if (!factoryContract) {
-                factoryContract = await initSignerContract(address, abi)
-            }
-
-            const chain_info = await provider.getNetwork()
-
-            if(!chain_info['chainId'] || !(chain_info['chainId'] in nft_chain_supported)) {
-                throw new Error('Smart Contract Do Not Supported Current Chain')
+                factoryContract = await initSignerContract(factoryAddress, abi)
             }
 
             $("#process_text").text("Sign tx......")
