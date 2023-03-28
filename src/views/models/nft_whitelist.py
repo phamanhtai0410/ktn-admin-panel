@@ -1,0 +1,106 @@
+import random
+import string
+import traceback
+
+from flask import request, redirect, url_for, flash
+from flask_admin import expose
+import pydash as py_
+import web3
+from wtforms import validators, fields
+
+from src.models.nft_whitelist import NftWhitelist
+from src.views.base import MyBaseModelView, RowActionListMixin
+
+
+class NftWhitelistView(RowActionListMixin, MyBaseModelView):
+    column_list = ['address', 'collection', 'amount']
+    can_edit = True
+    can_create = True
+    can_delete = True
+
+    # column_searchable_list = ['address', 'collection']
+
+    list_template = 'form/models/nft_whitelist/menu_bar.html'
+
+    column_default_sort = ('collection', True)
+
+    form_args = {
+        'address': {
+            'validators': [validators.required()]
+        },
+        'collection': {
+            'validators': [validators.required()],
+        },
+        'amount': {
+            'validators': [
+                validators.required()
+            ]
+        }
+    }
+
+    def is_valid_data(self, data, is_upload_file=False, csv_row=0):
+        print('Check is valid')
+        _web3 = web3.Web3()
+        _address = py_.get(data, 'address', None)
+        _collection = py_.get(data, 'collection', None)
+        _amount = py_.to_integer(py_.get(data, 'amount', 0))
+        if not _address or not _web3.isAddress(_address) or not _collection or not _web3.isAddress(_collection) or not _amount:
+            if is_upload_file:
+                flash(message=f'DATA NOT VALID - ROW IN CSV: {csv_row + 1} - address: {_address}, collection: {_collection}, amount: {_amount}', category="error")
+            else:
+                flash(message=f'DATA NOT VALID - address: {_address}, collection: {_collection}, amount: {_amount}', category="error")
+                
+            return False
+
+        return True
+
+    @expose('/upload_whitelist', methods=['POST'])
+    def upload_whitelist(self):
+        file = request.files.get('files')
+        print(file)
+        _csv_data = file.read().decode('utf-8')
+        if not _csv_data:
+            flash(message=f'Do not have data', category="error")
+
+        _web3 = web3.Web3()
+        _csv_data = _csv_data.split('\n')
+        _insert_data = []
+        for (_row, _item) in enumerate(_csv_data):
+            # NOTE: row == 0 is row name of data
+            if _row == 0:
+                continue
+            
+            _data = _item.split(',')
+            _address = py_.get(_data, '0', None)
+            _collection = py_.get(_data, '1', None)
+            _amount = py_.to_integer(py_.get(_data, '2', 0))
+
+            _insert = {
+                'address': _address.lower(),
+                'collection': _collection.lower(),
+                'amount': _amount
+            }
+            _is_valid = self.is_valid_data(
+                data=_insert,
+                is_upload_file=True,
+                csv_row=_row
+            )
+
+            if not _is_valid:
+                return redirect(url_for('.index_view'))
+            
+            _insert_data.append(_insert)
+
+        # NOTE: loop in insert_data for update amount, address if upload file many time
+        for _item in _insert_data:
+            _address = py_.get(_item, 'address')
+            _collection = py_.get(_item, 'collection')
+            _amount = py_.get(_item, 'amount')
+            NftWhitelist.objects(address=_address, collection=_collection).update_one(
+                set__address=_address,
+                set__collection=_collection,
+                set__amount=_amount,
+                upsert=True)
+
+
+        return redirect(url_for('.index_view'))

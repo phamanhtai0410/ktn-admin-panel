@@ -35,6 +35,8 @@ from .setting import SettingView
 from .admin_default_configs import AdminDefaultConfigsView
 from .raffle_config import RaffleConfigView
 from .raffle import RaffleView
+from .nft_whitelist import NftWhitelistView
+from .nft_whitelist_time import NftWhitelistTimeView
 
 from ...models.box import Box
 from ...models.box_rate import RateOfBox
@@ -57,6 +59,7 @@ from ...models.nfts_statistic import NftsStatistic
 from ...models.admin_default_config import AdminDefaultConfigs
 from ...models.raffle_config import RaffleConfig
 from ...models.raffle import Raffle
+from ...models.nft_whitelist import NftWhitelist
 
 model_categories = {
     'Setting': {
@@ -107,6 +110,10 @@ model_views = [
 
     PaymentView(Payment, category='Payment'),
     NftCollectionView(NftCollection, category='Master Data'),
+    NftWhitelistTimeView(NftCollection, category='Master Data',  endpoint='nft_collection_whitelist_time', name='Nft Whitelist Time'),
+    NftWhitelistView(NftWhitelist, category='Master Data', name='Nft Whitelist Address'),
+
+
 
     # NftRarityView(NftRarity, category='Master Data'),
     # MeshView(Mesh, name="Mesh", category='Master Data'),
@@ -116,5 +123,5 @@ model_views = [
 
     AdminDefaultConfigsView(AdminDefaultConfigs, category='Master Data'),
     RaffleConfigView(RaffleConfig, category='Master Data'),
-    RaffleView(Raffle, category='Application')
+    RaffleView(Raffle, category='Application'),
 ]

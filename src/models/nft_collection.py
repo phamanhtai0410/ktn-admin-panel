@@ -25,6 +25,10 @@ class Royalty(EmbeddedDocument):
     user_address = StringField(required=True)
     percent = FloatField(required=True, min_value=0, max_value=100)
 
+class WhitelistTime(EmbeddedDocument):
+    phase = IntField(required=True)
+    start_time = IntField(required=True)
+    end_time = IntField(required=True)
 
 class NftCollection(BaseDocument):
     meta = {
@@ -57,6 +61,8 @@ class NftCollection(BaseDocument):
     chain = StringField(required=False, default=None)
     pay_token_address = StringField(required=False, default=None)
     dapp_creator_address = StringField(required=False, default=None)
+
+    whitelist_time = ListField(EmbeddedDocumentField(WhitelistTime), default=[], missing=[])
 
     def __str__(self):
         return self.name if self else ''

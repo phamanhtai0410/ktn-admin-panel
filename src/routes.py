@@ -28,7 +28,8 @@ LOCK_PAGE = [
     'Nft History',
     'Nft Collection',
     'Box',
-    'Rate Of Box'
+    'Rate Of Box',
+    'Nft Whitelist Time'
 ]
 
 ROLES__PAGE_ACCESS_DISPLAY = {

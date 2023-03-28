@@ -1,0 +1,24 @@
+{% macro add_upload_file_modal(url='', title='', modal_window_id='fa_modal_window', file_accept='') %}
+<div class="modal fade" id="{{modal_window_id}}" tabindex="-1" role="dialog" aria-labelledby="{{modal_window_id}}">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <form action="{{url}}" method="POST" enctype="multipart/form-data" class="form-group">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">{{title}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input class="form-control" type="file" name="files" id="files" accept="{{file_accept}}" required/>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-primary" value="Save">
+                    <button class="btn btn-secondary" role="button" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endmacro %}
