@@ -46,8 +46,8 @@ class NftCollection(BaseDocument):
     types_list = ListField(EmbeddedDocumentField(NftType))
     royalty = ListField(EmbeddedDocumentField(Royalty))
 
-    commision = FloatField(required=True)
-    commision_level_2 = FloatField(required=True)
+    commission = FloatField(required=True)
+    commission_level_2 = FloatField(required=True)
 
     deployed = BooleanField(default=False)
     royalty_rate = IntField(required=True, default=20, min_value=0, max_value=100)
