@@ -54,6 +54,16 @@
     </div>
 
     {% endif %}
+    {% if model.deployed and model.is_box %}
+    <div class="card d-flex align-items-center justify-content-center flex-row p-3">
+        <button id="change_box_to_nft" data-object='{{ model | tojson(0)}}' style="max-width: 200px !important;" class="btn btn-success m-2">
+            Change Box To NFT
+        </button>
+        <button id="change_nft_to_box" data-object='{{ model | tojson(0)}}' style="max-width: 200px !important;" class="btn btn-primary m-2">
+            Change NFT To Box
+        </button>
+    </div>
+    {% endif %}
 {% endblock %}
 
 {% block tail %}

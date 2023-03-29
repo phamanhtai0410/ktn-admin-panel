@@ -34,12 +34,18 @@
             },
             {
                 "indexed": false,
-                "internalType": "uint256",
-                "name": "totalRoyaltyRate",
-                "type": "uint256"
+                "internalType": "address[]",
+                "name": "receivers",
+                "type": "address[]"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256[]",
+                "name": "proportions",
+                "type": "uint256[]"
             }
         ],
-        "name": "ConfigureTotalRoyaltyRate",
+        "name": "ConfigureRoyaltiesProportions",
         "type": "event"
     },
     {
@@ -53,18 +59,12 @@
             },
             {
                 "indexed": false,
-                "internalType": "address[]",
-                "name": "receivers",
-                "type": "address[]"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256[]",
-                "name": "proportions",
-                "type": "uint256[]"
+                "internalType": "uint256",
+                "name": "totalRoyaltyRate",
+                "type": "uint256"
             }
         ],
-        "name": "ConfiureRoyaltiesProportions",
+        "name": "ConfigureTotalRoyaltyRate",
         "type": "event"
     },
     {

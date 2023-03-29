@@ -24,7 +24,7 @@ def get_nfts_options():
 
 class NftCollectionView(MyBaseModelView, RowActionListMixin):
     column_list = ['collection_id', 'name', 'symbol',
-                   'address', 'description', 'types_list', 'chain', 'created_time']
+                   'address', 'description', 'types_list', 'chain', 'is_box', 'created_time']
     # create_modal = True
     edit_template = 'form/models/factory/edit.html'
     create_modal_template = 'form/models/factory/modals/create.html'

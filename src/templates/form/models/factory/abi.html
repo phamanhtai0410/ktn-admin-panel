@@ -16,7 +16,8 @@
     var royalty_controller_address = "{{  royalty_controller_address}}"
 
     var before_royalty = {{ before_royalty | tojson(indent=2) }};
-    var base_uri = "https://s3.amazonaws.com/static.katanainu.com/metadata"
+    const base_uri = "https://s3.amazonaws.com/static.katanainu.com/metadata"
+    const box_base_uri = "https://s3.us-east-1.amazonaws.com/static.katanainu.com/metadata/collection" 
     var factoryContract = null;
     var royaltyControllerContract = null
     var before_disable_mint =
@@ -38,6 +39,7 @@
         const chain_info = await window.provider.getNetwork()
 
         if(!chain_info['chainId'] || !(chain_info['chainId'] in nft_chain_supported)) {
+            alert('Smart Contract Do Not Supported Current Chain')
             throw new Error('Smart Contract Do Not Supported Current Chain')
         }
 
@@ -147,7 +149,7 @@
         return true
     }
 
-    async function createNftCollection(name, symbol, total_supply, treasury_address, _royaltyRate, _prices) {
+    async function createNftCollection(name, symbol, total_supply, treasury_address, _royaltyRate, _prices, is_box) {
         try {
             $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
             const chain_info = await validateChainInfo()
@@ -161,8 +163,9 @@
             }
 
             $("#process_text").text("Sign tx......")
+            const baseUri = is_box ? box_base_uri : base_uri
             var result = await factoryContract.createNftCollection(
-                name, symbol, base_uri, total_supply, treasury_address, _royaltyRate, _prices
+                name, symbol, baseUri, total_supply, treasury_address, _royaltyRate, _prices
             );
             console.log(result)
             $("#process_text").text("Wait tx " + result.hash + "......")
@@ -183,6 +186,49 @@
                 ...nft_chain_supported[chain_info['chainId']],
                 'chain_id': chain_info['chainId']
             }};
+        } catch (e) {
+            console.error(e)
+            console.log(e.data?.message)
+            console.log(e.toString())
+            console.log(e.data?.message)
+            var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+            $("#msg_factory").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+            console.error(e)
+            $("#abi_lock_page").html('')
+        }
+        return false;
+    }
+
+    async function changeNftBaseUri(chain_id, chain, address, is_change_to_nft) {
+        try {
+            $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
+            const chain_info = await validateChainInfo()
+
+            console.log(`chain_info: ${chain_info}, ${chain_info['chainId']}, factoryAddress: ${nft_chain_supported[chain_info['chainId']]['factory_address']}`);
+
+            if(chain_info.chainId != chain_id) {
+                alert(`Do not same chain please use: ${chain}`)
+                throw new Error(`Do not same chain please use: ${chain}`)
+            }
+
+            const factoryAddress = nft_chain_supported[chain_info['chainId']]['factory_address']
+
+            if (!factoryContract) {
+                factoryContract = await initSignerContract(factoryAddress, abi)
+            }
+
+            let baseUri = is_change_to_nft ? base_uri : box_base_uri
+
+            $("#process_text").text("Sign tx......")
+            var result = await factoryContract.configNftCollectionURI(
+                address,  baseUri
+            );
+            console.log(result)
+            $("#process_text").text("Wait tx " + result.hash + "......")
+            var tx = await result.wait()
+
+            $("#process_text").html('<div  class="alert alert-success" role="alert"> Successfully </div>')
+            return true;
         } catch (e) {
             console.error(e)
             console.log(e.data?.message)
@@ -245,7 +291,8 @@
                 object.total_supply,
                 object.treasury_address,
                 object.royalty_rate,
-                _prices
+                _prices,
+                object.is_box,
             )
             if (res && res.address) {
                 console.log("Call BE")
@@ -349,6 +396,77 @@
 
         })
 
+        $("#change_box_to_nft").on('click', async function(event) {
+            try {
+                    event.preventDefault();
+                    let object = event.target.getAttribute("data-object")
+                    if (object) {
+                        try {
+                            object = JSON.parse(object)
+                        } catch (e) {
+                            console.error(e)
+                        }
+                    }
+                    console.log(object)
+                    const chain = object.chain
+                    const chain_id = object.chain_id
+                    const address = object.address
+
+                    await changeNftBaseUri(
+                        chain_id,
+                        chain,
+                        address,
+                        true
+                    )
+
+                    location.reload()
+            } catch (e) {
+                    console.error(e)
+                    console.log(e.data?.message)
+                    console.log(e.toString())
+                    console.log(e.data?.message)
+                    var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+                    $("#msg_factory").html('<div   class="alert alert-danger" role="alert">' + msg + ' </div>')
+                    console.error(e)
+                    $("#abi_lock_page").html('')
+            }
+        })
+
+        $("#change_nft_to_box").on('click', async function(event) {
+            try {
+                event.preventDefault();
+                let object = event.target.getAttribute("data-object")
+                if (object) {
+                    try {
+                        object = JSON.parse(object)
+                    } catch (e) {
+                        console.error(e)
+                    }
+                }
+                console.log(object)
+                const chain = object.chain
+                const chain_id = object.chain_id
+                const address = object.address
+
+                await changeNftBaseUri(
+                    chain_id,
+                    chain,
+                    address,
+                    false
+                )
+
+                location.reload()
+            } catch (e) {
+                console.error(e)
+                console.log(e.data?.message)
+                console.log(e.toString())
+                console.log(e.data?.message)
+                var msg = e.data?.message || e.toString() || "Internal JSON-RPC error."
+                $("#msg_factory").html('<div class="alert alert-danger" role="alert">' + msg + ' </div>')
+                console.error(e)
+                $("#abi_lock_page").html('')
+            }
+        })
     });
 
 

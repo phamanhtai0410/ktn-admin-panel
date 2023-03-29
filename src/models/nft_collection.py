@@ -53,6 +53,8 @@ class NftCollection(BaseDocument):
     commission = FloatField(required=True)
     commission_level_2 = FloatField(required=True)
 
+    discount = FloatField(required=True)
+
     deployed = BooleanField(default=False)
     royalty_rate = IntField(required=True, default=20, min_value=0, max_value=100)
     treasury_address = StringField()

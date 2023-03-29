@@ -23,6 +23,7 @@ class NftWhitelistTimeView(MyBaseModelView):
 
     form_edit_rules = ('whitelist_time', )
 
+    column_default_sort = ('created_time', True)
 
     def whitelist_time_format(view, context, model, name):
         _whitelist_time = py_.get(model, 'whitelist_time', [])
