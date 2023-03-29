@@ -2,7 +2,7 @@ import random
 import string
 import traceback
 
-from flask import request, redirect, url_for, flash
+from flask import request, redirect, url_for, flash, send_file
 from flask_admin import expose
 import pydash as py_
 import web3
@@ -104,3 +104,7 @@ class NftWhitelistView(RowActionListMixin, MyBaseModelView):
 
 
         return redirect(url_for('.index_view'))
+
+    @expose('/download_example', methods=['GET'])
+    def download_example(self):
+        return send_file('uploads/whitelist_address_example.csv')

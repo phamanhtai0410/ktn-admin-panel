@@ -24,7 +24,7 @@ def get_nfts_options():
 
 class NftCollectionView(MyBaseModelView, RowActionListMixin):
     column_list = ['collection_id', 'name', 'symbol',
-                   'address', 'description', 'types_list', 'created_time']
+                   'address', 'description', 'types_list', 'chain', 'created_time']
     # create_modal = True
     edit_template = 'form/models/factory/edit.html'
     create_modal_template = 'form/models/factory/modals/create.html'
@@ -56,7 +56,8 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
         address=HiddenField,
         image=S3ImageUploadField,
         max_rarity=HiddenField,
-        block_number=HiddenField
+        block_number=HiddenField,
+        box_image_url=S3ImageUploadField
     )
     form_subdocuments = {
         'types_list': {
@@ -68,7 +69,6 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
                     )
                 }
             }
-
         }
     }
 

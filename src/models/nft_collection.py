@@ -39,7 +39,7 @@ class NftCollection(BaseDocument):
     name = StringField(required=True)
     symbol = StringField(required=True)
     description = StringField(required=True)
-    image = StringField(required=True)
+    image = StringField(required=False)
     address = StringField()
     # max_rarity = IntField(default=0)
     block_number = IntField(default=0)
@@ -63,6 +63,9 @@ class NftCollection(BaseDocument):
     dapp_creator_address = StringField(required=False, default=None)
 
     whitelist_time = ListField(EmbeddedDocumentField(WhitelistTime), default=[], missing=[])
+
+    is_box = BooleanField()
+    box_image_url = StringField(required=True)
 
     def __str__(self):
         return self.name if self else ''
