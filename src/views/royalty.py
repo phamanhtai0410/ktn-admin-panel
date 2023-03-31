@@ -10,7 +10,7 @@ from wtforms import SubmitField, PasswordField, validators
 from src.config import Config
 from src.models.security import User
 from src.utils.s3_image_uploader import S3ImageUploadField
-
+import json
 
 class RoyaltyView(BaseView):
 
@@ -23,6 +23,7 @@ class RoyaltyView(BaseView):
         # res = requests.get(f'{Config.DAPP_API}/royalty_info', timeout=10)
         # print("** Call to get Royalty Infos: ",res.text)
         return self.render('pages/royalty.html',
-                           ROYALTY_CONTROLLER_ADDRESS=Config.ROYALTY_CONTROLLER_ADDRESS
-                           )
+                            API_URL=Config.DAPP_API,
+                            NFT_CHAIN_SUPPORTED=Config.NFT_CHAIN_SUPPORTED
+                        )
 
