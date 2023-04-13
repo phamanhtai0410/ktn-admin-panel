@@ -14,6 +14,7 @@ load_dotenv()
 class Config:
     PROJECT_NAME = 'Admin panel'
     TEMPLATE_MODE = 'bootstrap4'
+    PORT = os.getenv('PORT', 5100)
     MONGO_URI = os.getenv('MONGO_URI')
     BSC_SCAN = os.getenv('BSC_SCAN')
     ETH_SCAN = os.getenv('ETH_SCAN')

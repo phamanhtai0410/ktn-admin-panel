@@ -4,6 +4,7 @@ class RaffleView(MyBaseModelView, RowActionListMixin):
      # View column
     column_list = [
         'address',
+        'email',
         'user_id_twitter',
         'is_favourite_twitter',
         'is_retweeted_twitter',
@@ -20,6 +21,6 @@ class RaffleView(MyBaseModelView, RowActionListMixin):
     can_create = False
     can_delete = False
 
-    column_searchable_list = ['address', 'user_id_twitter']
+    column_searchable_list = ['address', 'user_id_twitter', 'email']
 
     column_default_sort = ('created_time', True)

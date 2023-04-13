@@ -14,6 +14,7 @@ class Raffle(BaseDocument):
         'collection': 'raffle'
     }
     address = StringField(required=True)
+    email = StringField(missing='')
     user_id_twitter = StringField(required=True)
     is_favourite_twitter = BooleanField(required=True)
     is_retweeted_twitter = BooleanField(required=True)
