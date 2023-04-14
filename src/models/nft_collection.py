@@ -67,7 +67,7 @@ class NftCollection(BaseDocument):
     whitelist_time = ListField(EmbeddedDocumentField(WhitelistTime), default=[], missing=[])
 
     is_box = BooleanField()
-    box_image_url = StringField(required=True)
+    box_image_url = StringField(required=False)
 
     def __str__(self):
         return self.name if self else ''
