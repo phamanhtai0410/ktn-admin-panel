@@ -60,4 +60,4 @@ class S3ImageUploadField(FileUploadField):
         except:
             traceback.print_exc()
             return ""
-        return f'{Config.S3_STATIC}/{name_prefix}_{image.filename}'
+        return f'{Config.S3_HOST}/{Config.BUCKET_NAME}/{name_prefix}_{image.filename}'
