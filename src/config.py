@@ -55,4 +55,6 @@ class Config:
     PAY_TOKEN = '0x69c76f1bfd9b85142716f7d766968028fc6b6a1d'
 
     NFT_CHAIN_SUPPORTED = json.loads(os.getenv('NFT_CHAIN_SUPPORTED', '{}'))
+
+    PORT = os.getenv('PORT', 5000)
     pass
