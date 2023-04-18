@@ -71,15 +71,24 @@ class NftWhitelistView(RowActionListMixin, MyBaseModelView):
                 continue
             
             _data = _item.split(',')
+            print(len(_csv_data), len(_data), _data, _row)
+
             _address = py_.get(_data, '0', None)
             _collection = py_.get(_data, '1', None)
             _amount = py_.to_integer(py_.get(_data, '2', 0))
-
-            _insert = {
-                'address': _address.lower(),
-                'collection': _collection.lower(),
-                'amount': _amount
-            }
+            
+            if len(_data) != 3:
+                _insert = {
+                    'address': None,
+                    'collection': None,
+                    'amount': None
+                }
+            else:
+                _insert = {
+                    'address': _address.lower(),
+                    'collection': _collection.lower(),
+                    'amount': _amount
+                }
             _is_valid = self.is_valid_data(
                 data=_insert,
                 is_upload_file=True,
