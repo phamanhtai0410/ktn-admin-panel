@@ -1,0 +1,37 @@
+{% extends 'admin/model/create.html' %}
+{% import 'form/models/abi.html' as abi_lib with context %}
+{% import 'form/models/lib.html' as model_lib with context %}
+
+
+{% set form_id = 'created_form' %}
+
+{% block body %}
+  {% block navlinks %}
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+          <a href="{{ return_url }}" class="nav-link">{{ _gettext('List') }}</a>
+      </li>
+      <li class="nav-item">
+          <a href="javascript:void(0)" class="nav-link active">{{ _gettext('Create') }}</a>
+      </li>
+    </ul>
+  {% endblock %}
+
+  {% block create_form %}
+    {{ model_lib.render_form_with_id(form, return_url, extra(), form_opts, id="factory_create_collection") }}
+  {% endblock %}
+
+
+{% endblock %}
+
+{% block tail %}
+  {{ super() }}
+  {{ lib.form_js() }}
+
+{% endblock %}
+
+
+
+
+
+
