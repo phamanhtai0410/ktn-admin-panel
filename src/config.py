@@ -56,5 +56,4 @@ class Config:
 
     NFT_CHAIN_SUPPORTED = json.loads(os.getenv('NFT_CHAIN_SUPPORTED', '{}'))
 
-    PORT = os.getenv('PORT', 5000)
     pass
