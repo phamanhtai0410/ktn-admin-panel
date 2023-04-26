@@ -38,6 +38,7 @@ from .raffle import RaffleView
 from .nft_whitelist import NftWhitelistView
 from .nft_whitelist_time import NftWhitelistTimeView
 from .pre_launch_nft_whitelist import PreLaunchNftWhitelistView
+from .forging_address import ForgingAddressView
 
 from ...models.box import Box
 from ...models.box_rate import RateOfBox
@@ -62,6 +63,7 @@ from ...models.raffle_config import RaffleConfig
 from ...models.raffle import Raffle
 from ...models.nft_whitelist import NftWhitelist
 from ...models.pre_launch_nft_whitelist import PreLaunchNftWhitelist
+from ...models.forging_address import ForgingAddress
 
 model_categories = {
     'Setting': {
@@ -115,6 +117,7 @@ model_views = [
     NftWhitelistTimeView(NftCollection, category='Master Data',  endpoint='nft_collection_whitelist_time', name='Nft Whitelist Time'),
     NftWhitelistView(NftWhitelist, category='Master Data', name='Nft Whitelist Address'),
     PreLaunchNftWhitelistView(PreLaunchNftWhitelist, category='Master Data', name='Pre-launch NFT Whitelist'),
+    ForgingAddressView(ForgingAddress, category='Master Data'),
 
 
     # NftRarityView(NftRarity, category='Master Data'),
