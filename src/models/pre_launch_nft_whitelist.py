@@ -17,4 +17,4 @@ class PreLaunchNftWhitelist(BaseDocument):
 
     address = StringField(required=True) # Address of user
     # amount = IntField(required=True) # Address amount of nft can mint in each whitelist phase
-    collection = StringField(required=True) # Address of collection 
+    # collection = StringField(required=True) # Address of collection 
