@@ -63,6 +63,8 @@ class PreLaunchNftWhitelistView(RowActionListMixin, MyBaseModelView):
             print(len(_csv_data), len(_data), _data, _row)
 
             _address = py_.get(_data, '0', None)
+            if _address is not None:
+                _address = _address.strip()
             
             if len(_data) != 1:
                 _insert = {
