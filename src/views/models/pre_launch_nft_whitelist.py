@@ -52,7 +52,6 @@ class PreLaunchNftWhitelistView(RowActionListMixin, MyBaseModelView):
         if not _csv_data:
             flash(message=f'Do not have data', category="error")
 
-        _web3 = web3.Web3()
         _csv_data = _csv_data.split('\n')
         _insert_data = []
         for (_row, _item) in enumerate(_csv_data):
@@ -65,7 +64,7 @@ class PreLaunchNftWhitelistView(RowActionListMixin, MyBaseModelView):
 
             _address = py_.get(_data, '0', None)
             
-            if len(_data) != 3:
+            if len(_data) != 1:
                 _insert = {
                     'address': None
                 }
