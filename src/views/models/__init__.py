@@ -121,7 +121,7 @@ model_views = [
     PreLaunchNftWhitelistView(PreLaunchNftWhitelist, category='Master Data', name='Pre-launch NFT Whitelist'),
     ForgingAddressView(ForgingAddress, category='Master Data'),
 
-    EmailSubscribeView(EmailSubscribe),
+    EmailSubscribeView(EmailSubscribe, category='Application'),
 
 
     # NftRarityView(NftRarity, category='Master Data'),
