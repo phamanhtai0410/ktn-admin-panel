@@ -39,6 +39,7 @@ from .nft_whitelist import NftWhitelistView
 from .nft_whitelist_time import NftWhitelistTimeView
 from .pre_launch_nft_whitelist import PreLaunchNftWhitelistView
 from .forging_address import ForgingAddressView
+from .email_subscribe import EmailSubscribeView
 
 from ...models.box import Box
 from ...models.box_rate import RateOfBox
@@ -64,6 +65,7 @@ from ...models.raffle import Raffle
 from ...models.nft_whitelist import NftWhitelist
 from ...models.pre_launch_nft_whitelist import PreLaunchNftWhitelist
 from ...models.forging_address import ForgingAddress
+from ...models.email_subscribe import EmailSubscribe
 
 model_categories = {
     'Setting': {
@@ -118,6 +120,8 @@ model_views = [
     NftWhitelistView(NftWhitelist, category='Master Data', name='Nft Whitelist Address'),
     PreLaunchNftWhitelistView(PreLaunchNftWhitelist, category='Master Data', name='Pre-launch NFT Whitelist'),
     ForgingAddressView(ForgingAddress, category='Master Data'),
+
+    EmailSubscribeView(EmailSubscribe),
 
 
     # NftRarityView(NftRarity, category='Master Data'),
