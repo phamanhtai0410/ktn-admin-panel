@@ -6,6 +6,7 @@ from flask_admin.form import Select2Widget
 from flask_admin.model.template import EditRowAction
 from markupsafe import Markup
 from wtforms import HiddenField
+import pydash as py_
 
 from src.abis import factory_abi, royalty_controller_abi
 from src.config import Config
@@ -23,7 +24,7 @@ def get_nfts_options():
 
 
 class NftCollectionView(MyBaseModelView, RowActionListMixin):
-    column_list = ['collection_id', 'name', 'symbol',
+    column_list = ['collection_id', 'name', 'symbol', 'base_url',
                    'address', 'description', 'types_list', 'chain', 'is_box', 'created_time']
     # create_modal = True
     edit_template = 'form/models/factory/edit.html'
@@ -99,6 +100,19 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     def image_format(view, context, model, name):
         # _image = model['image']
         return Markup(f'<a target="_blank" href="{model["image"]}"> image </a>')
+
+    def base_url_format(view, context, model, name):
+        # _image = model['image']
+        if not py_.get(model, 'is_existing_metadata', False):
+            return ''
+        
+        _base_url = f'''
+            <ul>
+                <li>image_base_url: {py_.get(model, "image_base_url")}</li>
+                <li>json_base_url: {py_.get(model, "json_base_url")}</li>
+            </ul>
+        '''
+        return Markup(_base_url)
 
     # def types_list_format(view, context, model, name):
     #     print("*** DEBUG : model = ", model)
@@ -233,6 +247,7 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     column_default_sort = ('created_time', True)
     column_formatters = {
         'image': image_format,
+        'base_url': base_url_format,
         # 'royalty': royalty_format,
         # 'types_list': types_list_format
     }

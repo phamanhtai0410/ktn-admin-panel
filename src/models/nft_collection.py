@@ -69,5 +69,10 @@ class NftCollection(BaseDocument):
     is_box = BooleanField()
     box_image_url = StringField(required=False)
 
+    is_existing_metadata = BooleanField(required=False, default=False)
+    price = FloatField(required=False, default=0)
+    image_base_url = StringField(required=False, default='')
+    json_base_url = StringField(required=False, default='')
+
     def __str__(self):
         return self.name if self else ''

@@ -284,7 +284,8 @@
                 alert("Royalty rate is required")
                 return;
             }
-            let _prices = object.types_list.map(item => ((item.price * 10 ** 18).toFixed(0)).toString())
+            let _prices = object.is_existing_metadata ? [object.price] : object.types_list.map(item => ((item.price * 10 ** 18).toFixed(0)).toString())
+
             var res = await createNftCollection(
                 object.name,
                 object.symbol,
