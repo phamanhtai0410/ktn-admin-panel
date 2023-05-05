@@ -29,7 +29,8 @@ class WhitelistTime(EmbeddedDocument):
     phase = IntField(required=True)
     start_time = IntField(required=True)
     end_time = IntField(required=True)
-
+    is_public = BooleanField(required=True)
+    
 class NftCollection(BaseDocument):
     meta = {
         'strict': False,
@@ -61,7 +62,10 @@ class NftCollection(BaseDocument):
 
     chain_id = IntField(required=False, default=None)
     chain = StringField(required=False, default=None)
+    
+    pay_token_symbol = StringField(required=False, default=None)
     pay_token_address = StringField(required=False, default=None)
+    is_paid_by_native = BooleanField(required=False)
     dapp_creator_address = StringField(required=False, default=None)
 
     whitelist_time = ListField(EmbeddedDocumentField(WhitelistTime), default=[], missing=[])

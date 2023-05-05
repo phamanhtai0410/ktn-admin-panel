@@ -25,8 +25,13 @@ def get_nfts_options():
 
 class NftCollectionView(MyBaseModelView, RowActionListMixin):
     column_list = ['collection_id', 'name', 'symbol', 'base_url',
-                   'address', 'description', 'types_list', 'chain', 'is_box', 'created_time']
-    # create_modal = True
+                   'address', 'description', 'chain',
+                   'is_box', 'created_time',
+                   ]
+    
+    """
+        Tempalte definitions
+    """
     edit_template = 'form/models/factory/edit.html'
     create_modal_template = 'form/models/factory/modals/create.html'
     create_template = 'form/models/factory/create.html'
@@ -41,14 +46,6 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     column_labels = {
         'collection_id': 'Id'
     }
-    #
-    # def royalty_format(self, context, model, name):
-    #     _royalty = Royalty.objects(collection_address=model['address'])
-    #     permission = '<ul>'
-    #     for item in _royalty:
-    #         permission += f'<li href="#" target="_blank" >{item.user_address} - {item.percent}</li>'
-    #     permission += f'<li ><a href="{url_for("royalty.create_view", collection_address=model["address"])}"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></li>'
-    #     return Markup(permission + "</ul>")
 
     form_overrides = dict(
         nfts=SelectMultipleField,
@@ -212,6 +209,9 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
                 'disabled': True
             },
             'pay_token_address': {
+                'disabled': True
+            },
+            'pay_token_symbol': {
                 'disabled': True
             },
             'dapp_creator_address': {

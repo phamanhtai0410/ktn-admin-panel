@@ -51,7 +51,7 @@
       return chain_info
   }
 
-  async function saveAddress(collection_id, address, block_number, chainInfo) {
+  async function saveAddress(collection_id, address, block_number, chainInfo, isPaidByNative) {
       return await new Promise(async function (resolve, reject) {
           var form = new FormData();
           form.append("address", address);
@@ -59,8 +59,16 @@
           form.append('collection_id', collection_id)
           form.append('chain_id', chainInfo['chain_id'])
           form.append('chain', chainInfo['chain'])
-          form.append('pay_token_address', chainInfo['pay_token_address'])
           form.append('dapp_creator_address', chainInfo['dapp_creator_address'])
+          form.append('gateway_address', chainInfo['gateway_address'])
+          form.append('is_paid_by_native', isPaidByNative)
+          if (isPaidByNative) {
+            form.append('pay_token_address', chainInfo['weth_address'])
+            form.append('pay_token_symbol', chainInfo['native_token_symbol'])
+          } else {
+            form.append('pay_token_address', chainInfo['pay_token_address'])
+            form.append('pay_token_symbol', chainInfo['pay_token_symbol'])
+          }
 
           var xhr = new XMLHttpRequest();
           xhr.withCredentials = true;
@@ -154,7 +162,7 @@
       return true
   }
 
-  async function createNftCollection(name, symbol, total_supply, treasury_address, _royaltyRate, _prices, is_box) {
+  async function createNftCollection(name, symbol, total_supply, treasury_address, _royaltyRate, _prices, is_box, is_paid_by_native) {
       try {
           $("#abi_lock_page").html('<div id="lock_page" style=" position: fixed; width: 100vw; height: 100vh; z-index: 10000000000000000; background: rgba(207,207,207, 0.4); top: 0; left: 0; display: flex; justify-content: center; align-content: center; align-items: center; "> <section style="background: white; margin: 16px; padding: 16px; border-radius: 10px; text-align: center;"  role="status"> <div style="display: flex; align-items: center; justify-content: center;"> <i style="  font-size: 40px;" class="fa fa-circle-o-notch fa-spin"></i> </div> <i>Please do not leave or close the window.</i> <h3 id="process_text">Loading...</h3> </section> </div>')
           const chain_info = await validateChainInfo()
@@ -163,14 +171,17 @@
 
           const factoryAddress = nft_chain_supported[chain_info['chainId']]['factory_address']
 
+          const payTokenAddress = is_paid_by_native ? nft_chain_supported[chain_info['chainId']]['native_token_symbol'] : nft_chain_supported[chain_info['chainId']]['pay_token_address']
+
           if (!factoryContract) {
               factoryContract = await initSignerContract(factoryAddress, abi)
           }
 
           $("#process_text").text("Sign tx......")
           const baseUri = is_box ? box_base_uri : base_uri
+
           var result = await factoryContract.createNftCollection(
-              name, symbol, baseUri, total_supply, treasury_address, _royaltyRate, _prices
+              name, symbol, baseUri, total_supply, treasury_address, _royaltyRate, _prices, payTokenAddress
           );
           console.log(result)
           $("#process_text").text("Wait tx " + result.hash + "......")
@@ -190,7 +201,8 @@
           return {address: NFTAddress, blockNumber: blockNumber, chainInfo: {
               ...nft_chain_supported[chain_info['chainId']],
               'chain_id': chain_info['chainId']
-          }};
+          }
+        };
       } catch (e) {
           console.error(e)
           console.log(e.data?.message)
@@ -281,16 +293,16 @@
               alert("symbol is required")
               return;
           }
-          if (!object.total_supply) {
+           if (!object.total_supply) {
               alert("Total supply is required")
               return;
           }
-          if (!object.royalty_rate) {
-              alert("Royalty rate is required")
-              return;
-          }
+          //if (!object.royalty_rate) {
+          //    alert("Royalty rate is required")
+          //    return;
+          //}
           let _prices = object.is_existing_metadata ? [((object.price * 10 ** 18).toFixed(0)).toString()] : object.types_list.map(item => ((item.price * 10 ** 18).toFixed(0)).toString())
-
+          
           var res = await createNftCollection(
               object.name,
               object.symbol,
@@ -299,11 +311,13 @@
               object.royalty_rate,
               _prices,
               object.is_box,
+              object.is_paid_by_native
           )
+    
           if (res && res.address) {
               console.log("Call BE")
-
-              await saveAddress(object.collection_id, res.address, res.blockNumber, res.chainInfo)
+              console.log("isPaidByNative : ", object.is_paid_by_native)
+              await saveAddress(object.collection_id, res.address, res.blockNumber, res.chainInfo, object.is_paid_by_native)
               if (object.royalty?.length > 0) {
                   let resRoy = await checkRoyaltyController(res.address, object.royalty, true)
                   if (!resRoy) {

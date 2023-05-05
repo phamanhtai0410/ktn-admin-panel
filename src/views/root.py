@@ -134,8 +134,11 @@ def save_address_for_collection():
             nft.deployed = True
             nft.chain_id = data['chain_id']
             nft.chain = data['chain']
+            nft.is_paid_by_native = data['is_paid_by_native'] == 'true'
             nft.pay_token_address = data['pay_token_address'].lower()
+            nft.pay_token_symbol = data['pay_token_symbol']
             nft.dapp_creator_address = data['dapp_creator_address'].lower()
+            nft.gateway_address = data['gateway_address'].lower()
             nft.save()
             print({
                 "contract": nft.address,
