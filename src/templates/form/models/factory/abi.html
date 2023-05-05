@@ -171,7 +171,7 @@
 
           const factoryAddress = nft_chain_supported[chain_info['chainId']]['factory_address']
 
-          const payTokenAddress = is_paid_by_native ? nft_chain_supported[chain_info['chainId']]['native_token_address'] : nft_chain_supported[chain_info['chainId']]['pay_token_address']
+          const payTokenAddress = is_paid_by_native ? nft_chain_supported[chain_info['chainId']]['weth_address'] : nft_chain_supported[chain_info['chainId']]['pay_token_address']
 
           if (!factoryContract) {
               factoryContract = await initSignerContract(factoryAddress, abi)
