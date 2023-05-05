@@ -35,14 +35,18 @@ class NftWhitelistTimeView(MyBaseModelView):
             _phase = py_.get(_item, 'phase')
             _start_time = py_.get(_item, 'start_time')
             _end_time = py_.get(_item, 'end_time')
+            _is_public = py_.get(_item, 'is_public', False)
             _html += f'''
                 Phase: {_phase}
                     <ul>
                         <li>
-                            StartTime: {_start_time} - {datetime.datetime.fromtimestamp(_start_time).strftime('%Y/%m/%d %H:%m')}
+                            StartTime: {_start_time} - {datetime.datetime.fromtimestamp(_start_time).strftime('%Y/%m/%d %H:%M')}
                         </li>
                         <li>
-                            EndTime: {_end_time} - {datetime.datetime.fromtimestamp(_end_time).strftime('%Y/%m/%d %H:%m')}
+                            EndTime: {_end_time} - {datetime.datetime.fromtimestamp(_end_time).strftime('%Y/%m/%d %H:%M')}
+                        </li>
+                        <li>
+                            Is Public: {_is_public}
                         </li>
                     </ul>
             '''

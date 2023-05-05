@@ -29,6 +29,7 @@ class WhitelistTime(EmbeddedDocument):
     phase = IntField(required=True)
     start_time = IntField(required=True)
     end_time = IntField(required=True)
+    is_public = BooleanField(default=False)
 
 class NftCollection(BaseDocument):
     meta = {
