@@ -171,7 +171,7 @@
 
           const factoryAddress = nft_chain_supported[chain_info['chainId']]['factory_address']
 
-          const payTokenAddress = is_paid_by_native ? nft_chain_supported[chain_info['chainId']]['native_token_symbol'] : nft_chain_supported[chain_info['chainId']]['pay_token_address']
+          const payTokenAddress = is_paid_by_native ? nft_chain_supported[chain_info['chainId']]['native_token_address'] : nft_chain_supported[chain_info['chainId']]['pay_token_address']
 
           if (!factoryContract) {
               factoryContract = await initSignerContract(factoryAddress, abi)
@@ -179,7 +179,7 @@
 
           $("#process_text").text("Sign tx......")
           const baseUri = is_box ? box_base_uri : base_uri
-
+          console.log("CreateCollection Params : ", name, symbol, baseUri, total_supply, treasury_address, _royaltyRate, _prices, payTokenAddress);
           var result = await factoryContract.createNftCollection(
               name, symbol, baseUri, total_supply, treasury_address, _royaltyRate, _prices, payTokenAddress
           );
