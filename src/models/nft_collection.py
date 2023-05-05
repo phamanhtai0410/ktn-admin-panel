@@ -69,6 +69,7 @@ class NftCollection(BaseDocument):
     dapp_creator_address = StringField(required=False, default=None)
 
     whitelist_time = ListField(EmbeddedDocumentField(WhitelistTime), default=[], missing=[])
+    whitelist_price = FloatField(required=False, missing=0)
 
     is_box = BooleanField()
     box_image_url = StringField(required=False)
