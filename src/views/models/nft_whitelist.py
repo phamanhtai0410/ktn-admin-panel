@@ -111,7 +111,7 @@ class NftWhitelistView(RowActionListMixin, MyBaseModelView):
                 set__amount=_amount,
                 upsert=True)
 
-
+        flash(f'Upload Whitelist Success: {len(_insert_data)} Record', category='message')
         return redirect(url_for('.index_view'))
 
     @expose('/download_example', methods=['GET'])
