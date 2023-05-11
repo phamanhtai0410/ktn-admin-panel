@@ -272,11 +272,12 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
         except Exception as e:
             flash(gettext(str(e)), 'error')
 
-    def _can_edit(self, model):
+    # Change to debug prod # NOTE: need to change back when go live
+    # def _can_edit(self, model):
 
-        # Put your logic here to allow edit per model
-        # return True to allow edit
-        return not model.deployed
+    #     # Put your logic here to allow edit per model
+    #     # return True to allow edit
+    #     return not model.deployed
 
     def allow_row_action(self, action, model):
         print("allow_row_action", action, model)
