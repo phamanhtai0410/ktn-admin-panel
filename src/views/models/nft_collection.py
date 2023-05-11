@@ -278,6 +278,8 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
     #     # Put your logic here to allow edit per model
     #     # return True to allow edit
     #     return not model.deployed
+    def _can_edit(self, model):
+        return True
 
     def allow_row_action(self, action, model):
         print("allow_row_action", action, model)
