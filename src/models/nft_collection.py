@@ -76,6 +76,7 @@ class NftCollection(BaseDocument):
 
     is_existing_metadata = BooleanField(required=False, default=False)
     price = FloatField(required=False, default=0)
+    limitation = IntField(required=False, default=0)
     image_base_url = StringField(required=False, default='')
     json_base_url = StringField(required=False, default='')
     display_url = StringField(required=False, default='')
