@@ -199,9 +199,9 @@ class NftCollectionView(MyBaseModelView, RowActionListMixin):
                 "we3-address": "input_address",
                 "readonly": True
             },
-            'deployed': {
-                'disabled': True
-            },
+            # 'deployed': {
+            #     'disabled': True
+            # },
             'chain_id': {
                 'disabled': True
             },
