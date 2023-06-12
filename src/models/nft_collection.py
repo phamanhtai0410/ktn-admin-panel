@@ -20,7 +20,7 @@ class NftType(EmbeddedDocument):
     AnimationModelUrl = StringField(required=False, default='', missing='')
     rate = FloatField(required=True)
     price = FloatField(required=True)
-    whiteslist_price = FloatField(required=False)
+    whitelist_price = FloatField(required=False, missing=0)
 
 class Royalty(EmbeddedDocument):
     user_address = StringField(required=True)
@@ -49,7 +49,7 @@ class NftCollection(BaseDocument):
     disable_mint = BooleanField(default=False)
     total_supply = IntField(required=True, default=10000, min_value=1)
 
-    types_list = ListField(EmbeddedDocumentField(NftType))
+    types_list = ListField(EmbeddedDocumentField(NftType), required=False, missing=[])
     royalty = ListField(EmbeddedDocumentField(Royalty))
 
     commission = FloatField(required=True)
